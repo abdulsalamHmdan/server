@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ar" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>أحمد السفير - لوحة التحكم</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        /* direction: ltr !important; */
+      }
+      :root {
+        --bg-color: #f4f5f7;
+        --card-bg: #ffffff;
+        --primary-btn: #5c524d;
+        --secondary-btn: #ffffff;
+        --text-main: #2d3436;
+        --text-muted: #636e72;
+        --border-color: #edf2f7;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        /* font-family: "IBM Plex Sans Arabic", system-ui, -apple-system, "SF Pro Display", "SF Pro Text", Arial, sans-serif; */
+        /* background-color: var(--bg-color); */
+        background:
+          radial-gradient(
+            900px 600px at 10% 0%,
+            rgba(155, 217, 228, 0.35),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 700px at 95% 15%,
+            rgba(68, 49, 41, 0.14),
+            transparent 55%
+          ),
+          radial-gradient(
+            1100px 700px at 50% 120%,
+            rgba(0, 0, 0, 0.04),
+            transparent 60%
+          ),
+          var(--bg-color);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--text-main);
+      }
+
+      .container {
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* Header Area */
+      .header {
+        text-align: center;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .header h1 {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+      .code-badge {
+        background: #fff;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Card Style */
+      .card {
+        background: var(--card-bg);
+        border-radius: 25px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        position: relative;
+      }
+
+      .card-number {
+        /* position: absolute; */
+        top: 20px;
+        right: 20px;
+        background: #f8f9fa;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 0.7rem;
+        color: #999;
+        border: 1px solid #eee;
+      }
+
+      .card-title {
+        direction: ltr;
+        text-align: center;
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .card-title h2 {
+        font-size: 1.1rem;
+        margin: 0;
+        text-align: right;
+      }
+      .card-title p {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin: 5px 0 15px 0;
+      }
+
+      /* Image Placeholder */
+      .image-box {
+        max-width: 440px;
+        height: 250px;
+        background: #e2e8f0;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 15px;
+      }
+      .image-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* Input & Link Styles */
+      .link-section {
+        background: #fdfdfd;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+      }
+      .link-text {
+        font-size: 0.8rem;
+        color: #3182ce;
+        word-break: break-all;
+        margin-left: 10px;
+      }
+
+      .message-preview {
+        background: #f9f9f9;
+        border-radius: 12px;
+        padding: 15px;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        color: var(--text-muted);
+        margin-bottom: 15px;
+        text-align: justify;
+      }
+
+      /* Target Grid */
+      .target-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+      .target-item {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        padding: 15px;
+        text-align: center;
+      }
+      .target-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        display: block;
+      }
+      .target-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 5px;
+        display: block;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        background: #fcfcfc;
+        text-align: center;
+      }
+
+      /* Buttons */
+      .btn {
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        font-size: 0.95rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-bottom: 10px;
+        transition: opacity 0.2s;
+      }
+      .btn-primary {
+        background-color: var(--primary-btn);
+        color: white;
+      }
+      .btn-outline {
+        background-color: var(--secondary-btn);
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+      }
+      .btn-logout {
+        background-color: white;
+        color: #2d3436;
+        margin-top: 10px;
+      }
+
+      .footer-note {
+        font-size: 0.7rem;
+        color: #a0aec0;
+        text-align: center;
+        margin-top: 5px;
+      }
+
+      .empty-state {
+        padding: 30px;
+        text-align: center;
+        border: 1px dashed #cbd5e0;
+        border-radius: 15px;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="code-badge">
+          83923 <span style="opacity: 0.7; font-size: 12px">CODE</span>
+        </div>
+        <div class="cont">
+          <p style="font-size: 0.8rem; color: #718096; margin-bottom: 5px">
+            أهلاً بك صاحب الأثر
+          </p>
+          <h1>أحمد السفير</h1>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-number">001</div>
+          <div class="cont">
+            <h2>رسالة النشر</h2>
+            <p>انسخ/شارك الرسالة مع صورة جاهزة</p>
+          </div>
+        </div>
+        <div class="image-box">
+          <img
+            src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=60"
+            alt="Library"
+          />
+        </div>
+        <div class="link-section">
+          <div class="link-text">
+            https://capable-lollipop-4fa68c.netlify.app/s/83923?ref=AHM-83923
+          </div>
+          <button
+            class="btn-outline"
+            style="
+              width: auto;
+              padding: 5px 15px;
+              margin: 0;
+              font-size: 0.75rem;
+            "
+          >
+            نسخ
+          </button>
+        </div>
+        <div class="message-preview">
+          مساء الخير 🌿| قد يغيب عنك أثرك مع مرور الوقت، لكن أثره لا يغيب؛ فكل
+          ريال يُصرف في تحفيظ القرآن يبقى أجره ممتداً ومتنامياً.. تبرع الآن عبر
+          هذا الرابط الخاص...
+        </div>
+        <button id="share-btn" class="btn btn-primary">مشاركة</button>
+        <button id="copy-btn" class="btn btn-outline">نسخ الرسالة</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-number">002</div>
+          <div class="cont">
+            <h2>مستهدف اليوم</h2>
+            <p>متابعة الإنجاز اليومي بسرعة</p>
+          </div>
+        </div>
+        <div class="target-grid">
+          <div class="target-item">
+            <span class="target-label">هدف المبلغ</span>
+            <span class="target-value">٢,٠٠٠ ر.س.</span>
+            <span class="target-label">/ يوم</span>
+          </div>
+          <div class="target-item">
+            <span class="target-label">هدف الصناديق</span>
+            <span class="target-value">10</span>
+            <span class="target-label">/ يوم</span>
+          </div>
+          <div class="target-item">
+            <span class="target-label">المبلغ اليوم</span>
+            <span class="target-value">٠ ر.س.</span>
+            <span class="target-label">SAR</span>
+          </div>
+          <div class="target-item">
+            <span class="target-label">المحقق اليوم</span>
+            <span class="target-value">0</span>
+            <span class="target-label">صندوق</span>
+          </div>
+        </div>
+        <button class="btn btn-primary">تحديث إنجاز اليوم</button>
+        <button class="btn btn-outline">الحصول على الكوبون</button>
+        <p class="footer-note">
+          ملاحظة: هذا التتبع محلي على الجهاز (بدون سيرفر). لو تبي التتبع مركزي
+          لكل السفراء نربطه بملف CSV/Google Sheet/Netlify Function.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-number">004</div>
+        <div class="card-title">
+          <h2>الصناديق السهمية</h2>
+          <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
+        </div>
+        <div class="empty-state">
+          <p style="color: #a0aec0; font-size: 0.9rem">الصناديق السهمية</p>
+          <p style="font-weight: bold">لا يوجد روابط</p>
+        </div>
+
+        <button class="btn btn-outline">تحديث الكل</button>
+      </div>
+
+      <button class="btn btn-outline btn-logout">تسجيل خروج</button>
+    </div>
+  </body>
+  <script defer>
+    const shareBtn = document.querySelector("#share-btn");
+    const copyBtn = document.querySelector("#copy-btn");
+
+    shareBtn.addEventListener("click", async () => {
+  const imageUrl = "/img/a.png"; 
+  const shareText = "مساء الخير 🌿 | هذا النص سيظهر تحت الصورة";
+
+  // التأكد أولاً أن المتصفح يدعم أساساً خاصية المشاركة
+  if (!navigator.share) {
+    alert("متصفحك لا يدعم المشاركة، يرجى استخدام متصفح حديث على الهاتف.");
+    return;
+  }
+
+  try {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    const file = new File([blob], "share_image.png", { type: "image/png" });
+
+    // التحقق من إمكانية مشاركة "هذا الملف بالتحديد"
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        text: shareText,
+        title: "رسالة نشر" // بعض المتصفحات تطلب العنوان
+      });
+    } else {
+      // إذا فشل مشاركة الملف، نكتفي بالنص (الخيار الاحتياطي)
+      await navigator.share({
+        text: shareText
+      });
+    }
+  } catch (error) {
+    console.error("فشلت المشاركة:", error);
+    // في حال حدوث خطأ في Fetch (CORS مثلاً)، شارك النص فقط
+    navigator.share({ text: shareText }).catch(() => {});
+  }
+});
+
+    // copyBtn.addEventListener("click", () => {
+    //   const message = `مساء الخير 🌿| قد يغيب عنك أثرك مع مرور الوقت، لكن أثره لا يغيب؛ فكل ريال يُصرف في تحفيظ القرآن يبقى أجره ممتداً ومتنامياً.. تبرع الآن عبر هذا الرابط الخاص...\n\nhttps://capable-lollipop-4fa68c.netlify.app/s/83923?ref=AHM-83923`;
+    //   console.log("تم نسخ الرسالة إلى الحافظة!");
+    //   navigator.clipboard
+    //     .writeText(message)
+    //     .then(() => alert("تم نسخ الرسالة إلى الحافظة!"))
+    //     .catch((error) => alert("فشل نسخ الرسالة: " + error));
+    // });
+  </script>
+</html>

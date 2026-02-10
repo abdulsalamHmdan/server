@@ -5,6 +5,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
 
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -26,7 +27,7 @@ mongoose
 
 // المسارات الأساسية
 app.get('/', (req, res) => {
-  res.render('index', { title: 'الصفحة الرئيسية' });
+  res.render('sfeer', { title: 'الصفحة الرئيسية' });
 });
 
 // معالج الأخطاء 404
