@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تعديل بيانات اليوم <%= data.date %></title>
+    <style>
+        /* إعدادات المتغيرات والألوان */
+        :root {
+            --bg-color: #f4f5f7;
+            --card-bg: #ffffff;
+            --primary-btn: #5c524d;
+            --secondary-btn: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --border-color: #edf2f7;
+            --input-bg: #fcfcfc;
+            --danger-color: #e53e3e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-main);
+            background:
+                radial-gradient(900px 600px at 10% 0%, rgba(155, 217, 228, 0.35), transparent 60%),
+                radial-gradient(900px 700px at 95% 15%, rgba(68, 49, 41, 0.14), transparent 55%),
+                radial-gradient(1100px 700px at 50% 120%, rgba(0, 0, 0, 0.04), transparent 60%),
+                var(--bg-color);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .card-title {
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .card-title h2 {
+            font-size: 1.1rem;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            background: var(--input-bg);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #cbd5e0;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .target-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .target-item {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .target-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .target-item input {
+            margin-bottom: 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* --- تعديلات الخطة اليومية وزر الحذف --- */
+        .link-section {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* تعديل العرض ليتناسب مع وجود زر الحذف */
+        .link-section input[name="goal"] {
+            width: 35% !important; 
+            margin-bottom: 0;
+        }
+
+        .link-section input[name="label"] {
+            width: 55% !important;
+            margin-bottom: 0;
+        }
+
+        /* تنسيق زر الحذف */
+        .btn-delete {
+            background: #ffecec;
+            color: var(--danger-color);
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            width: 35px;
+            height: 45px; /* نفس ارتفاع الحقل تقريباً */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            flex-shrink: 0; /* منع الزر من الانكماش */
+        }
+
+        .btn-delete:hover {
+            background: var(--danger-color);
+            color: white;
+            border-color: var(--danger-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* --------------------------------------- */
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-btn);
+            color: white;
+            box-shadow: 0 4px 6px rgba(92, 82, 77, 0.2);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-outline {
+            background-color: var(--secondary-btn);
+            color: var(--text-main);
+            border: 1px solid #d1d5db;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.9rem;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .btn-outline:hover {
+            background-color: #f7fafc;
+        }
+
+        button[onclick="addGoal()"] {
+            width: 100%;
+            margin-top: 15px;
+            border-style: dashed;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/" class="btn-outline" style="padding: 5px 15px;">عودة</a>
+            <h1>تعديل بيانات اليوم <%= data.date %></h1>
+        </div>
+
+        <form action="/save" method="POST">
+            <input type="hidden" name="date" value="<%= data.date %>">
+
+            <div class="card">
+                <div class="card-title">
+                    <h2>البيانات الأساسية</h2>
+                </div>
+                <input type="text" name="img" placeholder="رابط الصورة" value="<%= data.img %>">
+                <textarea name="text" class="message-preview" style="width:100%; height:100px; border:1px solid #eee"
+                    placeholder="نص الرسالة"><%= data.text %></textarea>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <h2>الأهداف المالية</h2>
+                </div>
+                <div class="target-grid">
+                    <div class="target-item">
+                        <span class="target-label">هدف المبلغ</span>
+                        <input type="number" name="payGoal" value="<%= data.payGoal %>">
+                    </div>
+                    <div class="target-item">
+                        <span class="target-label">هدف الصناديق</span>
+                        <input type="number" name="boxGoal" value="<%= data.boxGoal %>">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <h2>الخطة اليومية (Goals)</h2>
+                </div>
+                <div id="goalsContainer">
+                    <% if(data.goals && data.goals.length > 0) { %>
+                        <% data.goals.forEach(g => { %>
+                            <div class="link-section">
+                                <input type="text" name="goal" placeholder="الهدف (مثال: 50)" value="<%= g.goal %>">
+                                <input type="text" name="label" placeholder="الوصف (مثال: جزء)" value="<%= g.label %>">
+                                <button type="button" class="btn-delete" onclick="removeGoal(this)" title="حذف">✕</button>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="link-section">
+                            <input type="text" name="goal" placeholder="الهدف (مثال: 50)">
+                            <input type="text" name="label" placeholder="الوصف (مثال: جزء)">
+                            <button type="button" class="btn-delete" onclick="removeGoal(this)" title="حذف">✕</button>
+                        </div>
+                    <% } %>
+                </div>
+                <button type="button" class="btn-outline" onclick="addGoal()">+ إضافة هدف آخر</button>
+            </div>
+
+            <button type="submit" class="btn btn-primary">حفظ البيانات</button>
+        </form>
+    </div>
+
+    <script>
+        // دالة إضافة هدف جديد
+        function addGoal() {
+            const div = document.createElement('div');
+            div.className = 'link-section';
+            div.innerHTML = `
+                <input type="text" name="goal" placeholder="الهدف">
+                <input type="text" name="label" placeholder="الوصف">
+                <button type="button" class="btn-delete" onclick="removeGoal(this)" title="حذف">✕</button>
+            `;
+            document.getElementById('goalsContainer').appendChild(div);
+        }
+
+        // دالة حذف الهدف
+        function removeGoal(btn) {
+            // التحقق من عدد العناصر المتبقية (اختياري: إذا أردت منع حذف آخر حقل)
+            // const container = document.getElementById('goalsContainer');
+            // if (container.children.length > 1) { ... }
+            
+            const section = btn.closest('.link-section');
+            section.remove();
+        }
+    </script>
+</body>
+
+</html>

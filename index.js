@@ -4,12 +4,11 @@ const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 require("dotenv").config();
-
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// إعدادات العطاقات الثابتة
+const Day = require('./models/Day'); // المسار لملف الموديل
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -24,37 +23,50 @@ mongoose
   .catch((err) => console.log("فشل الاتصال:", err));
 
 // المسارات الأساسية
-app.get("/", (req, res) => {
-  const dayGoals = [
-    {
-      goal: "افتح ١٠ صناديق فعّالة",
-      label: "لتفعيل الصندوق يجب اجراء عملية تبرع",
-    },
-    {
-      goal: "حقق ٢٬٠٠٠ ريال",
-      label: "(اجمالي قيمة التبرعات)",
-    },
-    {
-      goal: "شارك رسالة اليوم في 5 جهات",
-      label: "نشر في وسائل التواصل الاجتماعي",
-    },
-  ];
-  const data = {
-    title: "الصفحة الرئيسية",
-    boxGoal: 10,
-    payGoal: 2000,
-    achievedBox: 0,
-    achievedPay: 0,
-    dayGoals,
-    img: "img/a.png",
-    text: "مساء الخير 🌿\n\nقد يَغيب عنك أثرك مع مرور الوقت، لكن أثره لا يغيب؛ فكل ريال يُصرف في تحفيظ القرآن يبقى أجره ممتدًا ومتناميًا.\n\nتبرع الآن عبر هذا الرابط الخاص: https://capable-lollipop-4fa68c.netlify.app/s/83923?ref=AHM-83923\n\nجزاك الله خيرًا ✨",
-  };
-  res.render("sfeer", data);
+app.get("/sfeer", async (req, res) => {
+  let dayData = await Day.findOne({ date: 1 });
+  res.render("sfeer", dayData);
 });
 
 app.get("/boxes",(req,res)=>{
   res.json([]);
 })
+
+app.get('/', (req, res) => {
+  res.render('index'); 
+});
+app.get('/days', (req, res) => {
+  res.render('days'); 
+});
+
+app.get('/admin/:dayId', async (req, res) => {
+  const dayId = req.params.dayId;
+  let dayData = await Day.findOne({ date: dayId });
+  
+  // إذا لم توجد بيانات، نرسل كائن فارغ للـ EJS
+  if (!dayData) {
+    dayData = { date: dayId, img: '', text: '', boxGoal: 0, payGoal: 0, goals: [] };
+  }
+  res.render('admin', { data: dayData });
+});
+
+// حفظ أو تحديث البيانات
+app.post('/save', async (req, res) => {
+  const { date, img, text, boxGoal, payGoal, goal, label } = req.body;
+  
+  // تجميع المصفوفة من المدخلات
+  const goalsArray = Array.isArray(goal) 
+    ? goal.map((g, i) => ({ goal: g, label: label[i] }))
+    : [{ goal, label }];
+
+  await Day.findOneAndUpdate(
+    { date: date },
+    { img, text, boxGoal, payGoal, goals: goalsArray },
+    { upsert: true, new: true }
+  );
+  
+  res.redirect(`/admin/${date}?success=true`);
+});
 
 // معالج الأخطاء 404
 app.use((req, res) => {

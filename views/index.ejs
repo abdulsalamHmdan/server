@@ -1,12 +1,185 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <script src="socket.io/socket.io.js"></script>
-  <script defer src="/js/main.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الرئيسية - لوحة التحكم</title>
+    <style>
+        /* إعدادات المتغيرات والألوان */
+        :root {
+            --bg-color: #f4f5f7;
+            --card-bg: #ffffff;
+            --primary-btn: #5c524d;
+            --secondary-btn: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --border-color: #edf2f7;
+            --hover-bg: #fdfdfd;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-main);
+            /* الخلفية المتدرجة الموحدة */
+            background:
+                radial-gradient(900px 600px at 10% 0%, rgba(155, 217, 228, 0.35), transparent 60%),
+                radial-gradient(900px 700px at 95% 15%, rgba(68, 49, 41, 0.14), transparent 55%),
+                radial-gradient(1100px 700px at 50% 120%, rgba(0, 0, 0, 0.04), transparent 60%),
+                var(--bg-color);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* شبكة القائمة الرئيسية */
+        .menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* تنسيق بطاقات القائمة */
+        .menu-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 30px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary-btn);
+        }
+
+        .card-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background: #f4f5f7;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .text-box h2 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .text-box p {
+            margin: 5px 0 0 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .arrow-icon {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+
+        .menu-card:hover .arrow-icon {
+            opacity: 1;
+            color: var(--primary-btn);
+        }
+    </style>
 </head>
+
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>أهلاً بك</h1>
+            <p>لوحة التحكم الرئيسية</p>
+        </div>
+
+        <div class="menu-grid">
+            
+            <a href="/sfeer" class="menu-card">
+                <div class="card-content">
+                    <div class="icon-box">👤</div>
+                    <div class="text-box">
+                        <h2>صفحة السفير</h2>
+                        <p>لوحة الإنجاز والمتابعة</p>
+                    </div>
+                </div>
+                <div class="arrow-icon">←</div>
+            </a>
+
+            <a href="/days" class="menu-card">
+                <div class="card-content">
+                    <div class="icon-box">⚙️</div>
+                    <div class="text-box">
+                        <h2>الإدارة</h2>
+                        <p>تعديل الأيام والمحتوى</p>
+                    </div>
+                </div>
+                <div class="arrow-icon">←</div>
+            </a>
+
+            <a href="/copun" class="menu-card">
+                <div class="card-content">
+                    <div class="icon-box">🎟️</div>
+                    <div class="text-box">
+                        <h2>الكوبونات</h2>
+                        <p>إدارة الروابط والكوبونات</p>
+                    </div>
+                </div>
+                <div class="arrow-icon">←</div>
+            </a>
+
+        </div>
+    </div>
 </body>
+
 </html>
