@@ -7,7 +7,7 @@ require("dotenv").config();
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-
+const Coupon = require("./models/Coupon");
 const Day = require("./models/Day"); // المسار لملف الموديل
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -26,8 +26,8 @@ mongoose
 app.get("/sfeer", async (req, res) => {
   let dayData = await Day.findOne({ date: 1 });
   const object = Object.create(dayData);
-  object["name"]="علي المذن"
-  object["url"]="https://donate.utq.org.sa/"
+  object["name"] = "علي المذن";
+  object["url"] = "https://donate.utq.org.sa/";
   res.render("sfeer", object);
 });
 
@@ -78,52 +78,40 @@ app.post("/save", async (req, res) => {
   res.redirect(`/admin/${date}?success=true`);
 });
 
-
-
-app.get('/coupons/add', (req, res) => {
-    res.render('add-coupons');
+app.get("/coupons/add", (req, res) => {
+  res.render("add-coupons");
 });
 
 // 2. استقبال البيانات JSON وحفظها
-app.post('/coupons/save-bulk', async (req, res) => {
-    const couponsData = req.body; // عبارة عن مصفوفة جايتنا من المتصفح
-    
-    let added = [];
-    let failed = [];
-    const Coupon = require('./models/Coupon');
-
-    for (const item of couponsData) {
-        // التحقق البسيط
-        if (!item.code || !item.from) {
-            failed.push({ ...item, reason: 'بيانات ناقصة' });
-            continue;
-        }
-
-        try {
-            await Coupon.create({
-                code: String(item.code),
-                from: String(item.from),
-                status: 0
-            });
-            added.push(item);
-        } catch (err) {
-            if (err.code === 11000) {
-                failed.push({ ...item, reason: 'مكرر' });
-            } else {
-                failed.push({ ...item, reason: 'خطأ في النظام' });
-            }
-        }
+app.post("/coupons/save-bulk", async (req, res) => {
+  const couponsData = req.body; // عبارة عن مصفوفة جايتنا من المتصفح
+  let added = [];
+  let failed = [];
+  for (const item of couponsData) {
+    // التحقق البسيط
+    if (!item.code || !item.from) {
+      failed.push({ ...item, reason: "بيانات ناقصة" });
+      continue;
     }
 
-    res.json({ added, failed });
+    try {
+      await Coupon.create({
+        code: String(item.code),
+        from: String(item.from),
+        status: 0,
+      });
+      added.push(item);
+    } catch (err) {
+      if (err.code === 11000) {
+        failed.push({ ...item, reason: "مكرر" });
+      } else {
+        failed.push({ ...item, reason: "خطأ في النظام" });
+      }
+    }
+  }
+
+  res.json({ added, failed });
 });
-
-
-
-
-
-
-
 
 // معالج الأخطاء 404
 app.use((req, res) => {
