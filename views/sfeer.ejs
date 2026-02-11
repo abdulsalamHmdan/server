@@ -437,7 +437,7 @@
 
   shareBtn.addEventListener("click", async () => {
     const imageUrl = "/img/a.png";
-    const shareText = "مساء الخير 🌿 | هذا النص سيظهر تحت الصورة";
+    const shareText = "<%=text%>";
 
     // التأكد أولاً أن المتصفح يدعم أساساً خاصية المشاركة
     if (!navigator.share) {
@@ -481,14 +481,13 @@
       }
     })
   })
-  // copyBtn.addEventListener("click", () => {
-  //   const message = `مساء الخير 🌿| قد يغيب عنك أثرك مع مرور الوقت، لكن أثره لا يغيب؛ فكل ريال يُصرف في تحفيظ القرآن يبقى أجره ممتداً ومتنامياً.. تبرع الآن عبر هذا الرابط الخاص...\n\nhttps://capable-lollipop-4fa68c.netlify.app/s/83923?ref=AHM-83923`;
-  //   console.log("تم نسخ الرسالة إلى الحافظة!");
-  //   navigator.clipboard
-  //     .writeText(message)
-  //     .then(() => alert("تم نسخ الرسالة إلى الحافظة!"))
-  //     .catch((error) => alert("فشل نسخ الرسالة: " + error));
-  // });
+  copyBtn.addEventListener("click", () => {
+    const message = "<%=text%>"
+    navigator.clipboard
+      .writeText(message)
+      .then(() => alert("تم نسخ الرسالة إلى الحافظة!"))
+      .catch((error) => alert("فشل نسخ الرسالة: " + error));
+  });
 
 
   function boxesForm() {
