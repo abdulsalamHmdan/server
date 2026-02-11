@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>أحمد السفير - لوحة التحكم</title>
+  <title> <%=name%> - لوحة التحكم</title>
   <style>
     * {
       box-sizing: border-box;
@@ -264,7 +264,8 @@
       justify-content: space-between;
       gap: 10px;
       padding: 12px 0;
-      border-bottom: 1px solid var(--hairline);
+      border-bottom: 1px solid #000;
+
     }
 
     #tasksList {
@@ -308,7 +309,7 @@
         <p style="font-size: 0.8rem; color: #718096; margin-bottom: 5px">
           أهلاً بك صاحب الأثر
         </p>
-        <h1>أحمد السفير</h1>
+        <h1><%=name%></h1>
       </div>
     </div>
 
@@ -325,9 +326,9 @@
       </div>
       <div class="link-section">
         <div class="link-text">
-          https://capable-lollipop-4fa68c.netlify.app/s/83923?ref=AHM-83923
+         <%=url%>
         </div>
-        <button class="btn-outline" style="
+        <button id="urlSave" class="btn-outline" style="
               width: auto;
               padding: 5px 15px;
               margin: 0;
@@ -422,7 +423,6 @@
 
       <div class="empty-state">
         <p style="color: #000000; font-size: 1.5rem">الصناديق السهمية</p>
-        <!-- <p style="font-weight: bold">لا يوجد روابط</p> -->
       </div>
       <button class="btn btn-primary" onclick="boxesAll()">عرض جميع الصناديق</button>
       <button class="btn btn-outline" onclick="boxesToday()">عرض صناديق اليوم</button>
@@ -434,11 +434,12 @@
 <script defer>
   const shareBtn = document.querySelector("#share-btn");
   const copyBtn = document.querySelector("#copy-btn");
+  const urlSave = document.querySelector("#urlSave");
+  const btnLogout = document.querySelector(".btn-logout");
 
   shareBtn.addEventListener("click", async () => {
     const imageUrl = "<%= img%>";
     const shareText = `<%=text%>`;
-
     // التأكد أولاً أن المتصفح يدعم أساساً خاصية المشاركة
     if (!navigator.share) {
       alert("متصفحك لا يدعم المشاركة، يرجى استخدام متصفح حديث على الهاتف.");
@@ -481,6 +482,7 @@
       }
     })
   })
+  
   copyBtn.addEventListener("click", () => {
     const message = `<%=text%>`
     navigator.clipboard
@@ -489,6 +491,16 @@
       .catch((error) => alert("فشل نسخ الرسالة: " + error));
   });
 
+  urlSave.addEventListener("click", () => {
+    const message = `<%=url%>`
+    navigator.clipboard
+      .writeText(message)
+      .then(() => alert("تم نسخ الرسالة إلى الحافظة!"))
+      .catch((error) => alert("فشل نسخ الرسالة: " + error));
+  });
+  btnLogout.addEventListener("click", () => {
+    location.href = "/"
+  });
 
   function boxesForm() {
     document.querySelector(".boxes").innerHTML = `
@@ -502,7 +514,6 @@
 
       <div class="empty-state">
         <p style="color: #000000; font-size: 1.5rem">الصناديق السهمية</p>
-        <!-- <p style="font-weight: bold">لا يوجد روابط</p> -->
       </div>
       <button class="btn btn-primary" onclick="boxesAll()">عرض جميع الصناديق</button>
       <button class="btn btn-outline" onclick="boxesToday()">عرض صناديق اليوم</button>
@@ -528,7 +539,7 @@
       </div>
       <div class="empty-state">
         <p style="color: #a0aec0; font-size: 0.9rem">الصناديق السهمية</p>
-        <p style="font-weight: bold">لا يوجد روابط</p>
+        <p style="font-weight: bold">لا يوجد صناديق</p>
       </div>
       <button class="btn btn-outline" onclick="boxesForm()">عودة</button>`;
     }
@@ -543,7 +554,7 @@
       </div>
       <div class="empty-state">
         <p style="color: #a0aec0; font-size: 0.9rem">الصناديق السهمية</p>
-        <p style="font-weight: bold">لا يوجد روابط</p>
+        <p style="font-weight: bold">لا يوجد صناديق</p>
       </div>
       <button class="btn btn-outline" onclick="boxesForm()">عودة</button>`;
   }

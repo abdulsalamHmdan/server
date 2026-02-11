@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const Day = require('./models/Day'); // المسار لملف الموديل
+const Day = require("./models/Day"); // المسار لملف الموديل
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -25,48 +25,105 @@ mongoose
 // المسارات الأساسية
 app.get("/sfeer", async (req, res) => {
   let dayData = await Day.findOne({ date: 1 });
-  res.render("sfeer", dayData);
+  const object = Object.create(dayData);
+  object["name"]="علي المذن"
+  object["url"]="https://donate.utq.org.sa/"
+  res.render("sfeer", object);
 });
 
-app.get("/boxes",(req,res)=>{
+app.get("/boxes", (req, res) => {
   res.json([]);
-})
-
-app.get('/', (req, res) => {
-  res.render('index'); 
-});
-app.get('/days', (req, res) => {
-  res.render('days'); 
 });
 
-app.get('/admin/:dayId', async (req, res) => {
+app.get("/", (req, res) => {
+  res.render("index");
+});
+app.get("/days", (req, res) => {
+  res.render("days");
+});
+
+app.get("/admin/:dayId", async (req, res) => {
   const dayId = req.params.dayId;
   let dayData = await Day.findOne({ date: dayId });
-  
+
   // إذا لم توجد بيانات، نرسل كائن فارغ للـ EJS
   if (!dayData) {
-    dayData = { date: dayId, img: '', text: '', boxGoal: 0, payGoal: 0, goals: [] };
+    dayData = {
+      date: dayId,
+      img: "",
+      text: "",
+      boxGoal: 0,
+      payGoal: 0,
+      goals: [],
+    };
   }
-  res.render('admin', { data: dayData });
+  res.render("admin", { data: dayData });
 });
 
 // حفظ أو تحديث البيانات
-app.post('/save', async (req, res) => {
+app.post("/save", async (req, res) => {
   const { date, img, text, boxGoal, payGoal, goal, label } = req.body;
-  
+
   // تجميع المصفوفة من المدخلات
-  const goalsArray = Array.isArray(goal) 
+  const goalsArray = Array.isArray(goal)
     ? goal.map((g, i) => ({ goal: g, label: label[i] }))
     : [{ goal, label }];
 
   await Day.findOneAndUpdate(
     { date: date },
     { img, text, boxGoal, payGoal, goals: goalsArray },
-    { upsert: true, new: true }
+    { upsert: true, new: true },
   );
-  
+
   res.redirect(`/admin/${date}?success=true`);
 });
+
+
+
+app.get('/coupons/add', (req, res) => {
+    res.render('add-coupons');
+});
+
+// 2. استقبال البيانات JSON وحفظها
+app.post('/coupons/save-bulk', async (req, res) => {
+    const couponsData = req.body; // عبارة عن مصفوفة جايتنا من المتصفح
+    
+    let added = [];
+    let failed = [];
+    const Coupon = require('./models/Coupon');
+
+    for (const item of couponsData) {
+        // التحقق البسيط
+        if (!item.code || !item.from) {
+            failed.push({ ...item, reason: 'بيانات ناقصة' });
+            continue;
+        }
+
+        try {
+            await Coupon.create({
+                code: String(item.code),
+                from: String(item.from),
+                status: 0
+            });
+            added.push(item);
+        } catch (err) {
+            if (err.code === 11000) {
+                failed.push({ ...item, reason: 'مكرر' });
+            } else {
+                failed.push({ ...item, reason: 'خطأ في النظام' });
+            }
+        }
+    }
+
+    res.json({ added, failed });
+});
+
+
+
+
+
+
+
 
 // معالج الأخطاء 404
 app.use((req, res) => {
