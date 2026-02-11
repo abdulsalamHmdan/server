@@ -437,7 +437,7 @@
 
   shareBtn.addEventListener("click", async () => {
     const imageUrl = "/img/a.png";
-    const shareText = "<%=text%>";
+    const shareText = `<%=text%>`;
 
     // التأكد أولاً أن المتصفح يدعم أساساً خاصية المشاركة
     if (!navigator.share) {
@@ -482,7 +482,7 @@
     })
   })
   copyBtn.addEventListener("click", () => {
-    const message = "<%=text%>"
+    const message = `<%=text%>`
     navigator.clipboard
       .writeText(message)
       .then(() => alert("تم نسخ الرسالة إلى الحافظة!"))
