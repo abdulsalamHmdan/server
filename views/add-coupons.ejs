@@ -1,269 +1,403 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>إضافة كوبونات</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
+
     <style>
-        :root {
-            --bg-color: #f4f5f7;
-            --card-bg: #ffffff;
-            --primary-btn: #5c524d;
-            --text-main: #2d3436;
-            --text-muted: #636e72;
-            --border-color: #edf2f7;
-            --success-bg: #c6f6d5;
-            --success-text: #2f855a;
-            --error-bg: #fed7d7;
-            --error-text: #c53030;
-        }
+      :root {
+        --bg-color: #f4f5f7;
+        --card-bg: #ffffff;
+        --primary-btn: #5c524d;
+        --text-main: #2d3436;
+        --text-muted: #636e72;
+        --border-color: #edf2f7;
+        --success-bg: #c6f6d5;
+        --success-text: #2f855a;
+        --error-bg: #fed7d7;
+        --error-text: #c53030;
+      }
 
-        body {
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            color: var(--text-main);
-            background:
-                radial-gradient(900px 600px at 10% 0%, rgba(155, 217, 228, 0.35), transparent 60%),
-                radial-gradient(900px 700px at 95% 15%, rgba(68, 49, 41, 0.14), transparent 55%),
-                radial-gradient(1100px 700px at 50% 120%, rgba(0, 0, 0, 0.04), transparent 60%),
-                var(--bg-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        color: var(--text-main);
+        background:
+          radial-gradient(
+            900px 600px at 10% 0%,
+            rgba(155, 217, 228, 0.35),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 700px at 95% 15%,
+            rgba(68, 49, 41, 0.14),
+            transparent 55%
+          ),
+          radial-gradient(
+            1100px 700px at 50% 120%,
+            rgba(0, 0, 0, 0.04),
+            transparent 60%
+          ),
+          var(--bg-color);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-        .container {
-            width: 100%;
-            max-width: 600px;
-        }
+      .container {
+        width: 100%;
+        max-width: 600px;
+      }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 25px;
-            padding: 30px; /* زيادة الحشوة */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            margin-bottom: 20px;
-            overflow: hidden; /* لمنع خروج العناصر */
-        }
+      .card {
+        background: var(--card-bg);
+        border-radius: 25px;
+        padding: 30px; /* زيادة الحشوة */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        margin-bottom: 20px;
+        overflow: hidden; /* لمنع خروج العناصر */
+      }
 
-        /* تعديل منطقة الرفع لتكون مرنة وتأخذ العرض الكامل */
-        .upload-area {
-            display: flex;       /* تحويلها لـ Flex لضبط المحتوى */
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;         /* عرض كامل */
-            box-sizing: border-box; /* احتساب الحشوة ضمن العرض */
-            border: 2px dashed #cbd5e0;
-            border-radius: 15px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            background: #fafafa;
-            transition: all 0.3s ease;
-            margin-bottom: 20px; /* مسافة أسفل المنطقة */
-        }
-        
-        .upload-area:hover { 
-            border-color: var(--primary-btn); 
-            background: #f0f0f0;
-        }
+      /* تعديل منطقة الرفع لتكون مرنة وتأخذ العرض الكامل */
+      .upload-area {
+        display: flex; /* تحويلها لـ Flex لضبط المحتوى */
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%; /* عرض كامل */
+        box-sizing: border-box; /* احتساب الحشوة ضمن العرض */
+        border: 2px dashed #cbd5e0;
+        border-radius: 15px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        background: #fafafa;
+        transition: all 0.3s ease;
+        margin-bottom: 20px; /* مسافة أسفل المنطقة */
+      }
 
-        .upload-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
+      .upload-area:hover {
+        border-color: var(--primary-btn);
+        background: #f0f0f0;
+      }
 
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: none;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            background-color: var(--primary-btn);
-            color: white;
-            transition: opacity 0.2s;
-        }
-        
-        .btn:hover { opacity: 0.9; }
-        .btn:disabled { background-color: #ccc; cursor: not-allowed; opacity: 1; }
+      .upload-icon {
+        font-size: 3rem;
+        margin-bottom: 10px;
+      }
 
-        /* جداول النتائج */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
-        th, td { padding: 12px; border-bottom: 1px solid var(--border-color); text-align: right; }
-        th { background: #f7fafc; color: var(--text-muted); }
-        
-        .badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
-        .badge-success { background: var(--success-bg); color: var(--success-text); }
-        .badge-error { background: var(--error-bg); color: var(--error-text); }
+      .btn {
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: none;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        background-color: var(--primary-btn);
+        color: white;
+        transition: opacity 0.2s;
+      }
 
-        .hidden { display: none; }
-        .loader {
-            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-btn);
-            border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 10px auto;
+      .btn:hover {
+        opacity: 0.9;
+      }
+      .btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        opacity: 1;
+      }
+
+      /* جداول النتائج */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border-color);
+        text-align: right;
+      }
+      th {
+        background: #f7fafc;
+        color: var(--text-muted);
+      }
+
+      .badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+      }
+      .badge-success {
+        background: var(--success-bg);
+        color: var(--success-text);
+      }
+      .badge-error {
+        background: var(--error-bg);
+        color: var(--error-text);
+      }
+
+      .hidden {
+        display: none;
+      }
+      .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary-btn);
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 10px auto;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <div class="card">
-            <h2 style="text-align:center; margin-bottom:10px; margin-top:0;">إضافة كوبونات</h2>
-            <p style="text-align:center; color:#666; font-size:0.9rem; margin-bottom:25px">يجب أن يحتوي الملف على الأعمدة: code, from</p>
-            
-            <label class="upload-area">
-                <span class="upload-icon">📂</span>
-                <p style="margin: 5px 0; font-weight: bold;">اختر ملف Excel</p>
-                <p style="margin: 0; font-size: 0.8rem; color: #a0aec0;">اضغط لاستعراض الملفات</p>
-                <input type="file" id="excelFile" accept=".xlsx, .xls" hidden onchange="handleFile(this)">
-            </label>
-            
-            <div id="fileName" style="text-align: center; margin-bottom: 15px; color: var(--primary-btn); font-weight:bold; min-height: 20px;"></div>
-            
-            <button id="processBtn" class="btn" onclick="processFile()" disabled>معالجة ورفع البيانات</button>
-            <div id="loader" class="loader hidden"></div>
-            
-            <div style="text-align: center; margin-top: 15px;">
-                <a href="/" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">عودة للرئيسية</a>
-            </div>
+      <div class="card">
+        <h2 style="text-align: center; margin-bottom: 10px; margin-top: 0">
+          إضافة كوبونات
+        </h2>
+        <p
+          style="
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+          "
+        >
+          يجب أن يحتوي الملف على الأعمدة: code, from
+        </p>
+
+        <label class="upload-area">
+          <span class="upload-icon">📂</span>
+          <p style="margin: 5px 0; font-weight: bold">اختر ملف Excel</p>
+          <p style="margin: 0; font-size: 0.8rem; color: #a0aec0">
+            اضغط لاستعراض الملفات
+          </p>
+          <input
+            type="file"
+            id="excelFile"
+            accept=".xlsx, .xls"
+            hidden
+            onchange="handleFile(this)"
+          />
+        </label>
+
+        <div
+          id="fileName"
+          style="
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--primary-btn);
+            font-weight: bold;
+            min-height: 20px;
+          "
+        ></div>
+
+        <button id="processBtn" class="btn" onclick="processFile()" disabled>
+          معالجة ورفع البيانات
+        </button>
+        <div id="loader" class="loader hidden"></div>
+
+        <div style="text-align: center; margin-top: 15px">
+          <a
+            href="/"
+            style="
+              color: var(--text-muted);
+              text-decoration: none;
+              font-size: 0.85rem;
+            "
+            >عودة للرئيسية</a
+          >
+        </div>
+      </div>
+
+      <div id="resultsArea" class="hidden">
+        <div
+          class="card"
+          style="
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+          "
+        >
+          <div>
+            <h3
+              id="addedCount"
+              style="color: var(--success-text); margin: 0; font-size: 2rem"
+            >
+              0
+            </h3>
+            <small>تمت إضافتها</small>
+          </div>
+          <div>
+            <h3
+              id="failedCount"
+              style="color: var(--error-text); margin: 0; font-size: 2rem"
+            >
+              0
+            </h3>
+            <small>فشلت</small>
+          </div>
         </div>
 
-        <div id="resultsArea" class="hidden">
-            <div class="card" style="display:flex; justify-content:space-around; text-align:center">
-                <div>
-                    <h3 id="addedCount" style="color:var(--success-text); margin:0; font-size: 2rem;">0</h3>
-                    <small>تمت إضافتها</small>
-                </div>
-                <div>
-                    <h3 id="failedCount" style="color:var(--error-text); margin:0; font-size: 2rem;">0</h3>
-                    <small>فشلت</small>
-                </div>
-            </div>
-
-            <div class="card hidden" id="failedCard">
-                <h3 style="color:var(--error-text); margin-top:0">❌ لم تتم إضافتها</h3>
-                <div style="overflow-x: auto;">
-                    <table id="failedTable">
-                        <thead><tr><th>الكود</th><th>الجهة</th><th>السبب</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card hidden" id="addedCard">
-                <h3 style="color:var(--success-text); margin-top:0">✅ تمت إضافتها</h3>
-                <div style="overflow-x: auto;">
-                    <table id="addedTable">
-                        <thead><tr><th>الكود</th><th>الجهة</th><th>الحالة</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="card hidden" id="failedCard">
+          <h3 style="color: var(--error-text); margin-top: 0">
+            ❌ لم تتم إضافتها
+          </h3>
+          <div style="overflow-x: auto">
+            <table id="failedTable">
+              <thead>
+                <tr>
+                  <th>الكود</th>
+                  <th>الجهة</th>
+                  <th>السبب</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
+
+        <div class="card hidden" id="addedCard">
+          <h3 style="color: var(--success-text); margin-top: 0">
+            ✅ تمت إضافتها
+          </h3>
+          <div style="overflow-x: auto">
+            <table id="addedTable">
+              <thead>
+                <tr>
+                  <th>الكود</th>
+                  <th>الجهة</th>
+                  <th>الحالة</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        let jsonData = [];
+      let jsonData = [];
 
-        function handleFile(input) {
-            const file = input.files[0];
-            if (file) {
-                document.getElementById('fileName').innerText = "تم اختيار: " + file.name;
-                document.getElementById('processBtn').disabled = false;
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheet = workbook.SheetNames[0];
-                    jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
-                };
-                reader.readAsArrayBuffer(file);
-            }
+      function handleFile(input) {
+        const file = input.files[0];
+        if (file) {
+          document.getElementById("fileName").innerText =
+            "تم اختيار: " + file.name;
+          document.getElementById("processBtn").disabled = false;
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
+            const firstSheet = workbook.SheetNames[0];
+            jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+          };
+          reader.readAsArrayBuffer(file);
+        }
+      }
+
+      try {
+        const response = await fetch("/coupons/save-bulk", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(jsonData),
+        });
+
+        // 1. Check if the HTTP status code is a success (200-299)
+        if (!response.ok) {
+          throw new Error(
+            `Server Error: ${response.status} ${response.statusText}`,
+          );
         }
 
-        async function processFile() {
-            if (jsonData.length === 0) {
-                alert("الملف فارغ أو لم يتم قراءته بشكل صحيح");
-                return;
-            }
-            console.log(jsonData);
-
-            document.getElementById('loader').classList.remove('hidden');
-            document.getElementById('processBtn').disabled = true;
-            document.getElementById('resultsArea').classList.add('hidden');
-
-            try {
-                const response = await fetch('/coupons/save-bulk', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(jsonData)
-                });
-
-                const result = await response.json();
-                renderResults(result);
-
-            } catch (error) {
-                alert("حدث خطأ أثناء الإرسال للسيرفر");
-                console.error(error);
-            } finally {
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('processBtn').disabled = false;
-            }
+        // 2. Check if the content type is actually JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          // If not JSON, read it as text to see what the HTML error says
+          const textResponse = await response.text();
+          console.error("Received HTML instead of JSON:", textResponse);
+          throw new Error(
+            "The server returned an HTML page instead of JSON data.",
+          );
         }
 
-        function renderResults(data) {
-            document.getElementById('resultsArea').classList.remove('hidden');
-            
-            document.getElementById('addedCount').innerText = data.added.length;
-            document.getElementById('failedCount').innerText = data.failed.length;
+        // 3. Safe to parse
+        const result = await response.json();
+        renderResults(result);
+      } catch (error) {
+        alert("حدث خطأ أثناء الإرسال للسيرفر");
+        console.error(error); // This will now show the real issue
+      } finally {
+        document.getElementById("loader").classList.add("hidden");
+        document.getElementById("processBtn").disabled = false;
+      }
+      function renderResults(data) {
+        document.getElementById("resultsArea").classList.remove("hidden");
 
-            const failedTbody = document.querySelector('#failedTable tbody');
-            failedTbody.innerHTML = '';
-            if (data.failed.length > 0) {
-                document.getElementById('failedCard').classList.remove('hidden');
-                data.failed.forEach(item => {
-                    failedTbody.innerHTML += `
+        document.getElementById("addedCount").innerText = data.added.length;
+        document.getElementById("failedCount").innerText = data.failed.length;
+
+        const failedTbody = document.querySelector("#failedTable tbody");
+        failedTbody.innerHTML = "";
+        if (data.failed.length > 0) {
+          document.getElementById("failedCard").classList.remove("hidden");
+          data.failed.forEach((item) => {
+            failedTbody.innerHTML += `
                         <tr>
-                            <td>${item.code || '-'}</td>
-                            <td>${item.from || '-'}</td>
+                            <td>${item.code || "-"}</td>
+                            <td>${item.from || "-"}</td>
                             <td><span class="badge badge-error">${item.reason}</span></td>
                         </tr>
                     `;
-                });
-            } else {
-                document.getElementById('failedCard').classList.add('hidden');
-            }
+          });
+        } else {
+          document.getElementById("failedCard").classList.add("hidden");
+        }
 
-            const addedTbody = document.querySelector('#addedTable tbody');
-            addedTbody.innerHTML = '';
-            if (data.added.length > 0) {
-                document.getElementById('addedCard').classList.remove('hidden');
-                data.added.forEach(item => {
-                    addedTbody.innerHTML += `
+        const addedTbody = document.querySelector("#addedTable tbody");
+        addedTbody.innerHTML = "";
+        if (data.added.length > 0) {
+          document.getElementById("addedCard").classList.remove("hidden");
+          data.added.forEach((item) => {
+            addedTbody.innerHTML += `
                         <tr>
                             <td>${item.code}</td>
                             <td>${item.from}</td>
                             <td><span class="badge badge-success">جديد</span></td>
                         </tr>
                     `;
-                });
-            } else {
-                document.getElementById('addedCard').classList.add('hidden');
-            }
-            
-            // التمرير للأسفل لرؤية النتائج
-            document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+          });
+        } else {
+          document.getElementById("addedCard").classList.add("hidden");
         }
+
+        // التمرير للأسفل لرؤية النتائج
+        document
+          .getElementById("resultsArea")
+          .scrollIntoView({ behavior: "smooth" });
+      }
     </script>
-</body>
+  </body>
 </html>
