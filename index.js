@@ -7,7 +7,7 @@ require("dotenv").config();
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-const Coupon = require("./models/Coupon");
+const Coupon = require("./models/coupon");
 const Day = require("./models/Day"); // المسار لملف الموديل
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
