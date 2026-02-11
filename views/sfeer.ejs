@@ -106,7 +106,7 @@
     .card-title {
       direction: ltr;
       text-align: center;
-      margin-top: 10px;
+      /* margin-top: 10px; */
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -255,6 +255,7 @@
       border: 1px dashed #cbd5e0;
       border-radius: 15px;
       margin-bottom: 15px;
+      
     }
 
     .cell {
@@ -271,6 +272,29 @@
       padding: 0;
       list-style: none;
     }
+
+    /* HTML: <div class="loader"></div> */
+.loader {
+  width: 60px;
+  aspect-ratio: 1;
+  background: 
+    linear-gradient(45deg,#60B99A 50%,#0000 0),
+    linear-gradient(45deg,#0000 50%,#60B99A 0),
+    linear-gradient(-45deg,#f77825 50%,#0000 0),
+    linear-gradient(-45deg,#0000 50%,#f77825 0),
+    linear-gradient(#554236 0 0);
+  background-size: 50% 50%;
+  background-repeat: no-repeat;
+  animation: l18 1.5s infinite;
+  margin: auto;
+}
+@keyframes l18{
+  0%   {background-position:50% 50%,50% 50%,50%  50% ,50% 50%,50% 50%}
+  25%  {background-position:0  100%,100%  0,50%  50% ,50% 50%,50% 50%}
+  50%  {background-position:0  100%,100%  0,100% 100%,0   0  ,50% 50%}
+  75%  {background-position:50% 50%,50% 50%,100% 100%,0   0  ,50% 50%}
+  100% {background-position:50% 50%,50% 50%,50%  50% ,50% 50%,50% 50%}
+}
   </style>
 </head>
 
@@ -331,8 +355,12 @@
         <% dayGoals.forEach(x=>{ %>
           <li class="cell" style="cursor: pointer">
             <div>
-              <div class="value"><%=x.goal%></div>
-              <div class="label"><%=x.label%></div>
+              <div class="value">
+                <%=x.goal%>
+              </div>
+              <div class="label">
+                <%=x.label%>
+              </div>
             </div>
             <div style="text-align: left">
               <div class="check">⬜️</div>
@@ -383,18 +411,21 @@
       </p>
     </div>
 
-    <div class="card">
-      <div class="card-number">004</div>
+    <div class="card boxes">
       <div class="card-title">
-        <h2>الصناديق السهمية</h2>
-        <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
-      </div>
-      <div class="empty-state">
-        <p style="color: #a0aec0; font-size: 0.9rem">الصناديق السهمية</p>
-        <p style="font-weight: bold">لا يوجد روابط</p>
+        <div class="card-number">004</div>
+        <div class="cont">
+          <h2>الصناديق السهمية</h2>
+          <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
+        </div>
       </div>
 
-      <button class="btn btn-outline">تحديث الكل</button>
+      <div class="empty-state">
+        <p style="color: #000000; font-size: 1.5rem">الصناديق السهمية</p>
+        <!-- <p style="font-weight: bold">لا يوجد روابط</p> -->
+      </div>
+      <button class="btn btn-primary" onclick="boxesAll()">عرض جميع الصناديق</button>
+      <button class="btn btn-outline" onclick="boxesToday()">عرض صناديق اليوم</button>
     </div>
 
     <button class="btn btn-outline btn-logout">تسجيل خروج</button>
@@ -450,7 +481,6 @@
       }
     })
   })
-
   // copyBtn.addEventListener("click", () => {
   //   const message = `مساء الخير 🌿| قد يغيب عنك أثرك مع مرور الوقت، لكن أثره لا يغيب؛ فكل ريال يُصرف في تحفيظ القرآن يبقى أجره ممتداً ومتنامياً.. تبرع الآن عبر هذا الرابط الخاص...\n\nhttps://capable-lollipop-4fa68c.netlify.app/s/83923?ref=AHM-83923`;
   //   console.log("تم نسخ الرسالة إلى الحافظة!");
@@ -459,6 +489,66 @@
   //     .then(() => alert("تم نسخ الرسالة إلى الحافظة!"))
   //     .catch((error) => alert("فشل نسخ الرسالة: " + error));
   // });
+
+
+  function boxesForm() {
+    document.querySelector(".boxes").innerHTML = `
+  <div class="card-title">
+        <div class="card-number">004</div>
+        <div class="cont">
+          <h2>الصناديق السهمية</h2>
+          <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
+        </div>
+      </div>
+
+      <div class="empty-state">
+        <p style="color: #000000; font-size: 1.5rem">الصناديق السهمية</p>
+        <!-- <p style="font-weight: bold">لا يوجد روابط</p> -->
+      </div>
+      <button class="btn btn-primary" onclick="boxesAll()">عرض جميع الصناديق</button>
+      <button class="btn btn-outline" onclick="boxesToday()">عرض صناديق اليوم</button>
+  `;
+  }
+  async function boxesAll() {
+    document.querySelector(".empty-state p").innerHTML =`<div class="loader"></div>`
+    const req = await fetch("/boxes", {
+      method: 'GET',
+      headers: {
+        'Content-Type': "application/json"
+      }
+    })
+    const boxes = await req.json();
+    console.log(boxes)
+    if (boxes.length == 0) {
+      document.querySelector(".boxes").innerHTML = `<div class="card-title">
+        <div class="card-number">004</div>
+        <div class="cont">
+          <h2>الصناديق السهمية</h2>
+          <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
+        </div>
+      </div>
+      <div class="empty-state">
+        <p style="color: #a0aec0; font-size: 0.9rem">الصناديق السهمية</p>
+        <p style="font-weight: bold">لا يوجد روابط</p>
+      </div>
+      <button class="btn btn-outline" onclick="boxesForm()">عودة</button>`;
+    }
+    }
+  async function boxesToday() {
+    document.querySelector(".boxes").innerHTML = `<div class="card-title">
+        <div class="card-number">004</div>
+        <div class="cont">
+          <h2>الصناديق السهمية</h2>
+          <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
+        </div>
+      </div>
+      <div class="empty-state">
+        <p style="color: #a0aec0; font-size: 0.9rem">الصناديق السهمية</p>
+        <p style="font-weight: bold">لا يوجد روابط</p>
+      </div>
+      <button class="btn btn-outline" onclick="boxesForm()">عودة</button>`;
+  }
+
 </script>
 
 </html>

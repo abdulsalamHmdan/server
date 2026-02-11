@@ -52,6 +52,10 @@ app.get("/", (req, res) => {
   res.render("sfeer", data);
 });
 
+app.get("/boxes",(req,res)=>{
+  res.json([]);
+})
+
 // معالج الأخطاء 404
 app.use((req, res) => {
   res.status(404).render("404", { title: "صفحة غير موجودة" });
