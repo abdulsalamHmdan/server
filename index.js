@@ -9,6 +9,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 const Coupon = require("./models/coupon");
 const Day = require("./models/Day"); // المسار لملف الموديل
+const { name } = require("ejs");
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -32,7 +33,11 @@ app.get("/sfeer", async (req, res) => {
 });
 
 app.get("/boxes", (req, res) => {
-  res.json([]);
+  res.json([{
+    sum:1000,
+    goal:10000,
+    name:"وقف علي المذن",
+  }]);
 });
 
 app.get("/", (req, res) => {

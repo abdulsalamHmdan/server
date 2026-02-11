@@ -1,0 +1,1 @@
+npx javascript-obfuscator public/js/main.js --output output-file.js

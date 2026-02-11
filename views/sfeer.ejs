@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title> <%=name%> - لوحة التحكم</title>
+  <title>
+    <%=name%> - لوحة التحكم
+  </title>
   <style>
     * {
       box-sizing: border-box;
@@ -15,6 +17,7 @@
       --bg-color: #f4f5f7;
       --card-bg: #ffffff;
       --primary-btn: #5c524d;
+      --loading: #5c524d;
       --secondary-btn: #ffffff;
       --text-main: #2d3436;
       --text-muted: #636e72;
@@ -179,12 +182,18 @@
       margin-bottom: 20px;
     }
 
+
     .target-item {
       background: #fff;
       border: 1px solid var(--border-color);
       border-radius: 15px;
       padding: 15px;
-      text-align: center;
+      text-align: right;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      direction: rtl;
     }
 
     .target-label {
@@ -194,6 +203,34 @@
     }
 
     .target-value {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 5px;
+      display: block;
+    }
+
+    .order-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .order-item {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .order-label {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .order-value {
       font-size: 1.2rem;
       font-weight: bold;
       margin-top: 5px;
@@ -255,7 +292,7 @@
       border: 1px dashed #cbd5e0;
       border-radius: 15px;
       margin-bottom: 15px;
-      
+
     }
 
     .cell {
@@ -274,28 +311,35 @@
       list-style: none;
     }
 
-    /* HTML: <div class="loader"></div> */
-.loader {
-  width: 60px;
-  aspect-ratio: 1;
-  background: 
-    linear-gradient(45deg,#60B99A 50%,#0000 0),
-    linear-gradient(45deg,#0000 50%,#60B99A 0),
-    linear-gradient(-45deg,#f77825 50%,#0000 0),
-    linear-gradient(-45deg,#0000 50%,#f77825 0),
-    linear-gradient(#554236 0 0);
-  background-size: 50% 50%;
-  background-repeat: no-repeat;
-  animation: l18 1.5s infinite;
-  margin: auto;
-}
-@keyframes l18{
-  0%   {background-position:50% 50%,50% 50%,50%  50% ,50% 50%,50% 50%}
-  25%  {background-position:0  100%,100%  0,50%  50% ,50% 50%,50% 50%}
-  50%  {background-position:0  100%,100%  0,100% 100%,0   0  ,50% 50%}
-  75%  {background-position:50% 50%,50% 50%,100% 100%,0   0  ,50% 50%}
-  100% {background-position:50% 50%,50% 50%,50%  50% ,50% 50%,50% 50%}
-}
+    .loader {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: block;
+      margin: 15px auto;
+      position: relative;
+      background: #FFF;
+      box-shadow: -24px 0 #FFF, 24px 0 #FFF;
+      box-sizing: border-box;
+      animation: shadowPulse 2s linear infinite;
+    }
+
+    @keyframes shadowPulse {
+      33% {
+        background: #FFF;
+        box-shadow: -24px 0 var(--loading), 24px 0 #FFF;
+      }
+
+      66% {
+        background: var(--loading);
+        box-shadow: -24px 0 #FFF, 24px 0 #FFF;
+      }
+
+      100% {
+        background: #FFF;
+        box-shadow: -24px 0 #FFF, 24px 0 var(--loading);
+      }
+    }
   </style>
 </head>
 
@@ -309,7 +353,9 @@
         <p style="font-size: 0.8rem; color: #718096; margin-bottom: 5px">
           أهلاً بك صاحب الأثر
         </p>
-        <h1><%=name%></h1>
+        <h1>
+          <%=name%>
+        </h1>
       </div>
     </div>
 
@@ -326,7 +372,7 @@
       </div>
       <div class="link-section">
         <div class="link-text">
-         <%=url%>
+          <%=url%>
         </div>
         <button id="urlSave" class="btn-outline" style="
               width: auto;
@@ -380,41 +426,94 @@
       </div>
       <div class="target-grid">
         <div class="target-item">
-          <span class="target-label">هدف المبلغ</span>
-          <span class="target-value" dir="rtl">
-            <%= payGoal%> ر.س.
-          </span>
+          <div class="cont">
+            <span class="target-label">هدف المبلغ</span>
+            <span class="target-value" dir="rtl">
+              <%= payGoal%> ر.س.
+            </span>
+          </div>
           <span class="target-label">/ يوم</span>
         </div>
         <div class="target-item">
-          <span class="target-label">هدف الصناديق</span>
-          <span class="target-value">
-            <%= boxGoal%>
-          </span>
+          <div class="cont">
+            <span class="target-label">هدف الصناديق</span>
+            <span class="target-value">
+              <%= boxGoal%>
+            </span>
+
+          </div>
           <span class="target-label">/ يوم</span>
         </div>
+
         <div class="target-item">
-          <span class="target-label">المبلغ اليوم</span>
-          <span class="target-value">٠ ر.س.</span>
-          <span class="target-label">SAR</span>
+          <div class="cont">
+            <span class="target-label">المبلغ اليوم</span>
+          </div>
+          <span class="loader"></span>
         </div>
+
         <div class="target-item">
-          <span class="target-label">المحقق اليوم</span>
-          <span class="target-value">0</span>
-          <span class="target-label">صندوق</span>
+          <div class="cont">
+            <span class="target-label">المحقق اليوم</span>
+            <!-- <span class="target-value">0</span> -->
+          </div>
+          <span class="loader"></span>
+
+          <!-- <span class="target-label">صندوق</span> -->
         </div>
       </div>
       <button class="btn btn-primary">تحديث إنجاز اليوم</button>
       <button class="btn btn-outline">الحصول على الكوبون</button>
       <p class="footer-note">
-        ملاحظة: هذا التتبع محلي على الجهاز (بدون سيرفر). لو تبي التتبع مركزي
-        لكل السفراء نربطه بملف CSV/Google Sheet/Netlify Function.
+        <!-- ملاحظة: هذا التتبع محلي على الجهاز (بدون سيرفر). لو تبي التتبع مركزي
+        لكل السفراء نربطه بملف CSV/Google Sheet/Netlify Function. -->
+      </p>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <div class="card-number">004</div>
+        <div class="cont">
+          <h2>ترتيبك بين السفراء</h2>
+          <p>آخر تحديث : <span id="refresh" style="color: #3182ce;">الان</span></p>
+        </div>
+      </div>
+      <div class="order-grid">
+
+        <div class="order-item">
+          <span class="order-label">ترتيبك على السفراء</span>
+          <span class="order-value" dir="rtl">
+            <span class="loader"></span>
+          </span>
+        </div>
+
+        <div class="order-item">
+          <span class="order-label">ترتيبك على سفراء فرعك</span>
+          <span class="order-value" dir="rtl">
+            <span class="loader"></span>
+          </span>
+        </div>
+
+        <div class="order-item">
+          <span class="order-label">ترتيب فرعك على الفروع</span>
+          <span class="order-value" dir="rtl">
+            <span class="loader"></span>
+          </span>
+        </div>
+
+      </div>
+      <button class="btn btn-primary">تحديث الترتيب</button>
+      <p class="footer-note">
+        <!-- ملاحظة: هذا التتبع محلي على الجهاز (بدون سيرفر). لو تبي التتبع مركزي
+        لكل السفراء نربطه بملف CSV/Google Sheet/Netlify Function. -->
       </p>
     </div>
 
+
     <div class="card boxes">
+
       <div class="card-title">
-        <div class="card-number">004</div>
+        <div class="card-number">005</div>
+
         <div class="cont">
           <h2>الصناديق السهمية</h2>
           <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
@@ -428,9 +527,14 @@
       <button class="btn btn-outline" onclick="boxesToday()">عرض صناديق اليوم</button>
     </div>
 
+
+
     <button class="btn btn-outline btn-logout">تسجيل خروج</button>
   </div>
 </body>
+
+<!-- <script src="js/main2.js"></script> -->
+
 <script defer>
   const shareBtn = document.querySelector("#share-btn");
   const copyBtn = document.querySelector("#copy-btn");
@@ -482,7 +586,7 @@
       }
     })
   })
-  
+
   copyBtn.addEventListener("click", () => {
     const message = `<%=text%>`
     navigator.clipboard
@@ -520,7 +624,7 @@
   `;
   }
   async function boxesAll() {
-    document.querySelector(".empty-state p").innerHTML =`<div class="loader"></div>`
+    document.querySelector(".empty-state p").innerHTML = `<span class="loader"></span>`
     const req = await fetch("/boxes", {
       method: 'GET',
       headers: {
@@ -543,9 +647,77 @@
       </div>
       <button class="btn btn-outline" onclick="boxesForm()">عودة</button>`;
     }
+    else {
+      document.querySelector(".boxes").innerHTML = `<div class="card-title">
+        <div class="card-number">005</div>
+        <div class="cont">
+          <h2>الصناديق السهمية</h2>
+          <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="boxesForm()">عودة</button>
+
+      <div class="boxes-container" style="margin-top: 20px;">
+
+      </div>`;
+
+      boxes.forEach(boxData => {
+
+        document.querySelector(".boxes-container").innerHTML += `<div class="fund-box" style="border: 1px solid #e0e0e0; border-radius: 15px; overflow: hidden; margin-bottom: 20px; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+      <div class="fund-category" style="background-color: #f1ede9; padding: 8px; text-align: center; border-bottom: 1px dashed #d1c4b9;">
+        <span style="color: #5d4037; font-weight: bold; font-size: 0.95rem; letter-spacing: 0.5px;">
+          ${boxData["name"]}
+        </span>
+      </div>
+      <div class="fund-body" style="padding: 20px;">
+        <div class="fund-header" style="text-align: center; margin-bottom: 15px;">
+          <img width="80%" src="https://donate.utq.org.sa/media/prods/1/17697347830.webp">
+        </div>
+        <div class="progress-container" style="margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; color: #8b6b4d;">
+            <span>نسبة الإنجاز</span>
+            <span>${boxData["sum"] / boxData["goal"] * 100}%</span>
+          </div>
+          <div class="progress-bar-container" style="background: #eee; direction: rtl; height: 12px; border-radius: 10px; overflow: hidden;">
+            <div class="progress-fill" style="background: linear-gradient(90deg, #8b6b4d, #bcaaa4); width: ${boxData["sum"] / boxData["goal"] * 100}%; height: 100%;"></div>
+          </div>
+        </div>
+        <div class="fund-stats" style="display: flex;direction: rtl; justify-content: space-around; background: #fafafa; padding: 10px; border-radius: 10px;">
+          <div style="text-align: center;">
+            <span style="display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px;">المستهدف</span>
+            <strong style="color: #8b6b4d; font-size: 1.1rem;">${boxData["goal"]} <small style="font-size: 0.7rem;">ريال</small></strong>
+          </div>
+                    <div style="width: 1px; background: #eee;"></div>
+
+          <div style="text-align: center;">
+            <span style="display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px;">إجمالي المبلغ</span>
+            <strong style="color: #8b6b4d; font-size: 1.1rem;">${boxData["sum"]} <small style="font-size: 0.7rem;">ريال</small></strong>
+          </div>
+          <div style="width: 1px; background: #eee;"></div>
+          <div style="text-align: center;">
+            <span style="display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px;">المتبرعين</span>
+            <strong style="color: #8b6b4d; font-size: 1.1rem;">993</strong>
+          </div>
+        </div>
+      </div>
+    </div>`;
+      })
+
     }
+  }
+
   async function boxesToday() {
-    document.querySelector(".boxes").innerHTML = `<div class="card-title">
+    document.querySelector(".empty-state p").innerHTML = `<span class="loader"></span>`
+    const req = await fetch("/boxes", {
+      method: 'GET',
+      headers: {
+        'Content-Type': "application/json"
+      }
+    })
+    const boxes = await req.json();
+    console.log(boxes)
+    if (boxes.length == 0) {
+      document.querySelector(".boxes").innerHTML = `<div class="card-title">
         <div class="card-number">004</div>
         <div class="cont">
           <h2>الصناديق السهمية</h2>
@@ -557,7 +729,67 @@
         <p style="font-weight: bold">لا يوجد صناديق</p>
       </div>
       <button class="btn btn-outline" onclick="boxesForm()">عودة</button>`;
+    }
+    else {
+      document.querySelector(".boxes").innerHTML = `<div class="card-title">
+        <div class="card-number">005</div>
+        <div class="cont">
+          <h2>الصناديق السهمية</h2>
+          <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="boxesForm()">عودة</button>
+
+      <div class="boxes-container" style="margin-top: 20px;">
+
+      </div>`;
+
+      boxes.forEach(boxData => {
+
+        document.querySelector(".boxes-container").innerHTML += `<div class="fund-box" style="border: 1px solid #e0e0e0; border-radius: 15px; overflow: hidden; margin-bottom: 20px; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+      <div class="fund-category" style="background-color: #f1ede9; padding: 8px; text-align: center; border-bottom: 1px dashed #d1c4b9;">
+        <span style="color: #5d4037; font-weight: bold; font-size: 0.95rem; letter-spacing: 0.5px;">
+          ${boxData["name"]}
+        </span>
+      </div>
+      <div class="fund-body" style="padding: 20px;">
+        <div class="fund-header" style="text-align: center; margin-bottom: 15px;">
+          <img width="80%" src="https://donate.utq.org.sa/media/prods/1/17697347830.webp">
+        </div>
+        <div class="progress-container" style="margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; color: #8b6b4d;">
+            <span>نسبة الإنجاز</span>
+            <span>${boxData["sum"] / boxData["goal"] * 100}%</span>
+          </div>
+          <div class="progress-bar-container" style="background: #eee; direction: rtl; height: 12px; border-radius: 10px; overflow: hidden;">
+            <div class="progress-fill" style="background: linear-gradient(90deg, #8b6b4d, #bcaaa4); width: ${boxData["sum"] / boxData["goal"] * 100}%; height: 100%;"></div>
+          </div>
+        </div>
+        <div class="fund-stats" style="display: flex;direction: rtl; justify-content: space-around; background: #fafafa; padding: 10px; border-radius: 10px;">
+          <div style="text-align: center;">
+            <span style="display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px;">المستهدف</span>
+            <strong style="color: #8b6b4d; font-size: 1.1rem;">${boxData["goal"]} <small style="font-size: 0.7rem;">ريال</small></strong>
+          </div>
+                    <div style="width: 1px; background: #eee;"></div>
+
+          <div style="text-align: center;">
+            <span style="display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px;">إجمالي المبلغ</span>
+            <strong style="color: #8b6b4d; font-size: 1.1rem;">${boxData["sum"]} <small style="font-size: 0.7rem;">ريال</small></strong>
+          </div>
+          <div style="width: 1px; background: #eee;"></div>
+          <div style="text-align: center;">
+            <span style="display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px;">المتبرعين</span>
+            <strong style="color: #8b6b4d; font-size: 1.1rem;">993</strong>
+          </div>
+        </div>
+      </div>
+    </div>`;
+      })
+
+    }
   }
+
+
 
 </script>
 
