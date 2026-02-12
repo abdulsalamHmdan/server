@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إدارة المستخدمين</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+      :root {
+        --bg-color: #f4f5f7;
+        --card-bg: #ffffff;
+        --primary-btn: #5c524d;
+        --text-main: #2d3436;
+        --text-muted: #636e72;
+        --border-color: #edf2f7;
+        --success-bg: #c6f6d5;
+        --success-text: #2f855a;
+        --error-bg: #fed7d7;
+        --error-text: #c53030;
+        --input-bg: #fafafa;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        color: var(--text-main);
+        background:
+          radial-gradient(
+            900px 600px at 10% 0%,
+            rgba(155, 217, 228, 0.35),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 700px at 95% 15%,
+            rgba(68, 49, 41, 0.14),
+            transparent 55%
+          ),
+          radial-gradient(
+            1100px 700px at 50% 120%,
+            rgba(0, 0, 0, 0.04),
+            transparent 60%
+          ),
+          var(--bg-color);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 700px;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .header h1 {
+        font-size: 1.2rem;
+        margin: 0;
+        color: var(--text-main);
+      }
+      .header a {
+        font-size: 1.2rem;
+        margin: 0;
+        color: var(--text-main);
+        background-color: #fff;
+        border-radius: 10px;
+        text-decoration: none;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 25px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        margin-bottom: 20px;
+        overflow: hidden;
+      }
+
+      h2,
+      h3 {
+        text-align: center;
+        margin-top: 0;
+      }
+
+      /* تنسيق التبويبات أو العناوين الفاصلة */
+      .section-title {
+        display: flex;
+        align-items: center;
+        color: var(--primary-btn);
+        font-weight: bold;
+        margin: 20px 0 15px 0;
+        font-size: 1.1rem;
+      }
+      .section-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border-color);
+        margin-right: 15px;
+      }
+
+      /* تنسيق حقول الإدخال اليدوي */
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-row {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+      .form-col {
+        flex: 1;
+        min-width: 200px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+      input[type="text"],
+      input[type="tel"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cbd5e0;
+        border-radius: 12px;
+        background: var(--input-bg);
+        font-family: inherit;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+      }
+      input:focus {
+        outline: none;
+        border-color: var(--primary-btn);
+        background: #fff;
+      }
+
+      /* منطقة الرفع */
+      .upload-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        box-sizing: border-box;
+        border: 2px dashed #cbd5e0;
+        border-radius: 15px;
+        padding: 30px 20px;
+        text-align: center;
+        cursor: pointer;
+        background: #fafafa;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+      }
+      .upload-area:hover {
+        border-color: var(--primary-btn);
+        background: #f0f0f0;
+      }
+      .upload-icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: none;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        background-color: var(--primary-btn);
+        color: white;
+        transition: opacity 0.2s;
+        margin-top: 10px;
+      }
+      .btn:hover {
+        opacity: 0.9;
+      }
+      .btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        opacity: 1;
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        border: 2px solid var(--primary-btn);
+        color: var(--primary-btn);
+      }
+      .btn-outline:hover {
+        background-color: var(--primary-btn);
+        color: white;
+      }
+
+      /* الجداول */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border-color);
+        text-align: right;
+      }
+      th {
+        background: #f7fafc;
+        color: var(--text-muted);
+      }
+
+      .badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+      }
+      .badge-success {
+        background: var(--success-bg);
+        color: var(--success-text);
+      }
+      .badge-error {
+        background: var(--error-bg);
+        color: var(--error-text);
+      }
+
+      .hidden {
+        display: none;
+      }
+      .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary-btn);
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 10px auto;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <a href="/" class="btn-outline" style="padding: 5px 15px">عودة</a>
+        <h1>تعديل بيانات اليوم</h1>
+      </div>
+      <div class="card">
+        <h2>إضافة المستخدمين</h2>
+
+        <div class="section-title">إضافة مستخدم جديد (يدوي)</div>
+        <form id="singleUserForm" onsubmit="handleSingleSubmit(event)">
+          <div class="form-row">
+            <div class="form-col">
+              <label>الاسم (Name)</label>
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder="اسم المستخدم"
+              />
+            </div>
+            <div class="form-col">
+              <label>رقم الهاتف (Phone)</label>
+              <input
+                type="tel"
+                name="phone"
+                required
+                placeholder="05xxxxxxxx"
+              />
+            </div>
+          </div>
+          <div class="form-row" style="margin-top: 10px">
+            <div class="form-col">
+              <label>Reff ID</label>
+              <input
+                type="text"
+                name="reff"
+                required
+                placeholder="كود الإحالة"
+              />
+            </div>
+            <div class="form-col">
+              <label>MGM3</label>
+              <input type="text" name="mgm3" placeholder="كود MGM3 (اختياري)" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline">حفظ المستخدم</button>
+        </form>
+
+        <div class="section-title" style="margin-top: 40px">
+          إضافة جماعية (Excel)
+        </div>
+        <p
+          style="
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+          "
+        >
+          يجب أن يحتوي الملف على الأعمدة: <b>name, phone, reff, mgm3</b>
+        </p>
+
+        <label class="upload-area">
+          <span class="upload-icon">📂</span>
+          <p style="margin: 5px 0; font-weight: bold">اختر ملف Excel</p>
+          <input
+            type="file"
+            id="excelFile"
+            accept=".xlsx, .xls"
+            hidden
+            onchange="handleFile(this)"
+          />
+        </label>
+
+        <div
+          id="fileName"
+          style="
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--primary-btn);
+            font-weight: bold;
+            min-height: 20px;
+          "
+        ></div>
+
+        <button
+          id="processBtn"
+          class="btn"
+          onclick="processBulkFile()"
+          disabled
+        >
+          معالجة ورفع الملف
+        </button>
+        <div id="loader" class="loader hidden"></div>
+      </div>
+
+      <div id="resultsArea" class="hidden">
+        <div
+          class="card"
+          style="
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+          "
+        >
+          <div>
+            <h3
+              id="addedCount"
+              style="color: var(--success-text); margin: 0; font-size: 2rem"
+            >
+              0
+            </h3>
+            <small>تمت إضافتهم</small>
+          </div>
+          <div>
+            <h3
+              id="failedCount"
+              style="color: var(--error-text); margin: 0; font-size: 2rem"
+            >
+              0
+            </h3>
+            <small>فشلت</small>
+          </div>
+        </div>
+
+        <div class="card hidden" id="failedCard">
+          <h3 style="color: var(--error-text); margin-top: 0">
+            ❌ لم تتم إضافتهم
+          </h3>
+          <div style="overflow-x: auto">
+            <table id="failedTable">
+              <thead>
+                <tr>
+                  <th>الاسم</th>
+                  <th>الهاتف</th>
+                  <th>السبب</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card hidden" id="addedCard">
+          <h3 style="color: var(--success-text); margin-top: 0">
+            ✅ تمت إضافتهم
+          </h3>
+          <div style="overflow-x: auto">
+            <table id="addedTable">
+              <thead>
+                <tr>
+                  <th>الاسم</th>
+                  <th>reff</th>
+                  <th>الهاتف</th>
+                  <th>الحالة</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // --- منطق الإضافة اليدوية ---
+      async function handleSingleSubmit(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        if (!confirm("هل أنت متأكد من إضافة هذا المستخدم؟")) return;
+
+        try {
+          // نستخدم نفس مصفوفة الإرسال لتوحيد المعالجة في الخلفية
+          // أو يمكنك عمل Endpoint خاص بالإضافة الفردية
+          const response = await fetch("/users/add-bulk", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([data]), // نرسله كمصفوفة عنصر واحد
+          });
+
+          const result = await response.json();
+
+          if (result.added && result.added.length > 0) {
+            alert("تمت إضافة المستخدم بنجاح ✅");
+            e.target.reset();
+          } else if (result.failed && result.failed.length > 0) {
+            alert("فشل إضافة المستخدم ❌: " + result.failed[0].reason);
+          }
+        } catch (err) {
+          alert("حدث خطأ في الاتصال");
+          console.error(err);
+        }
+      }
+
+      // --- منطق ملف الإكسل ---
+      let jsonData = [];
+
+      function handleFile(input) {
+        const file = input.files[0];
+        if (file) {
+          document.getElementById("fileName").innerText =
+            "تم اختيار: " + file.name;
+          document.getElementById("processBtn").disabled = false;
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
+            const firstSheet = workbook.SheetNames[0];
+            jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+          };
+          reader.readAsArrayBuffer(file);
+        }
+      }
+
+      async function processBulkFile() {
+        if (jsonData.length === 0) {
+          alert("الملف فارغ أو لم يتم قراءته بشكل صحيح");
+          return;
+        }
+        console.log(jsonData);
+
+        document.getElementById("loader").classList.remove("hidden");
+        document.getElementById("processBtn").disabled = true;
+        document.getElementById("resultsArea").classList.add("hidden");
+
+        try {
+          // إرسال البيانات للباك-إند
+          const response = await fetch("/users/add-bulk", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(jsonData),
+          });
+
+          const result = await response.json();
+          renderResults(result);
+        } catch (error) {
+          alert("حدث خطأ أثناء الإرسال للسيرفر");
+          console.error(error);
+        } finally {
+          document.getElementById("loader").classList.add("hidden");
+          document.getElementById("processBtn").disabled = false;
+        }
+      }
+
+      function renderResults(data) {
+        document.getElementById("resultsArea").classList.remove("hidden");
+        document.getElementById("addedCount").innerText = data.added.length;
+        document.getElementById("failedCount").innerText = data.failed.length;
+
+        // تعبئة جدول الفشل
+        const failedTbody = document.querySelector("#failedTable tbody");
+        failedTbody.innerHTML = "";
+        if (data.failed.length > 0) {
+          document.getElementById("failedCard").classList.remove("hidden");
+          data.failed.forEach((item) => {
+            failedTbody.innerHTML += `
+                <tr>
+                    <td>${item.name || "-"}</td>
+                    <td>${item.phone || "-"}</td>
+                    <td><span class="badge badge-error">${item.reason}</span></td>
+                </tr>
+            `;
+          });
+        } else {
+          document.getElementById("failedCard").classList.add("hidden");
+        }
+
+        // تعبئة جدول النجاح
+        const addedTbody = document.querySelector("#addedTable tbody");
+        addedTbody.innerHTML = "";
+        if (data.added.length > 0) {
+          document.getElementById("addedCard").classList.remove("hidden");
+          data.added.forEach((item) => {
+            addedTbody.innerHTML += `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.reff}</td>
+                    <td>${item.phone}</td>
+                    <td><span class="badge badge-success">تم الحفظ</span></td>
+                </tr>
+            `;
+          });
+        } else {
+          document.getElementById("addedCard").classList.add("hidden");
+        }
+
+        document
+          .getElementById("resultsArea")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+    </script>
+  </body>
+</html>
