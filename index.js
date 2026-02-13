@@ -35,7 +35,7 @@ app.get("/:id/sfeer", async (req, res) => {
   object["id"] = req.params.id;
   object["couponValue"] = "111";
   object["couponCode"] = "111";
-  object["entityName"] = "الهيئة الخيرية";
+  object["entityName"] = "الكوب الرابع";
 
 
   res.render("sfeer", object);
