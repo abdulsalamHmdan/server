@@ -368,7 +368,7 @@
         </div>
       </div>
       <div class="image-box">
-        <img src="<%= img%>" alt="Library" />
+        <img src="/img/<%= img%>" alt="Library" />
       </div>
       <div class="link-section">
         <div class="link-text">
@@ -446,24 +446,15 @@
         </div>
 
         <div class="target-item">
-          <div class="cont">
-            <span class="target-label">المبلغ اليوم</span>
-          </div>
           <span class="loader"></span>
         </div>
 
         <div class="target-item">
-          <div class="cont">
-            <span class="target-label">المحقق اليوم</span>
-            <!-- <span class="target-value">0</span> -->
-          </div>
           <span class="loader"></span>
-
-          <!-- <span class="target-label">صندوق</span> -->
         </div>
       </div>
-      <button class="btn btn-primary">تحديث إنجاز اليوم</button>
-      <button class="btn btn-outline">الحصول على الكوبون</button>
+      <button id="refresh" class="btn btn-primary">تحديث إنجاز اليوم</button>
+      <button id="coupon" class="btn btn-outline">الحصول على الكوبون</button>
       <p class="footer-note">
         <!-- ملاحظة: هذا التتبع محلي على الجهاز (بدون سيرفر). لو تبي التتبع مركزي
         لكل السفراء نربطه بملف CSV/Google Sheet/Netlify Function. -->
@@ -536,13 +527,18 @@
 <!-- <script src="js/main2.js"></script> -->
 
 <script defer>
+  // vars
   const shareBtn = document.querySelector("#share-btn");
   const copyBtn = document.querySelector("#copy-btn");
   const urlSave = document.querySelector("#urlSave");
   const btnLogout = document.querySelector(".btn-logout");
+  const refresh = document.querySelector("#refresh");
+
+
+  //buttons
 
   shareBtn.addEventListener("click", async () => {
-    const imageUrl = "<%= img%>";
+    const imageUrl = "/img/<%= img%>";
     const shareText = `<%=text%>`;
     // التأكد أولاً أن المتصفح يدعم أساساً خاصية المشاركة
     if (!navigator.share) {
@@ -574,7 +570,6 @@
       navigator.share({ text: shareText }).catch(() => { });
     }
   });
-
   document.querySelectorAll(".cell").forEach(x => {
     x.addEventListener('click', () => {
       if (x.querySelector(".check").innerHTML == "✅") {
@@ -586,7 +581,6 @@
       }
     })
   })
-
   copyBtn.addEventListener("click", () => {
     const message = `<%=text%>`
     navigator.clipboard
@@ -594,7 +588,6 @@
       .then(() => alert("تم نسخ الرسالة إلى الحافظة!"))
       .catch((error) => alert("فشل نسخ الرسالة: " + error));
   });
-
   urlSave.addEventListener("click", () => {
     const message = `<%=url%>`
     navigator.clipboard
@@ -603,8 +596,17 @@
       .catch((error) => alert("فشل نسخ الرسالة: " + error));
   });
   btnLogout.addEventListener("click", () => {
-    location.href = "/"
+    location.href = "/<%=id%>"
   });
+  refresh.addEventListener('click', () => {
+    const els = document.querySelectorAll(".target-item");
+    els[2].innerHTML = `<span class="loader"></span>`;
+    els[3].innerHTML = `<span class="loader"></span>`;
+    goals()
+  })
+
+
+  // boxPart
 
   function boxesForm() {
     document.querySelector(".boxes").innerHTML = `
@@ -625,7 +627,7 @@
   }
   async function boxesAll() {
     document.querySelector(".empty-state p").innerHTML = `<span class="loader"></span>`
-    const req = await fetch("/boxes", {
+    const req = await fetch("boxes?all=yes", {
       method: 'GET',
       headers: {
         'Content-Type': "application/json"
@@ -705,10 +707,9 @@
 
     }
   }
-
   async function boxesToday() {
     document.querySelector(".empty-state p").innerHTML = `<span class="loader"></span>`
-    const req = await fetch("/boxes", {
+    const req = await fetch("boxes?all=no", {
       method: 'GET',
       headers: {
         'Content-Type': "application/json"
@@ -789,6 +790,50 @@
     }
   }
 
+
+
+  // fetching
+
+  function rank() {
+    fetch("rank", {
+      method: "GET",
+      headers: {
+        'Content-Type': "application/json"
+      }
+    }).then(x => x.json()).then(x => {
+      const els = document.querySelectorAll(".order-value");
+      els[0].innerHTML = x.a;
+      els[1].innerHTML = x.b;
+      els[2].innerHTML = x.c;
+    })
+
+  }
+  rank();
+
+  function goals() {
+    fetch("goals", {
+      method: "GET",
+      headers: {
+        'Content-Type': "application/json"
+      }
+    }).then(x => x.json()).then(x => {
+      const els = document.querySelectorAll(".target-item");
+      els[2].innerHTML = `
+      <div class="cont">
+        <span class="target-label">المحقق اليوم</span>
+        <span class="target-value">${x.payment}</span>
+      </div>
+      <span class="target-label">ريال</span>`;
+      els[3].innerHTML = `<div class="cont">
+            <span class="target-label">المحقق اليوم</span>
+            <span class="target-value">${x.boxes}</span>
+          </div>
+          <span class="target-label">صندوق</span>`;
+
+    })
+
+  }
+  goals();
 
 
 </script>

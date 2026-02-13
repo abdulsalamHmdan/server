@@ -22,24 +22,50 @@ mongoose
   .catch((err) => console.log("فشل الاتصال:", err));
 
 // المسارات الأساسية
-app.get("/sfeer", async (req, res) => {
+app.get("/:id/sfeer", async (req, res) => {
+  const user = await User.findById("698ddf7e20fa63e11ce0e45f");
+  if (!user) {
+    res.send("لا يوجد سفير بهذا الرقم");
+    return;
+  }
   let dayData = await Day.findOne({ date: 1 });
   const object = Object.create(dayData);
-  object["name"] = "علي المذن";
-  object["url"] = "https://donate.utq.org.sa/";
+  object["name"] = user.name;
+  object["url"] = `https://donate.utq.org.sa/p/1/${user.reff}`;
+  object["id"] = req.params.id;
   res.render("sfeer", object);
 });
 
-app.get("/boxes", (req, res) => {
-  res.json([{
-    sum:1000,
-    goal:10000,
-    name:"وقف علي المذن",
-  }]);
+app.get("/:id/boxes", async (req, res) => {
+  let user = await User.findById(req.params.id);
+  console.log(req.query.all == "yes");
+  const boxes = [
+    {
+      sum: 1000,
+      goal: 10000,
+      name: "وقف علي المذن",
+    },
+  ];
+
+  res.json(boxes);
+});
+app.get("/:id/rank", async (req, res) => {
+  let user = await User.findById(req.params.id);
+  const rank = {a:1,b:1,c:1};
+
+  res.json(rank);
+});
+
+app.get("/:id/goals", async (req, res) => {
+  let user = await User.findById(req.params.id);
+  const goals = userGoals(user.phone,"");
+
+  res.json(goals);
 });
 
 app.get("/", (req, res) => {
-  res.render("index");
+  // User.findOne({phone:"0507499583"})
+  res.render("index", { id: req.params.id });
 });
 app.get("/days", (req, res) => {
   res.render("days");
@@ -83,11 +109,11 @@ app.get("/coupons/add", (req, res) => {
   res.render("add-coupons");
 });
 
-app.get("/safer/add",(req,res)=>{
-  res.render("addUser")
-})
+app.get("/safer/add", (req, res) => {
+  res.render("addUser");
+});
 
-app.post('/users/add-bulk', async (req, res) => {
+app.post("/users/add-bulk", async (req, res) => {
   const usersData = req.body; // نتوقع مصفوفة من الكائنات
   // التحقق من أن البيانات عبارة عن مصفوفة
   if (!Array.isArray(usersData)) {
@@ -98,48 +124,47 @@ app.post('/users/add-bulk', async (req, res) => {
   for (const row of usersData) {
     // ملاحظة: قد تأتي أسماء الأعمدة من الإكسل بأحرف كبيرة أو مسافات، يفضل تنظيفها هنا
     const userData = {
-      name: row.name || row.Name || row['الاسم'],
-      reff: row.reff || row.Reff || row['كود الاحالة'],
-      mgm3: row.mgm3 || row.Mgm3 || row['mgm3'],
-      phone: row.phone || row.Phone || row['الجوال'],
+      name: row.name,
+      reff: row.reff,
+      mgm3: row.mgm3,
+      phone: row.phone,
     };
     try {
-        // التحقق من الحقول الإجبارية قبل محاولة الحفظ
-        if (!userData.name || !userData.reff || !userData.phone) {
-            throw new Error("بيانات ناقصة (الاسم، الهاتف، أو reff)");
-        }
+      // التحقق من الحقول الإجبارية قبل محاولة الحفظ
+      if (!userData.name || !userData.reff || !userData.phone) {
+        throw new Error("بيانات ناقصة (الاسم، الهاتف، أو reff)");
+      }
 
-        // محاولة إنشاء المستخدم
-        const newUser = await User.create(userData);
-        
-        // إذا نجح الحفظ
-        added.push(newUser);
+      // محاولة إنشاء المستخدم
+      const newUser = await User.create(userData);
 
+      // إذا نجح الحفظ
+      added.push(newUser);
     } catch (error) {
-        // تحديد سبب الفشل
-        let reason = "خطأ غير معروف";
-        if (error.code === 11000) {
-            // خطأ التكرار (Duplicate Key)
-            if (error.keyPattern.phone) reason = "رقم الهاتف مكرر";
-            else if (error.keyPattern.reff) reason = "reff مكرر";
-            else if (error.keyPattern.mgm3) reason = "mgm3 مكرر";
-            else reason = "بيانات مكررة";
-        } else {
-            reason = error.message;
-        }
+      // تحديد سبب الفشل
+      let reason = "خطأ غير معروف";
+      if (error.code === 11000) {
+        // خطأ التكرار (Duplicate Key)
+        if (error.keyPattern.phone) reason = "رقم الهاتف مكرر";
+        else if (error.keyPattern.reff) reason = "reff مكرر";
+        else if (error.keyPattern.mgm3) reason = "mgm3 مكرر";
+        else reason = "بيانات مكررة";
+      } else {
+        reason = error.message;
+      }
 
-        // إضافة للفشل مع الاحتفاظ بالبيانات المرسلة لعرضها
-        failed.push({
-            ...userData,
-            reason: reason
-        });
+      // إضافة للفشل مع الاحتفاظ بالبيانات المرسلة لعرضها
+      failed.push({
+        ...userData,
+        reason: reason,
+      });
     }
   }
 
   // إرجاع النتيجة النهائية
   res.json({
     added,
-    failed
+    failed,
   });
 });
 
@@ -226,6 +251,11 @@ app.use((req, res) => {
 //   });
 // });
 
+
+
+function userGoals(id,day) {
+  return{boxes:1,payment:1};
+}
 // بدء السيرفر
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
