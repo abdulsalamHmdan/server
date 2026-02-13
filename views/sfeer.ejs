@@ -340,6 +340,61 @@
         box-shadow: -24px 0 #FFF, 24px 0 var(--loading);
       }
     }
+
+    /* Coupon Card Enhanced Styles */
+    .coupon-card {
+      background: linear-gradient(135deg, #ffffff 0%, #fdfbf9 100%);
+      border: 2px solid #f1ede9;
+      overflow: hidden;
+    }
+
+    .thanks-header {
+      text-align: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed #d1c4b9;
+      margin-bottom: 15px;
+    }
+
+    .thanks-title {
+      color: #8b6b4d;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin: 5px 0;
+    }
+
+    .discount-badge {
+      background: #5c524d;
+      color: #fff;
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 0 0 15px 15px;
+      font-size: 0.9rem;
+      margin-top: -20px;
+      box-shadow: 0 4px 10px rgba(92, 82, 77, 0.2);
+    }
+
+    .qr-wrapper {
+      background: #fff;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.02);
+      display: inline-block;
+      border: 1px solid #eee;
+    }
+
+    .value-tag {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #5c524d;
+      margin: 10px 0;
+      display: block;
+    }
+
+    .value-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
   </style>
 </head>
 
@@ -389,7 +444,6 @@
       <button id="share-btn" class="btn btn-primary">مشاركة</button>
       <button id="copy-btn" class="btn btn-outline">نسخ الرسالة</button>
     </div>
-
     <div class="card">
       <div class="card-title">
         <div class="card-number">002</div>
@@ -416,6 +470,7 @@
           <%})%>
       </ul>
     </div>
+
     <div class="card">
       <div class="card-title">
         <div class="card-number">003</div>
@@ -453,19 +508,53 @@
           <span class="loader"></span>
         </div>
       </div>
-      <button id="refresh" class="btn btn-primary">تحديث إنجاز اليوم</button>
+      <button id="refreshG" class="btn btn-primary">تحديث إنجاز اليوم</button>
       <button id="coupon" class="btn btn-outline">الحصول على الكوبون</button>
       <p class="footer-note">
-        <!-- ملاحظة: هذا التتبع محلي على الجهاز (بدون سيرفر). لو تبي التتبع مركزي
-        لكل السفراء نربطه بملف CSV/Google Sheet/Netlify Function. -->
       </p>
     </div>
-    <div class="card">
+    <% if (true) { %>
+          <div class="card coupon" dir="rtl">
+    <div style="text-align: center;">
+        <div class="discount-badge">خصم خاص لك</div>
+    </div>
+
+    <div class="thanks-header">
+        <h2 class="thanks-title">شكراً لكونك جزءاً من أثرنا! 🌟</h2>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">تقديراً لجهودك المبذولة، إليك هدية بسيطة</p>
+    </div>
+    <div style="text-align: center; margin-bottom: 15px;">
+        <span class="value-label">قيمة الكوبون</span>
+        <span class="value-tag"><%= couponValue %> ر.س</span>
+        
+        <div class="qr-wrapper">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=<%= couponCode %>" alt="QR Code" style="display: block;" />
+        </div>
+        
+        <div class="entity-name" style="margin-top: 10px; color: #5c524d;"><%= entityName %></div>
+    </div>
+    <div class="copy-box" style="border: 1.5px solid #d1c4b9; background: #fff;">
+        <div class="code-value" id="couponText" style="color: #5c524d; letter-spacing: 3px;"><%= couponCode %></div>
+        <button class="copy-icon-btn" onclick="copyCoupon()" id="copyBtn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b6b4d" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+        </button>
+    </div>
+    <p class="footer-note" style="margin-top: 12px;">ينتهي تاريخ صلاحية هذا الكوبون قريباً، بادر باستخدامه!</p>
+
+
+  </div>
+      <%}%>
+
+
+    <div class="card ranking">
       <div class="card-title">
         <div class="card-number">004</div>
         <div class="cont">
           <h2>ترتيبك بين السفراء</h2>
-          <p>آخر تحديث : <span id="refresh" style="color: #3182ce;">الان</span></p>
+          <p>آخر تحديث : <span id="refreshTime" style="color: #3182ce;">الان</span></p>
         </div>
       </div>
       <div class="order-grid">
@@ -492,7 +581,7 @@
         </div>
 
       </div>
-      <button class="btn btn-primary">تحديث الترتيب</button>
+      <button class="btn btn-primary" id="refreshR">تحديث الترتيب</button>
       <p class="footer-note">
         <!-- ملاحظة: هذا التتبع محلي على الجهاز (بدون سيرفر). لو تبي التتبع مركزي
         لكل السفراء نربطه بملف CSV/Google Sheet/Netlify Function. -->
@@ -532,8 +621,9 @@
   const copyBtn = document.querySelector("#copy-btn");
   const urlSave = document.querySelector("#urlSave");
   const btnLogout = document.querySelector(".btn-logout");
-  const refresh = document.querySelector("#refresh");
-
+  const refreshG = document.querySelector("#refreshG");
+  const refreshR = document.querySelector("#refreshR");
+  const couponBtn = document.querySelector("#coupon");
 
   //buttons
 
@@ -598,11 +688,17 @@
   btnLogout.addEventListener("click", () => {
     location.href = "/<%=id%>"
   });
-  refresh.addEventListener('click', () => {
+  refreshG.addEventListener('click', () => {
     const els = document.querySelectorAll(".target-item");
     els[2].innerHTML = `<span class="loader"></span>`;
     els[3].innerHTML = `<span class="loader"></span>`;
     goals()
+  })
+
+  refreshR.addEventListener('click', () => {
+    const els = document.querySelectorAll(".order-value");
+    els.forEach(x => x.innerHTML = `<span class="loader"></span>`);
+    rank()
   })
 
 
@@ -835,6 +931,50 @@
   }
   goals();
 
+  couponBtn.addEventListener("click", addCoupon);
+
+  function addCoupon() {
+    if (document.querySelector("#couponText")) {
+      document.querySelector(".card.coupon").scrollIntoView({ behavior: "smooth" });
+      return;
+    }else{
+      const newCard = document.createElement("div");
+      newCard.innerHTML = `
+    <div style="text-align: center;">
+        <div class="discount-badge">خصم خاص لك</div>
+    </div>
+
+    <div class="thanks-header">
+        <h2 class="thanks-title">شكراً لكونك جزءاً من أثرنا! 🌟</h2>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">تقديراً لجهودك المبذولة، إليك هدية بسيطة</p>
+    </div>
+    <div style="text-align: center; margin-bottom: 15px;">
+        <span class="value-label">قيمة الكوبون</span>
+        <span class="value-tag"><%= couponValue %> ر.س</span>
+        
+        <div class="qr-wrapper">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=<%= couponCode %>" alt="QR Code" style="display: block;" />
+        </div>
+        
+        <div class="entity-name" style="margin-top: 10px; color: #5c524d;"><%= entityName %></div>
+    </div>
+    <div class="copy-box" style="border: 1.5px solid #d1c4b9; background: #fff;">
+        <div class="code-value" id="couponText" style="color: #5c524d; letter-spacing: 3px;"><%= couponCode %></div>
+        <button class="copy-icon-btn" onclick="copyCoupon()" id="copyBtn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b6b4d" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+        </button>
+    </div>
+    <p class="footer-note" style="margin-top: 12px;">ينتهي تاريخ صلاحية هذا الكوبون قريباً، بادر باستخدامه!</p>      
+      `;
+      newCard.className = "card coupon";
+      newCard.dir="rtl";
+      document.querySelector(".container").insertBefore(newCard, document.querySelector(".card.ranking"));
+    }
+    
+  }
 
 </script>
 

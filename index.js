@@ -33,6 +33,11 @@ app.get("/:id/sfeer", async (req, res) => {
   object["name"] = user.name;
   object["url"] = `https://donate.utq.org.sa/p/1/${user.reff}`;
   object["id"] = req.params.id;
+  object["couponValue"] = "111";
+  object["couponCode"] = "111";
+  object["entityName"] = "الهيئة الخيرية";
+
+
   res.render("sfeer", object);
 });
 
