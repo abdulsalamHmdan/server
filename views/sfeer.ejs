@@ -513,14 +513,14 @@
       <p class="footer-note">
       </p>
     </div>
-    <% if (true) { %>
+    <% if (coupon) { %>
           <div class="card coupon" dir="rtl">
     <div style="text-align: center;">
         <div class="discount-badge">خصم خاص لك</div>
     </div>
 
     <div class="thanks-header">
-        <h2 class="thanks-title">شكراً لكونك جزءاً من أثرنا! 🌟</h2>
+        <h2 class="thanks-title">شكراً لكونك جزءاً من الأثر! 🌟</h2>
         <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">تقديراً لجهودك المبذولة، إليك هدية بسيطة</p>
     </div>
     <div style="text-align: center; margin-bottom: 15px;">
@@ -945,7 +945,7 @@
     </div>
 
     <div class="thanks-header">
-        <h2 class="thanks-title">شكراً لكونك جزءاً من أثرنا! 🌟</h2>
+        <h2 class="thanks-title">شكراً لكونك جزءاً من الأثر! 🌟</h2>
         <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">تقديراً لجهودك المبذولة، إليك هدية بسيطة</p>
     </div>
     <div style="text-align: center; margin-bottom: 15px;">
@@ -972,6 +972,7 @@
       newCard.className = "card coupon";
       newCard.dir="rtl";
       document.querySelector(".container").insertBefore(newCard, document.querySelector(".card.ranking"));
+      newCard.scrollIntoView({ behavior: "smooth" });
     }
     
   }

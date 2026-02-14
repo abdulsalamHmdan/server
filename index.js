@@ -28,11 +28,14 @@ app.get("/:id/sfeer", async (req, res) => {
     res.send("لا يوجد سفير بهذا الرقم");
     return;
   }
+  const coupon = await Coupon.findOne({ from: user, status: 1 });
   let dayData = await Day.findOne({ date: 1 });
   const object = Object.create(dayData);
   object["name"] = user.name;
   object["url"] = `https://donate.utq.org.sa/p/1/${user.reff}`;
   object["id"] = req.params.id;
+  object["coupon"] = coupon;
+
   object["couponValue"] = "111";
   object["couponCode"] = "111";
   object["entityName"] = "الكوب الرابع";
@@ -180,7 +183,7 @@ app.post("/coupons/save-bulk", async (req, res) => {
   let failed = [];
   for (const item of couponsData) {
     // التحقق البسيط
-    if (!item.code || !item.from) {
+    if (!item.code || !item.from || !item.value) {
       failed.push({ ...item, reason: "بيانات ناقصة" });
       continue;
     }
@@ -189,6 +192,7 @@ app.post("/coupons/save-bulk", async (req, res) => {
       await Coupon.create({
         code: String(item.code),
         from: String(item.from),
+        value: String(item.value),
         status: 0,
       });
       added.push(item);
