@@ -938,7 +938,28 @@
       document.querySelector(".card.coupon").scrollIntoView({ behavior: "smooth" });
       return;
     }else{
-      const newCard = document.createElement("div");
+      fetch("giveCoupon", {
+        method: "GET",
+        headers: {
+          'Content-Type': "application/json"
+        }
+      }).then(x => x.json()).then(x => {
+        if(x){
+          insertCoupon(x.value, x.code, x.entity)
+        }else{
+          alert("عذراً، لا يوجد كوبونات متاحة حالياً. استمر في جهودك المبذولة، وستكون من أوائل من يحصلون على الكوبون القادم! 🌟")
+        }
+      }).catch(() => {
+        alert("حدث خطأ أثناء جلب الكوبون. حاول مرة أخرى لاحقاً.")
+      })
+      // insertCoupon("<%= couponValue %>", "<%= couponCode %>", "<%= entityName %>")
+      }
+    
+  }
+
+
+  function insertCoupon(couponValue, couponCode, entityName) {
+    const newCard = document.createElement("div");
       newCard.innerHTML = `
     <div style="text-align: center;">
         <div class="discount-badge">خصم خاص لك</div>
@@ -950,16 +971,16 @@
     </div>
     <div style="text-align: center; margin-bottom: 15px;">
         <span class="value-label">قيمة الكوبون</span>
-        <span class="value-tag"><%= couponValue %> ر.س</span>
+        <span class="value-tag">${couponValue} ر.س</span>
         
         <div class="qr-wrapper">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=<%= couponCode %>" alt="QR Code" style="display: block;" />
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${couponCode}" alt="QR Code" style="display: block;" />
         </div>
         
-        <div class="entity-name" style="margin-top: 10px; color: #5c524d;"><%= entityName %></div>
+        <div class="entity-name" style="margin-top: 10px; color: #5c524d;">${entityName}</div>
     </div>
     <div class="copy-box" style="border: 1.5px solid #d1c4b9; background: #fff;">
-        <div class="code-value" id="couponText" style="color: #5c524d; letter-spacing: 3px;"><%= couponCode %></div>
+        <div class="code-value" id="couponText" style="color: #5c524d; letter-spacing: 3px;">${couponCode}</div>
         <button class="copy-icon-btn" onclick="copyCoupon()" id="copyBtn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b6b4d" stroke-width="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -973,7 +994,7 @@
       newCard.dir="rtl";
       document.querySelector(".container").insertBefore(newCard, document.querySelector(".card.ranking"));
       newCard.scrollIntoView({ behavior: "smooth" });
-    }
+    
     
   }
 

@@ -11,6 +11,7 @@ const User = require("./models/User");
 const Coupon = require("./models/coupon");
 const Day = require("./models/Day");
 const { name } = require("ejs");
+const e = require("express");
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
@@ -40,7 +41,6 @@ app.get("/:id/sfeer", async (req, res) => {
   object["couponCode"] = "111";
   object["entityName"] = "الكوب الرابع";
 
-
   res.render("sfeer", object);
 });
 
@@ -59,14 +59,14 @@ app.get("/:id/boxes", async (req, res) => {
 });
 app.get("/:id/rank", async (req, res) => {
   let user = await User.findById(req.params.id);
-  const rank = {a:1,b:1,c:1};
+  const rank = { a: 1, b: 1, c: 1 };
 
   res.json(rank);
 });
 
 app.get("/:id/goals", async (req, res) => {
   let user = await User.findById(req.params.id);
-  const goals = userGoals(user.phone,"");
+  const goals = userGoals(user.phone, "");
 
   res.json(goals);
 });
@@ -208,34 +208,41 @@ app.post("/coupons/save-bulk", async (req, res) => {
   res.json({ added, failed });
 });
 
-app.post("/coupons/link", async (req, res) => {
-  const couponsData = req.body; // عبارة عن مصفوفة جايتنا من المتصفح
-  let added = [];
-  let failed = [];
-  for (const item of couponsData) {
-    // التحقق البسيط
-    if (!item.code || !item.from) {
-      failed.push({ ...item, reason: "بيانات ناقصة" });
-      continue;
-    }
-
-    try {
-      await Coupon.create({
-        code: String(item.code),
-        from: String(item.from),
-        status: 0,
-      });
-      added.push(item);
-    } catch (err) {
-      if (err.code === 11000) {
-        failed.push({ ...item, reason: "مكرر" });
-      } else {
-        failed.push({ ...item, reason: "خطأ في النظام" });
-      }
-    }
+app.get("/:id/giveCoupon", async (req, res) => {
+  const userId = req.params.id;
+  let user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "المستخدم غير موجود" });
   }
-
-  res.json({ added, failed });
+  const coupon = await Coupon.findOne({ user: user._id, status: 1 });
+  if (coupon) {
+    res.json({
+      valid: true,
+      value: coupon.value,
+      code: coupon.code,
+      entity: coupon.from,
+    });
+    return;
+  }
+  const userGoalsData = await userGoals(user._id, "");
+  if (userGoalsData.boxes >= 1 && userGoalsData.payment >= 1) {
+    const newCoupon = await Coupon.findOneAndUpdate(
+      { status: 0 },
+      { user: user._id, status: 1 },
+    );
+    if (newCoupon) {
+      res.json({
+        valid: true,
+        value: newCoupon.value,
+        code: newCoupon.code,
+        entity: newCoupon.from,
+      });
+    } else {
+      res.json({ valid: false, message: "لا يوجد كوبونات متاحة" });
+    }
+  }else {
+    res.json({ valid: false, message: "لم تحقق الأهداف بعد" });
+  }
 });
 
 // معالج الأخطاء 404
@@ -260,10 +267,8 @@ app.use((req, res) => {
 //   });
 // });
 
-
-
-function userGoals(id,day) {
-  return{boxes:1,payment:1};
+function userGoals(id, day) {
+  return { boxes: 1, payment: 1 };
 }
 // بدء السيرفر
 const PORT = process.env.PORT || 3000;
