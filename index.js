@@ -24,22 +24,18 @@ mongoose
 
 // المسارات الأساسية
 app.get("/:id/sfeer", async (req, res) => {
-  const user = await User.findById("698ddf7e20fa63e11ce0e45f");
+  const user = await User.findById(req.params.id);
   if (!user) {
     res.send("لا يوجد سفير بهذا الرقم");
     return;
   }
-  const coupon = await Coupon.findOne({ from: user, status: 1 });
+  const coupon = await Coupon.findOne({ user: user, status: 1 });
   let dayData = await Day.findOne({ date: 1 });
   const object = Object.create(dayData);
   object["name"] = user.name;
   object["url"] = `https://donate.utq.org.sa/p/1/${user.reff}`;
   object["id"] = req.params.id;
   object["coupon"] = coupon;
-
-  object["couponValue"] = "111";
-  object["couponCode"] = "111";
-  object["entityName"] = "الكوب الرابع";
 
   res.render("sfeer", object);
 });
@@ -209,6 +205,7 @@ app.post("/coupons/save-bulk", async (req, res) => {
 });
 
 app.get("/:id/giveCoupon", async (req, res) => {
+
   const userId = req.params.id;
   let user = await User.findById(userId);
   if (!user) {
@@ -218,9 +215,8 @@ app.get("/:id/giveCoupon", async (req, res) => {
   if (coupon) {
     res.json({
       valid: true,
-      value: coupon.value,
-      code: coupon.code,
-      entity: coupon.from,
+      coupon: coupon,
+
     });
     return;
   }
@@ -233,14 +229,13 @@ app.get("/:id/giveCoupon", async (req, res) => {
     if (newCoupon) {
       res.json({
         valid: true,
-        value: newCoupon.value,
-        code: newCoupon.code,
-        entity: newCoupon.from,
+        coupon: newCoupon,
+
       });
     } else {
       res.json({ valid: false, message: "لا يوجد كوبونات متاحة" });
     }
-  }else {
+  } else {
     res.json({ valid: false, message: "لم تحقق الأهداف بعد" });
   }
 });
@@ -250,28 +245,11 @@ app.use((req, res) => {
   res.status(404).render("404", { title: "صفحة غير موجودة" });
 });
 
-// اتصالات Socket.io
-// io.on("connection", (socket) => {
-//   // console.log('مستخدم جديد متصل:', socket.id);
-//   socket.emit("message", { from: socket.id, message: "مرحبًا من السيرفر!" });
-
-//   // استقبال الرسائل
-//   socket.on("message", (data) => {
-//     console.log("رسالة مستقبلة:", data);
-//     io.emit("message", { from: socket.id, message: data });
-//   });
-
-//   // قطع الاتصال
-//   socket.on("disconnect", () => {
-//     console.log("مستخدم قطع الاتصال:", socket.id);
-//   });
-// });
-
 function userGoals(id, day) {
   return { boxes: 1, payment: 1 };
 }
 // بدء السيرفر
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
   console.log(`السيرفر يعمل على http://localhost:${PORT}`);
 });

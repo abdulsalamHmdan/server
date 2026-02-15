@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>لوحة المحافظ الاستثمارية - نسخة رسمية</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      /* الألوان الأساسية بناءً على طلبك */
+      --accent: #5c524d; 
+      --accent2: #413a36; /* درجة أغمق للتباين */
+      
+      /* ألوان الخلفيات والنصوص متناغمة مع اللون الأساسي */
+      --bg: #fdfcfb; 
+      --paper: rgba(255,255,255,.92);
+      --card: #ffffff;
+      --ink: #2a2523; /* أسود يميل للبني الداكن جداً */
+      --sub: #786d67; /* رمادي دافئ فرعي */
+      --line: rgba(92, 82, 77, 0.15);
+      --line2: rgba(92, 82, 77, 0.08);
+
+      --shadow: 0 26px 72px rgba(42,37,35,.08);
+      --shadow2: 0 14px 34px rgba(42,37,35,.06);
+
+      --r-xl: 28px;
+      --r-lg: 22px;
+      --r-md: 16px;
+      --r-sm: 12px;
+
+      /* ألوان الصناديق الاستثمارية (هادئة ورسمية) */
+      --s1: #a3876a; /* ذهبي مطفأ / برونزي */
+      --s2: #4b5e55; /* أخضر زيتي غامق */
+      --s3: #52616b; /* أزرق رمادي (Slate) */
+      --s4: #805c5c; /* عنابي مطفأ */
+      --s5: #6b625b; /* رمادي دافئ */
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"IBM Plex Sans Arabic", system-ui, -apple-system, sans-serif;
+      color:var(--ink);
+      /* إضاءات خلفية خفيفة جداً تتناسب مع الطابع الرسمي */
+      background:
+        radial-gradient(900px 650px at 88% -10%, rgba(163, 135, 106, 0.05), transparent 58%),
+        radial-gradient(850px 600px at 8% 0%, rgba(92, 82, 77, 0.04), transparent 55%),
+        var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top bar */
+    .top{
+      position:sticky; top:0; z-index:50;
+      padding: 12px 12px 10px;
+      backdrop-filter: blur(12px);
+      background: rgba(253,252,251,.85);
+      border-bottom:1px solid var(--line2);
+    }
+    .topInner{
+      max-width:1240px; margin:0 auto;
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .brand{display:flex; align-items:center; gap:10px}
+    .mark{
+      width:34px; height:34px; border-radius:12px;
+      background: linear-gradient(180deg, var(--accent2), var(--accent));
+      box-shadow: 0 10px 24px rgba(92,82,77,.25);
+      position:relative;
+    }
+    .mark:after{
+      content:""; position:absolute; inset:8px; border-radius:8px;
+      background: linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,.05));
+    }
+    .brand h1{margin:0; font-size:15px; font-weight:1000;}
+    .brand p{margin:2px 0 0; font-size:12px; font-weight:900; color:var(--sub)}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:1px solid var(--line2);
+      background: rgba(255,255,255,.9); color: var(--ink);
+      padding: 10px 12px; border-radius: 14px;
+      font-weight:1000; font-size:13px; cursor: pointer;
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      box-shadow: 0 8px 16px rgba(42,37,35,.04); transition: 0.2s;
+    }
+    .btn:hover{ background: #fff; transform: translateY(-1px); box-shadow: 0 10px 20px rgba(42,37,35,.08); }
+    .btn.primary{
+      border-color: transparent;
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      color:#fff;
+      box-shadow: 0 14px 26px rgba(65,58,54,.24);
+    }
+
+    /* Layout */
+    .wrap{max-width:1240px; margin:0 auto; padding: 12px 12px 26px}
+    .layout{
+      display:grid; grid-template-columns: 1.12fr .88fr; gap: 14px; align-items:start;
+    }
+    @media (max-width: 980px){ .layout{grid-template-columns:1fr} }
+
+    /* Panels */
+    .panel{
+      background: var(--paper); border: 1px solid var(--line2);
+      border-radius: var(--r-xl); box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .panelHead{
+      padding: 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      border-bottom:1px solid var(--line2); background: rgba(255,255,255,.6);
+    }
+    .searchRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; flex:1;}
+    .search{
+      flex:1; min-width:240px; border:1px solid var(--line2);
+      background:#fff; border-radius: 14px; padding: 10px 12px;
+      outline:none; font-weight:900; font-size:13px; color:var(--ink);
+    }
+    .search::placeholder{ color: var(--sub); }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px; padding:8px 10px;
+      border-radius:999px; border:1px solid var(--line2);
+      background: rgba(255,255,255,.84); font-size:12px; font-weight:1000; color:var(--accent2);
+    }
+
+    /* Cards List */
+    .list{ padding: 12px; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    @media (max-width: 760px){ .list{grid-template-columns:1fr} }
+
+    .card{
+      background: linear-gradient(180deg, #fff, rgba(255,255,255,.8));
+      border:1px solid rgba(92,82,77,.08); border-radius: 22px;
+      box-shadow: 0 10px 24px rgba(42,37,35,.04); padding: 12px;
+      position:relative; overflow:hidden; cursor: pointer; transition: 0.2s;
+    }
+    .card:hover{ box-shadow: 0 14px 30px rgba(42,37,35,.08); transform: translateY(-2px); }
+    .card.selected{ outline: 3px solid rgba(92,82,77,.18); border-color: rgba(92,82,77,.25); }
+    
+    .cardTop{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:10px; }
+    .name{ font-size: 17px; font-weight:1000; margin:0; line-height: 1.3; color:var(--ink); }
+    .kpi{ text-align:left; min-width: 110px; }
+    .kpi .l{font-size:11px; font-weight:1000; color:var(--sub)}
+    .kpi .v{font-size:15px; font-weight:1000; margin-top:4px; color: var(--accent2);}
+    .kpi .v strong{font-size:17px}
+    
+    .meta{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+    .pill{
+      display:inline-flex; align-items:center; gap:6px; padding:7px 9px;
+      border-radius:999px; border:1px solid rgba(92,82,77,.06);
+      background: rgba(253,252,251,.9); font-size:11px; font-weight:1000; color:var(--ink);
+    }
+    .pill span{color: var(--sub); font-weight:900}
+
+    /* Progress bar */
+    .barWrap{margin-top:8px; display: flex; align-items: center; gap: 10px;}
+    .bar{
+      flex: 1; height: 12px; border-radius: 999px; overflow:hidden;
+      border:1px solid rgba(92,82,77,.08); background: #f0eee9; display:flex;
+    }
+    .segm{height:100%; transition: 0.5s ease-in-out;}
+    .pctText {font-size: 12px; font-weight: 1000; color: var(--accent2); min-width: 35px;}
+
+    /* Inspector (Right Side) */
+    .inspector{ position:sticky; top:84px; }
+    @media (max-width: 980px){ .inspector{position:static} }
+    .hero{
+      padding: 16px; border-bottom:1px solid var(--line2);
+      background: radial-gradient(700px 450px at 20% 0%, rgba(92,82,77,.08), transparent 62%), rgba(255,255,255,.5);
+    }
+    .hero h2{ margin:0; font-size: 20px; font-weight:1000; color: var(--ink); }
+    .hero p{ margin:6px 0 0; color: var(--sub); font-size:12px; font-weight:900; line-height: 1.5; }
+
+    /* Summary Tiles in Inspector */
+    .big{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 12px; }
+    .tile{ border:1px solid var(--line2); background: rgba(255,255,255,.9); border-radius: 18px; padding: 12px; }
+    .tile.full { grid-column: span 2; }
+    .tile .t{font-size:12px; font-weight:1000; color:var(--sub)}
+    .tile .v{ margin-top:8px; font-size: 22px; font-weight:1000; color: var(--ink); }
+    .tile.full .v { font-size: 28px; color: var(--accent2); }
+    .tile .s{margin-top:8px; font-size:11px; font-weight:900; color:var(--sub);}
+
+    /* Funds Grid (الصناديق) */
+    .fundGrid{ display:grid; grid-template-columns: 1fr; gap: 10px; padding: 12px; }
+    .fundBox{
+      border:1px solid rgba(92,82,77,.08); background: #ffffff;
+      border-radius: 18px; padding: 14px; position:relative; overflow:hidden;
+      box-shadow: 0 6px 16px rgba(42,37,35,.03);
+    }
+    .fundBox:before{ content:""; position:absolute; inset:0 0 auto 0; height:5px; background: var(--stageColor, var(--s1)); }
+    .fundBox .row{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; }
+    .fundBox .row b{font-size:14px; font-weight:1000; color: var(--ink);}
+    .fundBox .row span{font-size:11px; font-weight:1000; color:#fff; background:var(--accent2); padding: 4px 8px; border-radius: 8px;}
+    
+    .fundDetails { display: flex; justify-content: space-between; align-items: flex-end;}
+    .fundDetails .lbl{font-size:11px; font-weight:1000; color:var(--sub); margin-bottom:4px}
+    .fundDetails .amt{ font-size: 20px; font-weight:1000; color: var(--ink); }
+    .fundDetails .amt .cur{font-size:12px; font-weight:1000; color:var(--sub); margin-right:4px}
+    
+    .fundBarWrap { margin-top: 12px; }
+    .fundBarWrap .fundBar { height: 6px; background: #f0eee9; border-radius: 999px; overflow: hidden; }
+    .fundBarWrap .fundSegm { height: 100%; background: var(--stageColor); border-radius: 999px; }
+    .fundBarWrap .fundMeta { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; font-weight: 900; color: var(--sub); }
+  
+  
+  
+@media print {
+    .wrap { padding: 0; }
+    .layout { grid-template-columns: 1fr; }
+    .panel .panelHead,.actions { display: none; }
+    .inspector { position: static; top: auto; page-break-before: always; }
+    body { background: #fff; }
+    .panel { box-shadow: none; border: none; }
+    .fundBox { page-break-inside: avoid; }
+    .card { page-break-inside: avoid; }
+    .tile { page-break-inside: avoid; }
+}
+
+
+  
+  
+  
+  
+  </style>
+</head>
+<body>
+
+  <header class="top">
+    <div class="topInner">
+      <div class="brand">
+        <div class="mark"></div>
+        <div>
+          <h1>لوحة المحافظ الاستثمارية</h1>
+          <p>عرض مركزي للمحافظ، المستهدفات، والصناديق التابعة</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary refresh">تحديث البيانات</button>
+        <button class="btn pdf">تصدير التقرير PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="layout">
+      
+      <div class="panel">
+        <div class="panelHead">
+          <div class="searchRow">
+            <input class="search" placeholder="ابحث باسم المحفظة أو المجمع..." />
+            <span class="chip" id="portfolioCount">0 محفظة</span>
+          </div>
+        </div>
+        
+        <div class="list" id="portfolioList">
+          </div>
+      </div>
+
+      <div class="panel inspector" id="inspectorPanel">
+        </div>
+
+    </section>
+  </main>
+
+  <script>
+    document.querySelector(".refresh").addEventListener("click", function() {
+        location.reload();
+    });
+
+    document.querySelector(".pdf").addEventListener("click", function() {
+        window.print();
+    });
+    // === 1. البيانات الوهمية للمحافظ والصناديق التابعة لها ===
+    const portfolios = [
+      {
+        id: 1,
+        name: "محفظة مجمع سعيد بن زيد",
+        overallTarget: 2500000,
+        phaseTarget: 500000,
+        collectedTotal: 650000,
+        description: "تهدف المحفظة إلى بناء أصول استثمارية عقارية وصناديق أسهم لضمان استدامة موارد المجمع التشغيلية ضمن معايير منخفضة المخاطر.",
+        funds: [
+          { name: "صندوق الوقف العقاري",  target: 1500000, collected: 1500000, color: "var(--s1)" },
+          { name: "صندوق الأسهم القيادية",  target: 700000, collected: 150000, color: "var(--s2)" },
+          { name: "صندوق الصكوك السيادية",target: 300000, collected: 100000, color: "var(--s3)" }
+        ]
+      },
+      {
+        id: 2,
+        name: "محفظة مجمع أبي بن كعب",
+        overallTarget: 1800000,
+        phaseTarget: 400000,
+        collectedTotal: 810000,
+        description: "محفظة مخصصة لدعم البرامج التعليمية وكفالة المعلمين عبر صناديق استثمارية ذات طابع آمن وعوائد مستقرة.",
+        funds: [
+        //   { name: "صندوق الإنماء الوقفي", returnRate: "7%", target: 1000000, collected: 600000, color: "var(--s1)" },
+        //   { name: "صندوق المرابحة", returnRate: "4%", target: 800000, collected: 210000, color: "var(--s5)" }
+        ]
+      },
+      {
+        id: 3,
+        name: "محفظة مجمع عمر بن الخطاب",
+        overallTarget: 3000000,
+        phaseTarget: 1000000,
+        collectedTotal: 450000,
+        description: "المحفظة الاستراتيجية الكبرى للمجمع، تركز على الاستحواذات العقارية المدرة للدخل.",
+        funds: [
+        //   { name: "صندوق الاستحواذ العقاري", returnRate: "9%", target: 2000000, collected: 250000, color: "var(--s4)" },
+        //   { name: "صندوق الريت (REITs)", returnRate: "6%", target: 1000000, collected: 200000, color: "var(--s3)" }
+        ]
+      },
+      {
+        id: 4,
+        name: "محفظة مجمع أسامة بن زيد",
+        overallTarget: 1200000,
+        phaseTarget: 300000,
+        collectedTotal: 1100000,
+        description: "محفظة منجزة تقريباً، تعتمد على عوائد الأسهم المطروحة للاكتتاب العام وذات النمو المتسارع.",
+        funds: [
+        //   { name: "صندوق الاكتتابات العامة", returnRate: "15%", target: 1200000, collected: 1100000, color: "var(--s2)" }
+        ]
+      }
+    ];
+
+    // === 2. دوال مساعدة للتنسيق ===
+    const formatMoney = (num) => Number(num).toLocaleString("ar-SA");
+    const calcPct = (part, total) => total > 0 ? Math.min(100, Math.round((part / total) * 100)) : 0;
+
+    // === 3. رسم قائمة المحافظ (الجانب الأيمن) ===
+    function renderPortfolios() {
+      const listContainer = document.getElementById('portfolioList');
+      document.getElementById('portfolioCount').textContent = `${portfolios.length} محافظ`;
+      listContainer.innerHTML = '';
+
+      portfolios.forEach((port, index) => {
+        const achivementPct = calcPct(port.collectedTotal, port.overallTarget);
+        
+        const cardEl = document.createElement('div');
+        // جعل أول محفظة مختارة افتراضياً
+        cardEl.className = `card ${index === 0 ? 'selected' : ''}`;
+        cardEl.id = `port-${port.id}`;
+        
+        cardEl.onclick = () => {
+          document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+          cardEl.classList.add('selected');
+          renderInspector(port);
+        };
+
+        cardEl.innerHTML = `
+          <div class="cardTop">
+            <h3 class="name">${port.name}</h3>
+            <div class="kpi">
+              <div class="l">المستهدف الكلي</div>
+              <div class="v"><strong>${formatMoney(port.overallTarget)}</strong></div>
+            </div>
+          </div>
+          <div class="meta">
+            <span class="pill"><span>المجموع</span> ${formatMoney(port.collectedTotal)} ﷼</span>
+            <span class="pill"><span>هدف المرحلة</span> ${formatMoney(port.phaseTarget)} ﷼</span>
+          </div>
+          <div class="barWrap">
+            <div class="bar">
+              <div class="segm" style="width:${achivementPct}%; background:var(--accent)"></div>
+            </div>
+            <div class="pctText">${achivementPct}%</div>
+          </div>
+        `;
+        listContainer.appendChild(cardEl);
+      });
+    }
+
+    // === 4. رسم تفاصيل المحفظة والصناديق (الجانب الأيسر) ===
+    function renderInspector(port) {
+      const inspector = document.getElementById('inspectorPanel');
+      const achivementPct = calcPct(port.collectedTotal, port.overallTarget);
+      const remaining = Math.max(0, port.overallTarget - port.collectedTotal);
+
+      // بناء HTML الصناديق
+      let fundsHtml = '';
+      if(port.funds && port.funds.length > 0) {
+        port.funds.forEach(fund => {
+          const fundPct = calcPct(fund.collected, fund.target);
+          fundsHtml += `
+            <div class="fundBox" style="--stageColor:${fund.color}">
+              <div class="row">
+                <b>${fund.name}</b>
+                <span>${fund.collected>=fund.target ? "مكتمل" : "غير مكتمل"}</span>
+              </div>
+              <div class="fundDetails">
+                <div>
+                  <div class="lbl">إجمالي المجموع</div>
+                  <div class="amt">${formatMoney(fund.collected)}<span class="cur">﷼</span></div>
+                </div>
+                <div style="text-align: left;">
+                  <div class="lbl">المستهدف</div>
+                  <div class="amt" style="font-size:16px;">${formatMoney(fund.target)}<span class="cur">﷼</span></div>
+                </div>
+              </div>
+              <div class="fundBarWrap">
+                <div class="fundBar">
+                  <div class="fundSegm" style="width: ${fundPct}%;"></div>
+                </div>
+                <div class="fundMeta">
+                  <span>نسبة التغطية للصندوق</span>
+                  <span style="color:var(--ink)">${fundPct}%</span>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        fundsHtml = `<div style="font-size:12px; color:var(--sub); padding:10px;">لا توجد صناديق مدرجة حالياً.</div>`;
+      }
+
+      // بناء HTML اللوحة الجانبية
+      inspector.innerHTML = `
+        <div class="hero">
+          <h2>${port.name}</h2>
+          <p>${port.description}</p>
+        </div>
+
+        <div class="big">
+          <div class="tile full">
+            <div class="t">إجمالي المبلغ المجموع للمحفظة</div>
+            <div class="v">${formatMoney(port.collectedTotal)} <span style="font-size:14px; color:var(--sub)">ريال سعودي</span></div>
+            <div class="s">يمثل هذا الرقم إجمالي ما تم جمعه في جميع الصناديق التابعة للمحفظة.</div>
+          </div>
+
+          <div class="tile">
+            <div class="t">نسبة التحقيق (الكلي)</div>
+            <div class="v" style="color:var(--accent2)">${achivementPct}%</div>
+            <div class="s">من أصل ${formatMoney(port.overallTarget)} ﷼</div>
+          </div>
+
+          <div class="tile">
+            <div class="t">المتبقي للمستهدف الكلي</div>
+            <div class="v" style="color:#a55c5c">${formatMoney(remaining)}</div>
+            <div class="s">المبلغ المتبقي لإغلاق المحفظة بالكامل.</div>
+          </div>
+        </div>
+
+        <div style="padding:0 14px 14px">
+          <b style="display:flex; align-items:center; justify-content:space-between; font-size:14px; font-weight:1000; margin:15px 4px 12px; color:var(--ink)">
+            <span>الصناديق الاستثمارية المكونة للمحفظة</span>
+            <span class="chip" style="background:#fff; font-size:11px;">${port.funds.length} صناديق</span>
+          </b>
+          <div class="fundGrid">
+            ${fundsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    // === 5. التهيئة المبدئية عند تحميل الصفحة ===
+    window.onload = () => {
+      renderPortfolios();
+      if(portfolios.length > 0) {
+        renderInspector(portfolios[0]); // عرض تفاصيل أول محفظة افتراضياً
+      }
+    };
+  </script>
+</body>
+</html>

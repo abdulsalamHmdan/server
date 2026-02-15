@@ -395,6 +395,15 @@
       color: var(--text-muted);
       text-transform: uppercase;
     }
+
+    .copy-box{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      border-radius: 12px;
+      margin-top: 20px;      
+    }
   </style>
 </head>
 
@@ -484,7 +493,7 @@
           <div class="cont">
             <span class="target-label">هدف المبلغ</span>
             <span class="target-value" dir="rtl">
-              <%= payGoal%> ر.س.
+              <%= payGoal%>
             </span>
           </div>
           <span class="target-label">/ يوم</span>
@@ -525,16 +534,16 @@
     </div>
     <div style="text-align: center; margin-bottom: 15px;">
         <span class="value-label">قيمة الكوبون</span>
-        <span class="value-tag"><%= couponValue %> ر.س</span>
+        <span class="value-tag"><%= coupon.value %></span>
         
         <div class="qr-wrapper">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=<%= couponCode %>" alt="QR Code" style="display: block;" />
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=<%= coupon.code %>" alt="QR Code" style="display: block;" />
         </div>
         
-        <div class="entity-name" style="margin-top: 10px; color: #5c524d;"><%= entityName %></div>
+        <div class="entity-name" style="margin-top: 10px; color: #5c524d;"><%= coupon.from %></div>
     </div>
     <div class="copy-box" style="border: 1.5px solid #d1c4b9; background: #fff;">
-        <div class="code-value" id="couponText" style="color: #5c524d; letter-spacing: 3px;"><%= couponCode %></div>
+        <div class="code-value" id="couponText" style="color: #5c524d; letter-spacing: 3px;"><%= coupon.code %></div>
         <button class="copy-icon-btn" onclick="copyCoupon()" id="copyBtn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b6b4d" stroke-width="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -944,15 +953,14 @@
           'Content-Type': "application/json"
         }
       }).then(x => x.json()).then(x => {
-        if(x){
-          insertCoupon(x.value, x.code, x.entity)
+        if(x.valid){
+          insertCoupon(x.coupon.value, x.coupon.code, x.coupon.from)
         }else{
           alert("عذراً، لا يوجد كوبونات متاحة حالياً. استمر في جهودك المبذولة، وستكون من أوائل من يحصلون على الكوبون القادم! 🌟")
         }
       }).catch(() => {
         alert("حدث خطأ أثناء جلب الكوبون. حاول مرة أخرى لاحقاً.")
       })
-      // insertCoupon("<%= couponValue %>", "<%= couponCode %>", "<%= entityName %>")
       }
     
   }
