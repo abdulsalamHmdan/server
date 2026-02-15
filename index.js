@@ -28,7 +28,7 @@ mongoose
 app.get("/test", async (req, res) => {
 
   const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
-  res.json(data);
+  res.json(data.items);
 });
 app.get("/:id/sfeer", async (req, res) => {
   const date = new Date();
@@ -50,8 +50,9 @@ app.get("/:id/sfeer", async (req, res) => {
 
 app.get("/dashboard", async (req, res) => {
   // let dayData = await Day.findOne({ date: 1 });
+    const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
 
-  res.render("aaa");
+  res.render("aaa", data );
 });
 
 app.get("/:id/boxes", async (req, res) => {

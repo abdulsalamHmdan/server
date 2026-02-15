@@ -275,12 +275,12 @@
         window.print();
     });
     // === 1. البيانات الوهمية للمحافظ والصناديق التابعة لها ===
-    const portfolios = [
+    const staticData = [
       {
         id: 1,
         name: "محفظة مجمع سعيد بن زيد",
         overallTarget: 2500000,
-        phaseTarget: 500000,
+        // phaseTarget: 0,
         collectedTotal: 650000,
         description: "تهدف المحفظة إلى بناء أصول استثمارية عقارية وصناديق أسهم لضمان استدامة موارد المجمع التشغيلية ضمن معايير منخفضة المخاطر.",
         funds: [
@@ -327,11 +327,11 @@
     ];
 
     // === 2. دوال مساعدة للتنسيق ===
-    const formatMoney = (num) => Number(num).toLocaleString("ar-SA");
+    const formatMoney = (num) => Number(num).toLocaleString("en-us");
     const calcPct = (part, total) => total > 0 ? Math.min(100, Math.round((part / total) * 100)) : 0;
 
     // === 3. رسم قائمة المحافظ (الجانب الأيمن) ===
-    function renderPortfolios() {
+    function renderPortfolios(portfolios) {
       const listContainer = document.getElementById('portfolioList');
       document.getElementById('portfolioCount').textContent = `${portfolios.length} محافظ`;
       listContainer.innerHTML = '';
@@ -456,12 +456,39 @@
     }
 
     // === 5. التهيئة المبدئية عند تحميل الصفحة ===
-    window.onload = () => {
-      renderPortfolios();
-      if(portfolios.length > 0) {
-        renderInspector(portfolios[0]); // عرض تفاصيل أول محفظة افتراضياً
+    // window.onload = () => {
+    //   renderPortfolios(staticData);
+    //   if(staticData.length > 0) {
+    //     renderInspector(staticData[0]); // عرض تفاصيل أول محفظة افتراضياً
+    //   }
+    // };
+
+    info = [
+      {pk:1,  overallTarget:1000000, phaseTarget:200000},
+      {pk:2,  overallTarget:1500000, phaseTarget:320000},
+      {pk:3,  overallTarget:1200000, phaseTarget:300000},
+    ]
+
+
+    fetch('/test')
+      .then(res => res.json())
+      .then(data => {
+        data = data.filter(item => info.find(i => i.pk == item.pk)).map((item, index) => ({
+          id: item.pk,
+          name: item.name,
+          overallTarget: info.find(i => i.pk == item.pk)?.overallTarget || 0,
+          phaseTarget: info.find(i => i.pk == item.pk)?.phaseTarget || 0,
+          collectedTotal: item.avg_ototal || 500000,
+          description: item.description || "وصف افتراضي للمحفظة.",
+          funds: item.funds || []
+        })).sort((a,b) => b.collectedTotal - a.collectedTotal); // ترتيب المحافظ حسب المستهدف الكلي
+        renderPortfolios(data); // إذا كانت البيانات متوافقة مع الهيكل المتوقع
+        if(data.length > 0) {
+        // renderInspector(data[0]); // عرض تفاصيل أول محفظة افتراضياً
       }
-    };
+     
+      })
+      .catch(err => console.error("خطأ في جلب البيانات:", err));
   </script>
 </body>
 </html>
