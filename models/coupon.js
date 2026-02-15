@@ -22,7 +22,7 @@ const couponSchema = new mongoose.Schema({
     default: null,
   },
   ExchangeDate: {
-    type: String,
+    type: Date,
     default: null,
   },
   status: {

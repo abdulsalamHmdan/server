@@ -396,13 +396,19 @@
       text-transform: uppercase;
     }
 
-    .copy-box{
+    .copy-box {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 10px 15px;
+      justify-content: center;
+      padding: 15px 15px;
       border-radius: 12px;
-      margin-top: 20px;      
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .copy-icon-btn {
+      position: absolute;
+      left: 10px;
     }
   </style>
 </head>
@@ -523,102 +529,110 @@
       </p>
     </div>
     <% if (coupon) { %>
-          <div class="card coupon" dir="rtl">
-    <div style="text-align: center;">
-        <div class="discount-badge">خصم خاص لك</div>
-    </div>
-
-    <div class="thanks-header">
-        <h2 class="thanks-title">شكراً لكونك جزءاً من الأثر! 🌟</h2>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">تقديراً لجهودك المبذولة، إليك هدية بسيطة</p>
-    </div>
-    <div style="text-align: center; margin-bottom: 15px;">
-        <span class="value-label">قيمة الكوبون</span>
-        <span class="value-tag"><%= coupon.value %></span>
-        
-        <div class="qr-wrapper">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=<%= coupon.code %>" alt="QR Code" style="display: block;" />
+      <div class="card coupon" dir="rtl">
+        <div style="text-align: center;">
+          <div class="discount-badge">خصم خاص لك</div>
         </div>
-        
-        <div class="entity-name" style="margin-top: 10px; color: #5c524d;"><%= coupon.from %></div>
-    </div>
-    <div class="copy-box" style="border: 1.5px solid #d1c4b9; background: #fff;">
-        <div class="code-value" id="couponText" style="color: #5c524d; letter-spacing: 3px;"><%= coupon.code %></div>
-        <button class="copy-icon-btn" onclick="copyCoupon()" id="copyBtn">
+
+        <div class="thanks-header">
+          <h2 class="thanks-title">شكراً لكونك جزءاً من الأثر! 🌟</h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">تقديراً لجهودك المبذولة، إليك هدية بسيطة
+          </p>
+        </div>
+        <div style="text-align: center; margin-bottom: 15px;">
+          <span class="value-label">قيمة الكوبون</span>
+          <span class="value-tag">
+            <%= coupon.value %>
+          </span>
+
+          <div class="qr-wrapper">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=<%= coupon.code %>" alt="QR Code"
+              style="display: block;" />
+          </div>
+
+          <div class="entity-name" style="margin-top: 10px; color: #5c524d;">
+            <%= coupon.from %>
+          </div>
+        </div>
+        <div class="copy-box" style="border: 1.5px solid #d1c4b9; background: #fff;">
+          <div class="code-value" id="couponText" style="color: #5c524d; letter-spacing: 3px;">
+            <%= coupon.code %>
+          </div>
+          <button class="copy-icon-btn" onclick="copyCoupon()" id="copyBtn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b6b4d" stroke-width="2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
             </svg>
-        </button>
-    </div>
-    <p class="footer-note" style="margin-top: 12px;">ينتهي تاريخ صلاحية هذا الكوبون قريباً، بادر باستخدامه!</p>
+          </button>
+        </div>
+        <p class="footer-note" style="margin-top: 12px;">ينتهي تاريخ صلاحية هذا الكوبون قريباً، بادر باستخدامه!</p>
 
 
-  </div>
+      </div>
       <%}%>
 
 
-    <div class="card ranking">
-      <div class="card-title">
-        <div class="card-number">004</div>
-        <div class="cont">
-          <h2>ترتيبك بين السفراء</h2>
-          <p>آخر تحديث : <span id="refreshTime" style="color: #3182ce;">الان</span></p>
-        </div>
-      </div>
-      <div class="order-grid">
+        <div class="card ranking">
+          <div class="card-title">
+            <div class="card-number">004</div>
+            <div class="cont">
+              <h2>ترتيبك بين السفراء</h2>
+              <p>آخر تحديث : <span id="refreshTime" style="color: #3182ce;">الان</span></p>
+            </div>
+          </div>
+          <div class="order-grid">
 
-        <div class="order-item">
-          <span class="order-label">ترتيبك على السفراء</span>
-          <span class="order-value" dir="rtl">
-            <span class="loader"></span>
-          </span>
-        </div>
+            <div class="order-item">
+              <span class="order-label">ترتيبك على السفراء</span>
+              <span class="order-value" dir="rtl">
+                <span class="loader"></span>
+              </span>
+            </div>
 
-        <div class="order-item">
-          <span class="order-label">ترتيبك على سفراء فرعك</span>
-          <span class="order-value" dir="rtl">
-            <span class="loader"></span>
-          </span>
-        </div>
+            <div class="order-item">
+              <span class="order-label">ترتيبك على سفراء فرعك</span>
+              <span class="order-value" dir="rtl">
+                <span class="loader"></span>
+              </span>
+            </div>
 
-        <div class="order-item">
-          <span class="order-label">ترتيب فرعك على الفروع</span>
-          <span class="order-value" dir="rtl">
-            <span class="loader"></span>
-          </span>
-        </div>
+            <div class="order-item">
+              <span class="order-label">ترتيب فرعك على الفروع</span>
+              <span class="order-value" dir="rtl">
+                <span class="loader"></span>
+              </span>
+            </div>
 
-      </div>
-      <button class="btn btn-primary" id="refreshR">تحديث الترتيب</button>
-      <p class="footer-note">
-        <!-- ملاحظة: هذا التتبع محلي على الجهاز (بدون سيرفر). لو تبي التتبع مركزي
+          </div>
+          <button class="btn btn-primary" id="refreshR">تحديث الترتيب</button>
+          <p class="footer-note">
+            <!-- ملاحظة: هذا التتبع محلي على الجهاز (بدون سيرفر). لو تبي التتبع مركزي
         لكل السفراء نربطه بملف CSV/Google Sheet/Netlify Function. -->
-      </p>
-    </div>
-
-
-    <div class="card boxes">
-
-      <div class="card-title">
-        <div class="card-number">005</div>
-
-        <div class="cont">
-          <h2>الصناديق السهمية</h2>
-          <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
+          </p>
         </div>
-      </div>
-
-      <div class="empty-state">
-        <p style="color: #000000; font-size: 1.5rem">الصناديق السهمية</p>
-      </div>
-      <button class="btn btn-primary" onclick="boxesAll()">عرض جميع الصناديق</button>
-      <button class="btn btn-outline" onclick="boxesToday()">عرض صناديق اليوم</button>
-    </div>
 
 
+        <div class="card boxes">
 
-    <button class="btn btn-outline btn-logout">تسجيل خروج</button>
+          <div class="card-title">
+            <div class="card-number">005</div>
+
+            <div class="cont">
+              <h2>الصناديق السهمية</h2>
+              <p>متابعة إنجاز صناديقك من روابط donate.utq.org.sa</p>
+            </div>
+          </div>
+
+          <div class="empty-state">
+            <p style="color: #000000; font-size: 1.5rem">الصناديق السهمية</p>
+          </div>
+          <button class="btn btn-primary" onclick="boxesAll()">عرض جميع الصناديق</button>
+          <button class="btn btn-outline" onclick="boxesToday()">عرض صناديق اليوم</button>
+        </div>
+
+
+
+        <button class="btn btn-outline btn-logout">تسجيل خروج</button>
   </div>
 </body>
 
@@ -946,29 +960,29 @@
     if (document.querySelector("#couponText")) {
       document.querySelector(".card.coupon").scrollIntoView({ behavior: "smooth" });
       return;
-    }else{
+    } else {
       fetch("giveCoupon", {
         method: "GET",
         headers: {
           'Content-Type': "application/json"
         }
       }).then(x => x.json()).then(x => {
-        if(x.valid){
+        if (x.valid) {
           insertCoupon(x.coupon.value, x.coupon.code, x.coupon.from)
-        }else{
+        } else {
           alert("عذراً، لا يوجد كوبونات متاحة حالياً. استمر في جهودك المبذولة، وستكون من أوائل من يحصلون على الكوبون القادم! 🌟")
         }
       }).catch(() => {
         alert("حدث خطأ أثناء جلب الكوبون. حاول مرة أخرى لاحقاً.")
       })
-      }
-    
+    }
+
   }
 
 
   function insertCoupon(couponValue, couponCode, entityName) {
     const newCard = document.createElement("div");
-      newCard.innerHTML = `
+    newCard.innerHTML = `
     <div style="text-align: center;">
         <div class="discount-badge">خصم خاص لك</div>
     </div>
@@ -998,12 +1012,12 @@
     </div>
     <p class="footer-note" style="margin-top: 12px;">ينتهي تاريخ صلاحية هذا الكوبون قريباً، بادر باستخدامه!</p>      
       `;
-      newCard.className = "card coupon";
-      newCard.dir="rtl";
-      document.querySelector(".container").insertBefore(newCard, document.querySelector(".card.ranking"));
-      newCard.scrollIntoView({ behavior: "smooth" });
-    
-    
+    newCard.className = "card coupon";
+    newCard.dir = "rtl";
+    document.querySelector(".container").insertBefore(newCard, document.querySelector(".card.ranking"));
+    newCard.scrollIntoView({ behavior: "smooth" });
+
+
   }
 
 </script>

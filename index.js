@@ -12,6 +12,7 @@ const Coupon = require("./models/coupon");
 const Day = require("./models/Day");
 const { name } = require("ejs");
 const e = require("express");
+const axios = require("axios");
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
@@ -23,13 +24,20 @@ mongoose
   .catch((err) => console.log("فشل الاتصال:", err));
 
 // المسارات الأساسية
+
+app.get("/test", async (req, res) => {
+
+  const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
+  res.json(data);
+});
 app.get("/:id/sfeer", async (req, res) => {
+  const date = new Date();
   const user = await User.findById(req.params.id);
   if (!user) {
     res.send("لا يوجد سفير بهذا الرقم");
     return;
   }
-  const coupon = await Coupon.findOne({ user: user, status: 1 });
+  const coupon = await Coupon.findOne({ user: user, status: 1,ExchangeDate: { $eq: new Date(date.getFullYear(), date.getMonth(), date.getDate()) } });
   let dayData = await Day.findOne({ date: 1 });
   const object = Object.create(dayData);
   object["name"] = user.name;
@@ -38,6 +46,12 @@ app.get("/:id/sfeer", async (req, res) => {
   object["coupon"] = coupon;
 
   res.render("sfeer", object);
+});
+
+app.get("/dashboard", async (req, res) => {
+  // let dayData = await Day.findOne({ date: 1 });
+
+  res.render("aaa");
 });
 
 app.get("/:id/boxes", async (req, res) => {
@@ -68,7 +82,6 @@ app.get("/:id/goals", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  // User.findOne({phone:"0507499583"})
   res.render("index", { id: req.params.id });
 });
 app.get("/days", (req, res) => {
@@ -107,10 +120,6 @@ app.post("/save", async (req, res) => {
   );
 
   res.redirect(`/admin/${date}?success=true`);
-});
-
-app.get("/coupons/add", (req, res) => {
-  res.render("add-coupons");
 });
 
 app.get("/safer/add", (req, res) => {
@@ -172,6 +181,9 @@ app.post("/users/add-bulk", async (req, res) => {
   });
 });
 
+app.get("/coupons/add", (req, res) => {
+  res.render("add-coupons");
+});
 // 2. استقبال البيانات JSON وحفظها
 app.post("/coupons/save-bulk", async (req, res) => {
   const couponsData = req.body; // عبارة عن مصفوفة جايتنا من المتصفح
@@ -204,19 +216,29 @@ app.post("/coupons/save-bulk", async (req, res) => {
   res.json({ added, failed });
 });
 
+/*============================== */
+// APIS
+/*============================== */
+
 app.get("/:id/giveCoupon", async (req, res) => {
+  const date = new Date();
 
   const userId = req.params.id;
   let user = await User.findById(userId);
   if (!user) {
     return res.status(404).json({ error: "المستخدم غير موجود" });
   }
-  const coupon = await Coupon.findOne({ user: user._id, status: 1 });
+  const coupon = await Coupon.findOne({
+    user: user._id,
+    status: 1,
+    ExchangeDate: {
+      $gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+    },
+  });
   if (coupon) {
     res.json({
       valid: true,
       coupon: coupon,
-
     });
     return;
   }
@@ -224,13 +246,20 @@ app.get("/:id/giveCoupon", async (req, res) => {
   if (userGoalsData.boxes >= 1 && userGoalsData.payment >= 1) {
     const newCoupon = await Coupon.findOneAndUpdate(
       { status: 0 },
-      { user: user._id, status: 1 },
+      {
+        user: user._id,
+        status: 1,
+        ExchangeDate: new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate(),
+        ),
+      },
     );
     if (newCoupon) {
       res.json({
         valid: true,
         coupon: newCoupon,
-
       });
     } else {
       res.json({ valid: false, message: "لا يوجد كوبونات متاحة" });
