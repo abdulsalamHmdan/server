@@ -39,6 +39,10 @@
       --s4: #805c5c; /* عنابي مطفأ */
       --s5: #6b625b; /* رمادي دافئ */
     }
+    a{
+      color: var(--accent);
+      text-decoration: none;
+    }
 
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -169,6 +173,8 @@
     .inspector{ position:sticky; top:84px; }
     @media (max-width: 980px){ .inspector{position:static} }
     .hero{
+      display: flex;
+    justify-content: space-between;
       padding: 16px; border-bottom:1px solid var(--line2);
       background: radial-gradient(700px 450px at 20% 0%, rgba(92,82,77,.08), transparent 62%), rgba(255,255,255,.5);
     }
@@ -228,7 +234,6 @@
   </style>
 </head>
 <body>
-
   <header class="top">
     <div class="topInner">
       <div class="brand">
@@ -241,6 +246,7 @@
       <div class="actions">
         <button class="btn primary refresh">تحديث البيانات</button>
         <button class="btn pdf">تصدير التقرير PDF</button>
+        <button class="btn back">العودة إلى اللوحة الرئيسية</button>
       </div>
     </div>
   </header>
@@ -269,6 +275,9 @@
   <script>
     document.querySelector(".refresh").addEventListener("click", function() {
         location.reload();
+    });
+    document.querySelector(".back").addEventListener("click", function() {
+        location.href = "/";
     });
 
     document.querySelector(".pdf").addEventListener("click", function() {
@@ -419,8 +428,11 @@
       // بناء HTML اللوحة الجانبية
       inspector.innerHTML = `
         <div class="hero">
-          <h2>${port.name}</h2>
-          <p>${port.description}</p>
+          <div class="con">
+            <h2>${port.name}</h2>
+            <p>${port.description}</p>
+            </div>
+          <a href="/mgm3/${port.id}" class="btn primary">صفحة المجمع</a>
         </div>
 
         <div class="big">
@@ -478,16 +490,16 @@
           name: item.name,
           overallTarget: info.find(i => i.pk == item.pk)?.overallTarget || 0,
           phaseTarget: info.find(i => i.pk == item.pk)?.phaseTarget || 0,
-          collectedTotal: item.avg_ototal || 500000,
+          collectedTotal: item.total || 500000,
           description: item.description || "وصف افتراضي للمحفظة.",
           funds: item.funds || [
             { name: "صندوق افتراضي 1", target: 500000, collected: 250000, color: "var(--s1)" },
             { name: "صندوق افتراضي 2", target: 300000, collected: 150000, color: "var(--s2)" }
           ]
-        })).sort((a,b) => b.collectedTotal - a.collectedTotal); // ترتيب المحافظ حسب المستهدف الكلي
-        renderPortfolios(data); // إذا كانت البيانات متوافقة مع الهيكل المتوقع
+        })).sort((a,b) => b.collectedTotal - a.collectedTotal);
+        renderPortfolios(data); 
         if(data.length > 0) {
-        renderInspector(data[0]); // عرض تفاصيل أول محفظة افتراضياً
+        renderInspector(data[0]); 
       }
      
       })

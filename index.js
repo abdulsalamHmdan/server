@@ -50,9 +50,19 @@ app.get("/:id/sfeer", async (req, res) => {
 
 app.get("/dashboard", async (req, res) => {
   // let dayData = await Day.findOne({ date: 1 });
+    // const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
+
+  res.render("dashboard" );
+});
+app.get("/mgm3/:id", async (req, res) => {
     const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
 
-  res.render("aaa", data );
+  res.json( data.items.find(i => i.pk == req.params.id) );
+});
+app.get("/:id/mycoupons", async (req, res) => {
+  const coupons = await Coupon.find({ user: req.params.id, status: 1 });
+  res.render("mycoupons", {coupons} );
+  // res.json(coupons );
 });
 
 app.get("/:id/boxes", async (req, res) => {
@@ -223,6 +233,7 @@ app.post("/coupons/save-bulk", async (req, res) => {
 
 app.get("/:id/giveCoupon", async (req, res) => {
   const date = new Date();
+  // date.setDate(date.getDate()-8); // Subtract one day
 
   const userId = req.params.id;
   let user = await User.findById(userId);
@@ -233,10 +244,11 @@ app.get("/:id/giveCoupon", async (req, res) => {
     user: user._id,
     status: 1,
     ExchangeDate: {
-      $gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+      $eq: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
     },
   });
   if (coupon) {
+      console.log("user");
     res.json({
       valid: true,
       coupon: coupon,

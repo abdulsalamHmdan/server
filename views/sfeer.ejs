@@ -525,6 +525,7 @@
       </div>
       <button id="refreshG" class="btn btn-primary">تحديث إنجاز اليوم</button>
       <button id="coupon" class="btn btn-outline">الحصول على الكوبون</button>
+      <a id="couponPage" style="display: block; text-decoration: none; text-align: center;" class="btn btn-outline" href="mycoupons">صفحة الكوبونات</a>
       <p class="footer-note">
       </p>
     </div>
@@ -709,7 +710,7 @@
       .catch((error) => alert("فشل نسخ الرسالة: " + error));
   });
   btnLogout.addEventListener("click", () => {
-    location.href = "/<%=id%>"
+    location.href = "/"
   });
   refreshG.addEventListener('click', () => {
     const els = document.querySelectorAll(".target-item");

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الكوبونات</title>
+    <style>
+        /* استيراد خط عربي جميل وعصري (Cairo) */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+
+/* تعريف المتغيرات للألوان لسهولة التعديل */
+:root {
+    --primary-color: #8b6b4d;      /* بني أنيق */
+    --secondary-color: #c2a383;    /* بيج دافئ */
+    --bg-color: #f4f0ec;           /* لون خلفية الصفحة */
+    --card-bg: #ffffff;            /* لون الكوبون */
+    --text-main: #4a403a;          /* لون النص الرئيسي */
+    --text-muted: #8c837d;         /* لون النص الفرعي */
+    --border-color: #d1c4b9;
+}
+
+/* تنسيقات الصفحة الأساسية */
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    margin: 0;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    color: var(--primary-color);
+    font-weight: 800;
+    margin-bottom: 2rem;
+}
+
+/* حاوية الكوبون الرئيسية */
+.card.coupon {
+    background-color: var(--card-bg);
+    width: 100%;
+    max-width: 380px;
+    border-radius: 20px;
+    padding: 0 20px 25px 20px;
+    box-shadow: 0 10px 30px rgba(139, 107, 77, 0.1);
+    position: relative;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    /* تأثير الخط المقطع في الأعلى ليعطي إيحاء التذكرة */
+    border-top: 6px dashed var(--secondary-color);
+}
+
+.card.coupon:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(139, 107, 77, 0.15);
+}
+
+/* شارة الخصم (الباج) */
+.discount-badge {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 6px 20px;
+    border-radius: 30px;
+    display: inline-block;
+    /* سحب الشارة للأعلى لتكون على حافة الكوبون */
+    transform: translateY(-15px);
+    box-shadow: 0 4px 15px rgba(139, 107, 77, 0.3);
+    letter-spacing: 0.5px;
+}
+
+/* ترويسة الشكر */
+.thanks-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.thanks-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin: 10px 0 5px 0;
+}
+
+/* قسم القيمة */
+.value-label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
+
+.value-tag {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.05);
+}
+
+/* حاوية رمز الاستجابة السريعة (QR Code) */
+.qr-wrapper {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 16px;
+    border: 2px dashed var(--border-color);
+    display: inline-block;
+    margin: 0 auto;
+    transition: transform 0.3s ease;
+}
+
+.qr-wrapper:hover {
+    transform: scale(1.05);
+}
+
+.qr-wrapper img {
+    border-radius: 8px;
+}
+
+/* اسم الجهة المانحة للكوبون */
+.entity-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+/* صندوق نسخ الكود */
+.copy-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.copy-box:hover {
+    border-color: var(--primary-color) !important;
+}
+
+.code-value {
+    font-weight: 800;
+    font-size: 1.1rem;
+    font-family: monospace; /* لجعل شكل الكود مميزاً */
+}
+
+/* زر النسخ */
+.copy-icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copy-icon-btn:hover {
+    background-color: rgba(139, 107, 77, 0.1);
+    transform: scale(1.1);
+}
+
+.copy-icon-btn:active {
+    transform: scale(0.95);
+}
+
+/* الملاحظة السفلية */
+.footer-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    font-weight: 600;
+}
+
+/* تصميم متجاوب لترتيب الكوبونات إذا كان هناك أكثر من واحد */
+@media (min-width: 768px) {
+    body {
+        /* إذا أردت عرض الكوبونات بجانب بعضها في الشاشات الكبيرة */
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        justify-items: center;
+        align-content: start;
+    }
+    h1 {
+        grid-column: 1 / -1;
+        text-align: center;
+    }
+}
+    </style>
+</head>
+<body>
+    <% if (coupons && coupons.length > 0) { %>
+        <h1>الكوبونات</h1>
+        <% coupons.forEach(coupon => { %>
+      <div class="card coupon" dir="rtl">
+        <div style="text-align: center;">
+          <div class="discount-badge">خصم خاص لك</div>
+        </div>
+        <div class="thanks-header">
+          <h2 class="thanks-title"><%= coupon.ExchangeDate.toLocaleDateString('ar-SA') %></h2>
+          </p>
+        </div>
+        <div style="text-align: center; margin-bottom: 15px;">
+          <span class="value-label">قيمة الكوبون</span>
+          <span class="value-tag">
+            <%= coupon.value %>
+          </span>
+
+          <div class="qr-wrapper">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=<%= coupon.code %>" alt="QR Code"
+              style="display: block;" />
+          </div>
+
+          <div class="entity-name" style="margin-top: 10px; color: #5c524d;">
+            <%= coupon.from %>
+          </div>
+        </div>
+        <div class="copy-box" style="border: 1.5px solid #d1c4b9; background: #fff;">
+          <div class="code-value" id="couponText" style="color: #5c524d; letter-spacing: 3px;">
+            <%= coupon.code %>
+          </div>
+          <button class="copy-icon-btn" onclick="copyCoupon()" id="copyBtn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b6b4d" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
+        <p class="footer-note" style="margin-top: 12px;">ينتهي تاريخ صلاحية هذا الكوبون قريباً، بادر باستخدامه!</p>
+
+
+      </div>
+        <% }); %>
+    <% } else { %>
+        <h1>لا توجد كوبونات</h1>
+    <% } %>
+</body>
+</html>
