@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم محفظة المجمع</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    :root {
+      --bg-color: #f4f5f7;
+      --card-bg: #ffffff;
+      --primary-btn: #5c524d;
+      --primary-light: #f5f3f1;
+      --secondary-btn: #ffffff;
+      --text-main: #2d3436;
+      --text-muted: #636e72;
+      --border-color: #edf2f7;
+      --success-color: #2e7d32;
+      --accent-color: #8b6b4d;
+    }
+
+    body {
+      background:
+        radial-gradient(900px 600px at 10% 0%, rgba(155, 217, 228, 0.35), transparent 60%),
+        radial-gradient(900px 700px at 95% 15%, rgba(68, 49, 41, 0.14), transparent 55%),
+        radial-gradient(1100px 700px at 50% 120%, rgba(0, 0, 0, 0.04), transparent 60%),
+        var(--bg-color);
+      margin: 0;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    /* حاوية لوحة التحكم */
+    .dashboard-wrapper {
+      width: 100%;
+      max-width: 1200px; /* مساحة واسعة تناسب لوحة التحكم */
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    /* رأس الصفحة */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 2px dashed #d1c4b9;
+    }
+
+    .header-titles h1 {
+      font-size: 1.8rem;
+      margin: 0;
+      color: var(--primary-btn);
+    }
+
+    .header-titles p {
+      margin: 5px 0 0 0;
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* نظام الشبكة (Grid System) */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 أعمدة في الشاشات الكبيرة */
+      gap: 20px;
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .span-3 {
+      grid-column: span 3;
+    }
+
+    /* تنسيق البطاقات العامة */
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      border: 1px solid #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title h2 {
+      font-size: 1.2rem;
+      margin: 0;
+      color: var(--text-main);
+    }
+
+    /* بطاقات الإحصائيات السريعة (KPIs) */
+    .kpi-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, #ffffff 0%, #fdfbf9 100%);
+      border: 1px solid #f1ede9;
+    }
+
+    .kpi-info span {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .kpi-info strong {
+      display: block;
+      font-size: 1.8rem;
+      color: var(--primary-btn);
+    }
+
+    .kpi-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--primary-light);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--accent-color);
+    }
+
+    /* شبكة المستهدفات (للبطاقات الكبيرة) */
+    .target-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .target-item {
+      background: #fdfdfd;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: right;
+    }
+
+    .target-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .target-value {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-top: 5px;
+      display: block;
+      color: var(--primary-btn);
+    }
+
+    .target-value.success {
+      color: var(--success-color);
+    }
+
+    /* شريط التقدم */
+    .progress-wrapper {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--text-muted);
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 12px;
+      background-color: var(--border-color);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--primary-btn);
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+
+    /* القوائم الجداولية */
+    .list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+      max-height: 300px;
+      padding-left: 5px; /* لمساحة السكرول */
+    }
+
+    /* لشبكة الصناديق لتعبئة المساحة العريضة */
+    .grid-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      background: #fcfcfc;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      transition: background 0.2s;
+    }
+
+    .list-item:hover {
+      background: #f4f5f7;
+    }
+
+    .item-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .item-number {
+      background: var(--primary-btn);
+      color: white;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    .item-name {
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    .item-amount {
+      font-size: 0.95rem;
+      color: var(--success-color);
+      font-weight: bold;
+    }
+
+    /* التجاوب مع الشاشات (Responsive Design) */
+    @media (max-width: 992px) {
+      .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .span-2 {
+        grid-column: span 2;
+      }
+      .grid-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+      .span-2, .span-3 {
+        grid-column: span 1;
+      }
+      .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+    }
+
+    /* تخصيص سكرول القوائم */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #d1c4b9; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary-btn); }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-wrapper">
+    
+    <div class="header">
+      <div class="header-titles">
+        <h1>لوحة تحكم محفظة المجمع</h1>
+        <p>نظرة عامة على أداء الصناديق والمستهدفات</p>
+      </div>
+      </div>
+
+    <div class="grid-container">
+      
+      <div class="card kpi-card">
+        <div class="kpi-info">
+          <span>إجمالي الصناديق التابعة</span>
+          <strong>12</strong>
+        </div>
+        <div class="kpi-icon">📦</div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-info">
+          <span>مستهدف الصناديق اليومي</span>
+          <strong>5</strong>
+        </div>
+        <div class="kpi-icon">🎯</div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-info">
+          <span>مستهدف التبرعات اليومي</span>
+          <strong style="color: var(--success-color);">5,000 ر.س</strong>
+        </div>
+        <div class="kpi-icon">💸</div>
+      </div>
+
+      <div class="card span-2">
+        <div class="card-title">
+          <h2>المستهدف الكلي للمحفظة</h2>
+        </div>
+        <div class="target-grid">
+          <div class="target-item">
+            <span class="target-label">إجمالي ما تم جمعه</span>
+            <span class="target-value success">45,000 ر.س</span> 
+          </div>
+          <div class="target-item">
+            <span class="target-label">المستهدف الكلي</span>
+            <span class="target-value">100,000 ر.س</span>
+          </div>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-header">
+            <span>نسبة المستهدف الكلي</span>
+            <span>45%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 45%;"></div>
+          </div>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-header">
+            <span>نسبة المستهدف المرحلي</span>
+            <span>45%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 45%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>المستهدف المرحلي</h2>
+        </div>
+        <div class="target-grid" style="grid-template-columns: 1fr;"> <div class="target-item">
+            <span class="target-label">تم جمعه (المرحلة الحالية)</span>
+            <span class="target-value success">20,000 ر.س</span>
+          </div>
+          <div class="target-item">
+            <span class="target-label">مستهدف المرحلة</span>
+            <span class="target-value">25,000 ر.س</span>
+          </div>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-header">
+            <span>نسبة الإنجاز</span>
+            <span>80%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 80%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>أبرز السفراء</h2>
+        </div>
+        <div id="sfraa" class="list-container">
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-number">1</span>
+              <span class="item-name">أحمد عبدالله</span>
+            </div>
+            <span class="item-amount">15,000 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-number">1</span>
+              <span class="item-name">أحمد عبدالله</span>
+            </div>
+            <span class="item-amount">15,000 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-number">2</span>
+              <span class="item-name">محمد خالد</span>
+            </div>
+            <span class="item-amount">12,500 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-number">3</span>
+              <span class="item-name">مؤسسة الأمل</span>
+            </div>
+            <span class="item-amount">8,000 ر.س</span>
+          </div>
+           <div class="list-item">
+            <div class="item-info">
+              <span class="item-number">4</span>
+              <span class="item-name">فاعل خير</span>
+            </div>
+            <span class="item-amount">4,500 ر.س</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card span-2">
+        <div class="card-title">
+          <h2>قائمة الصناديق التابعة</h2>
+        </div>
+        <div id="boxes" class="list-container grid-list">
+          
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق كفالة الأيتام</span>
+            </div>
+            <span class="item-amount">20,000 ر.س</span>
+          </div>
+
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق سقيا الماء</span>
+            </div>
+            <span class="item-amount">15,000 ر.س</span>
+          </div>
+
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق بناء المساجد</span>
+            </div>
+            <span class="item-amount">10,000 ر.س</span>
+          </div>
+
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق إفطار الصائم</span>
+            </div>
+            <span class="item-amount">0 ر.س</span>
+          </div>
+
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق كسوة العيد</span>
+            </div>
+            <span class="item-amount">0 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق كسوة العيد</span>
+            </div>
+            <span class="item-amount">0 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق كسوة العيد</span>
+            </div>
+            <span class="item-amount">0 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق كسوة العيد</span>
+            </div>
+            <span class="item-amount">0 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق كسوة العيد</span>
+            </div>
+            <span class="item-amount">0 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق كسوة العيد</span>
+            </div>
+            <span class="item-amount">0 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق كسوة العيد</span>
+            </div>
+            <span class="item-amount">0 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق كسوة العيد</span>
+            </div>
+            <span class="item-amount">0 ر.س</span>
+          </div>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name">صندوق كسوة العيد</span>
+            </div>
+            <span class="item-amount">0 ر.س</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+<script>
+  /**
+   * دالة التمرير التلقائي (للأعلى والأسفل)
+   * @param {string} elementId - الـ ID الخاص بالقائمة
+   * @param {number} speed - سرعة التمرير (رقم صغير مثل 0.5 أو 1)
+   */
+
+
+  function smoothAutoScroll(elementId, speed = 0.5) {
+    const container = document.getElementById(elementId);
+    if (!container) return;
+
+    let isPaused = false;
+    let direction = 1; // 1 للنزول، -1 للصعود
+    let currentScroll = 0; // تتبع موقع السكرول الدقيق
+    let pauseTimer = null; // مؤقت للإيقاف المؤقت
+
+    // إيقاف الحركة عند وضع الماوس على القائمة (لتسهيل القراءة)
+    container.addEventListener('mouseenter', () => isPaused = true);
+    // استئناف الحركة عند إبعاد الماوس
+    container.addEventListener('mouseleave', () => isPaused = false);
+
+    function pauseForSeconds(seconds) {
+      isPaused = true;
+      clearTimeout(pauseTimer);
+      pauseTimer = setTimeout(() => {
+        isPaused = false;
+      }, seconds * 1000);
+    }
+
+    async function scrollStep() {
+      if (!isPaused) {
+        // إذا وصلنا لآخر القائمة بالأسفل
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight - 1) {
+          pauseForSeconds(10); // إيقاف 3 ثواني
+          direction = -1; // اعكس الاتجاه للأعلى
+        } 
+        // إذا وصلنا لأول القائمة بالأعلى
+        else if (container.scrollTop <= 0) {
+          pauseForSeconds(10); // إيقاف 3 ثواني
+          direction = 1; // اعكس الاتجاه للأسفل
+        }
+
+        // تطبيق الحركة
+        currentScroll += (speed * direction);
+        container.scrollTop = currentScroll;
+
+        // مزامنة المتغير مع السكرول الفعلي
+        currentScroll = container.scrollTop; 
+      }
+
+      // استدعاء الدالة بشكل مستمر
+      requestAnimationFrame(scrollStep);
+    }
+
+    // بدء الحركة
+    requestAnimationFrame(scrollStep);
+  }
+
+  // تشغيل الدوال بمجرد اكتمال تحميل الصفحة
+  document.addEventListener('DOMContentLoaded', () => {
+    smoothAutoScroll('boxes', 0.5);
+    smoothAutoScroll('sfraa', 0.4);
+  });
+</script>
+</html>

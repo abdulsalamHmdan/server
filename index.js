@@ -56,8 +56,10 @@ app.get("/dashboard", async (req, res) => {
 });
 app.get("/mgm3/:id", async (req, res) => {
     const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
-
-  res.json( data.items.find(i => i.pk == req.params.id) );
+    
+    
+    res.render("mgm3", {data: data.items.find(i => i.pk == req.params.id) } );
+  // res.json( data.items.find(i => i.pk == req.params.id) );
 });
 app.get("/:id/mycoupons", async (req, res) => {
   const coupons = await Coupon.find({ user: req.params.id, status: 1 });
