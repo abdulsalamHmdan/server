@@ -480,11 +480,14 @@
           phaseTarget: info.find(i => i.pk == item.pk)?.phaseTarget || 0,
           collectedTotal: item.avg_ototal || 500000,
           description: item.description || "وصف افتراضي للمحفظة.",
-          funds: item.funds || []
+          funds: item.funds || [
+            { name: "صندوق افتراضي 1", target: 500000, collected: 250000, color: "var(--s1)" },
+            { name: "صندوق افتراضي 2", target: 300000, collected: 150000, color: "var(--s2)" }
+          ]
         })).sort((a,b) => b.collectedTotal - a.collectedTotal); // ترتيب المحافظ حسب المستهدف الكلي
         renderPortfolios(data); // إذا كانت البيانات متوافقة مع الهيكل المتوقع
         if(data.length > 0) {
-        // renderInspector(data[0]); // عرض تفاصيل أول محفظة افتراضياً
+        renderInspector(data[0]); // عرض تفاصيل أول محفظة افتراضياً
       }
      
       })
