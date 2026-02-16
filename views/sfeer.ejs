@@ -652,7 +652,7 @@
   //buttons
 
   shareBtn.addEventListener("click", async () => {
-    const imageUrl = "/img/<%= img%>";
+    const imageUrl = "<%= img%>";
     const shareText = `<%=text%>`;
     // التأكد أولاً أن المتصفح يدعم أساساً خاصية المشاركة
     if (!navigator.share) {
