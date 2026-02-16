@@ -62,7 +62,7 @@ app.get("/mgm3/:id", async (req, res) => {
   // res.json( data.items.find(i => i.pk == req.params.id) );
 });
 app.get("/:id/mycoupons", async (req, res) => {
-  const coupons = await Coupon.find({ user: req.params.id, status: 1 });
+  const coupons = await Coupon.find({ user: req.params.id, status: 1 }).populate("user");
   res.render("mycoupons", {coupons} );
   // res.json(coupons );
 });
@@ -292,6 +292,37 @@ app.use((req, res) => {
 function userGoals(id, day) {
   return { boxes: 1, payment: 1 };
 }
+
+function getRamadanDay(date) {
+  // تحويل التاريخ المدخل إلى تنسيق هجري (أم القرى)
+  const options = { day: 'numeric', month: 'long', year: 'numeric', calendar: 'islamic-uma' };
+  const hijriDate = new Intl.DateTimeFormat('en-u-ca-islamic-uma-nu-latn', options).format(date);
+  
+  // استخراج اليوم والشهر والسنة الهجرية من النص
+  const parts = hijriDate.split(' ');
+  const day = parseInt(parts[0]);
+  const month = parts[1];
+  const year = parseInt(parts[2]);
+
+  // التحقق إذا كانت السنة 1447هـ
+  if (year === 1447) {
+    if (month === 'Ramadan') {
+      return day;
+    } else if (month === 'Shaʻban') {
+      return 1; // قبل رمضان (شعبان وما قبله)
+    } else {
+      return 30; // بعد رمضان (شوال وما بعده)
+    }
+  } 
+  
+  // في حال كان التاريخ في سنوات أخرى
+  return year < 1447 ? 1 : 30;
+}
+
+// أمثلة للتجربة:
+console.log("اليوم الحالي:", getRamadanDay(new Date())); 
+// تجربة تاريخ محدد (19 فبراير 2026 يوافق 2 رمضان 1447)
+console.log("تاريخ 19 فبراير:", getRamadanDay(new Date('2026-02-19')));
 // بدء السيرفر
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
