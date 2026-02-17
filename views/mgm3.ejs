@@ -114,31 +114,37 @@
       justify-content: space-between;
       background: linear-gradient(135deg, #ffffff 0%, #fdfbf9 100%);
       border: 1px solid #f1ede9;
+      position: relative;
     }
 
-    .kpi-info span {
+    .kpi-card span {
       display: block;
       font-size: 0.9rem;
       color: var(--text-muted);
       margin-bottom: 5px;
     }
 
-    .kpi-info strong {
+    .kpi-card strong {
       display: block;
       font-size: 1.8rem;
       color: var(--primary-btn);
     }
 
     .kpi-icon {
-      width: 50px;
-      height: 50px;
+      position: absolute;
+      left: 0px;
+      top:0px;
+      width: 75px;
+      height: 75px;
+      padding: 20px;
       background: var(--primary-light);
-      border-radius: 15px;
+      border-radius: 30%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.5rem;
       color: var(--accent-color);
+      transform: scale(0.7);
     }
 
     /* شبكة المستهدفات (للبطاقات الكبيرة) */
@@ -316,27 +322,26 @@
     <div class="grid-container">
       
       <div class="card kpi-card">
-        <div class="kpi-info">
-          <span>إجمالي الصناديق التابعة</span>
-          <strong>12</strong>
-        </div>
-        <div class="kpi-icon">📦</div>
+        <span>عدد صناديق اليوم</span>
+        <strong><%=boxes?.length||0%></strong>
+        <img class="kpi-icon" src="/icons/quantity.png" width="45px" height="45px" alt="">
+      </div>
+      <div class="card kpi-card">
+        <span>مستهدف الصناديق اليومي</span>
+        <strong><%= msthdfat?.boxesGoal[position.day-1] || 0 %></strong>
+        <img class="kpi-icon" src="/icons/goal.png"  alt="">
+      </div>
+      <div class="card kpi-card">
+        <span>إجمالي تبرعات اليوم</span>
+        <strong><%= data?.total || 0 %> ر.س</strong>
+        <img class="kpi-icon" src="/icons/rial.png" width="45px" height="45px" alt="">
       </div>
 
-      <div class="card kpi-card">
-        <div class="kpi-info">
-          <span>مستهدف الصناديق اليومي</span>
-          <strong>5</strong>
-        </div>
-        <div class="kpi-icon">🎯</div>
-      </div>
 
       <div class="card kpi-card">
-        <div class="kpi-info">
-          <span>مستهدف التبرعات اليومي</span>
-          <strong style="color: var(--success-color);">5,000 ر.س</strong>
-        </div>
-        <div class="kpi-icon">💸</div>
+        <span>مستهدف التبرعات اليومي</span>
+        <strong style="color: var(--success-color);"><%= msthdfat?.dailyTarget[position.day-1] || 0 %> ر.س</strong>
+        <img class="kpi-icon" src="/icons/goal.png" width="45px" height="45px" alt="">
       </div>
 
       <div class="card span-2">
@@ -346,29 +351,29 @@
         <div class="target-grid">
           <div class="target-item">
             <span class="target-label">إجمالي ما تم جمعه</span>
-            <span class="target-value success">45,000 ر.س</span> 
+            <span class="target-value success"><%= data?.total || 0 %> ر.س</span> 
           </div>
           <div class="target-item">
             <span class="target-label">المستهدف الكلي</span>
-            <span class="target-value">100,000 ر.س</span>
+            <span class="target-value"><%= msthdfat?.bigTarget || 0 %> ر.س</span>
           </div>
         </div>
         <div class="progress-wrapper">
           <div class="progress-header">
             <span>نسبة المستهدف الكلي</span>
-            <span>45%</span>
+            <span><%= Math.round((data?.total || 0) / (msthdfat?.bigTarget || "-") * 100) || 0 %>%</span>
           </div>
           <div class="progress-container">
-            <div class="progress-bar" style="width: 45%;"></div>
+            <div class="progress-bar" style="width: <%= Math.round((data?.total || 0) / (msthdfat?.bigTarget || '-') * 100) || 0 %>%;"></div>
           </div>
         </div>
         <div class="progress-wrapper">
           <div class="progress-header">
             <span>نسبة المستهدف المرحلي</span>
-            <span>45%</span>
+            <span><%= Math.round(  (data?.total || 0) / (msthdfat?.phaseTarget[position.phase-1] || "-") * 100)%>%</span>
           </div>
           <div class="progress-container">
-            <div class="progress-bar" style="width: 45%;"></div>
+            <div class="progress-bar" style="width: <%= Math.round((data?.total || 0) / (msthdfat?.phaseTarget[position.phase-1] || '-') * 100) || 0 %>%;"></div>
           </div>
         </div>
       </div>
@@ -379,20 +384,20 @@
         </div>
         <div class="target-grid" style="grid-template-columns: 1fr;"> <div class="target-item">
             <span class="target-label">تم جمعه (المرحلة الحالية)</span>
-            <span class="target-value success">20,000 ر.س</span>
+            <span class="target-value success"><%= data?.total || 0 %> ر.س</span>
           </div>
           <div class="target-item">
             <span class="target-label">مستهدف المرحلة</span>
-            <span class="target-value">25,000 ر.س</span>
+            <span class="target-value"><%= msthdfat?.phaseTarget[position.phase-1] || "-" %> ر.س</span>
           </div>
         </div>
         <div class="progress-wrapper">
           <div class="progress-header">
             <span>نسبة الإنجاز</span>
-            <span>80%</span>
+            <span><%= Math.round(  (data?.total || 0) / (msthdfat?.phaseTarget[position.phase-1] || "-") * 100)%>%</span>
           </div>
           <div class="progress-container">
-            <div class="progress-bar" style="width: 80%;"></div>
+            <div class="progress-bar" style="width: <%= Math.round((data?.total || 0) / (msthdfat?.phaseTarget[position.phase-1] || "-") * 100) || 0 %>%;"></div>
           </div>
         </div>
       </div>

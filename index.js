@@ -1,3 +1,4 @@
+const msthdfat = require("./msthdfat.json");
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
@@ -26,8 +27,11 @@ mongoose
 // المسارات الأساسية
 
 app.get("/test", async (req, res) => {
-
-  const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
+  const data = (
+    await axios.get(
+      "https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik",
+    )
+  ).data;
   res.json(data.items);
 });
 app.get("/:id/sfeer", async (req, res) => {
@@ -37,7 +41,13 @@ app.get("/:id/sfeer", async (req, res) => {
     res.send("لا يوجد سفير بهذا الرقم");
     return;
   }
-  const coupon = await Coupon.findOne({ user: user, status: 1,ExchangeDate: { $eq: new Date(date.getFullYear(), date.getMonth(), date.getDate()) } });
+  const coupon = await Coupon.findOne({
+    user: user,
+    status: 1,
+    ExchangeDate: {
+      $eq: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+    },
+  });
   let dayData = await Day.findOne({ date: 1 });
   const object = Object.create(dayData);
   object["name"] = user.name;
@@ -50,20 +60,35 @@ app.get("/:id/sfeer", async (req, res) => {
 
 app.get("/dashboard", async (req, res) => {
   // let dayData = await Day.findOne({ date: 1 });
-    // const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
+  // const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
 
-  res.render("dashboard" );
+  res.render("dashboard");
 });
 app.get("/mgm3/:id", async (req, res) => {
-    const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
-    
-    
-    res.render("mgm3", {data: data.items.find(i => i.pk == req.params.id) } );
+  const today = new Date();
+  // const ramadanDay = getRamadanDay(today);
+
+
+  const data = (
+    await axios.get(
+      "https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik",
+    )
+  ).data;
+
+  res.render("mgm3", {
+    data: data.items.find((i) => i.pk == req.params.id),
+    boxes: [],
+    msthdfat: msthdfat[req.params.id],
+    position:{day: 1, phase: 1}
+  });
   // res.json( data.items.find(i => i.pk == req.params.id) );
 });
 app.get("/:id/mycoupons", async (req, res) => {
-  const coupons = await Coupon.find({ user: req.params.id, status: 1 }).populate("user");
-  res.render("mycoupons", {coupons} );
+  const coupons = await Coupon.find({
+    user: req.params.id,
+    status: 1,
+  }).populate("user");
+  res.render("mycoupons", { coupons });
   // res.json(coupons );
 });
 
@@ -250,7 +275,7 @@ app.get("/:id/giveCoupon", async (req, res) => {
     },
   });
   if (coupon) {
-      console.log("user");
+    console.log("user");
     res.json({
       valid: true,
       coupon: coupon,
@@ -293,37 +318,31 @@ function userGoals(id, day) {
   return { boxes: 1, payment: 1 };
 }
 
-function getRamadanDay(date) {
-  // تحويل التاريخ المدخل إلى تنسيق هجري (أم القرى)
-  const options = { day: 'numeric', month: 'long', year: 'numeric', calendar: 'islamic-uma' };
-  const hijriDate = new Intl.DateTimeFormat('en-u-ca-islamic-uma-nu-latn', options).format(date);
-  
-  // استخراج اليوم والشهر والسنة الهجرية من النص
-  const parts = hijriDate.split(' ');
-  const day = parseInt(parts[0]);
-  const month = parts[1];
-  const year = parseInt(parts[2]);
+// function getRamadanDay(date) {
+//   // تحويل التاريخ المدخل إلى تنسيق هجري (أم القرى)
+//   const options = { day: 'numeric', month: 'long', year: 'numeric', calendar: 'islamic-uma' };
+//   const hijriDate = new Intl.DateTimeFormat('en-u-ca-islamic-uma-nu-latn', options).format(date);
 
-  // التحقق إذا كانت السنة 1447هـ
-  if (year === 1447) {
-    if (month === 'Ramadan') {
-      return day;
-    } else if (month === 'Shaʻban') {
-      return 1; // قبل رمضان (شعبان وما قبله)
-    } else {
-      return 30; // بعد رمضان (شوال وما بعده)
-    }
-  } 
-  
-  // في حال كان التاريخ في سنوات أخرى
-  return year < 1447 ? 1 : 30;
-}
+//   // استخراج اليوم والشهر والسنة الهجرية من النص
+//   const parts = hijriDate.split(' ');
+//   const day = parseInt(parts[0]);
+//   const month = parts[1];
+//   const year = parseInt(parts[2]);
 
-// أمثلة للتجربة:
-console.log("اليوم الحالي:", getRamadanDay(new Date())); 
-// تجربة تاريخ محدد (19 فبراير 2026 يوافق 2 رمضان 1447)
-console.log("تاريخ 19 فبراير:", getRamadanDay(new Date('2026-02-19')));
-// بدء السيرفر
+//   // التحقق إذا كانت السنة 1447هـ
+//   if (year === 1447) {
+//     if (month === 'Ramadan') {
+//       return day;
+//     } else if (month === 'Shaʻban') {
+//       return 1; // قبل رمضان (شعبان وما قبله)
+//     } else {
+//       return 30; // بعد رمضان (شوال وما بعده)
+//     }
+//   }
+
+//   // في حال كان التاريخ في سنوات أخرى
+//   return year < 1447 ? 1 : 30;
+// }
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
   console.log(`السيرفر يعمل على http://localhost:${PORT}`);
