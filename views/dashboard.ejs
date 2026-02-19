@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -7,25 +8,30 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
 
   <style>
-    :root{
+    :root {
       /* الألوان الأساسية بناءً على طلبك */
-      --accent: #5c524d; 
-      --accent2: #413a36; /* درجة أغمق للتباين */
-      
+      --accent: #5c524d;
+      --accent2: #413a36;
+      /* درجة أغمق للتباين */
+
       /* ألوان الخلفيات والنصوص متناغمة مع اللون الأساسي */
-      --bg: #fdfcfb; 
-      --paper: rgba(255,255,255,.92);
+      --bg: #fdfcfb;
+      --paper: rgba(255, 255, 255, .92);
       --card: #ffffff;
-      --ink: #2a2523; /* أسود يميل للبني الداكن جداً */
-      --sub: #786d67; /* رمادي دافئ فرعي */
+      --ink: #2a2523;
+      /* أسود يميل للبني الداكن جداً */
+      --sub: #786d67;
+      /* رمادي دافئ فرعي */
       --line: rgba(92, 82, 77, 0.15);
       --line2: rgba(92, 82, 77, 0.08);
 
-      --shadow: 0 26px 72px rgba(42,37,35,.08);
-      --shadow2: 0 14px 34px rgba(42,37,35,.06);
+      --shadow: 0 26px 72px rgba(42, 37, 35, .08);
+      --shadow2: 0 14px 34px rgba(42, 37, 35, .06);
 
       --r-xl: 28px;
       --r-lg: 22px;
@@ -33,23 +39,36 @@
       --r-sm: 12px;
 
       /* ألوان الصناديق الاستثمارية (هادئة ورسمية) */
-      --s1: #a3876a; /* ذهبي مطفأ / برونزي */
-      --s2: #4b5e55; /* أخضر زيتي غامق */
-      --s3: #52616b; /* أزرق رمادي (Slate) */
-      --s4: #805c5c; /* عنابي مطفأ */
-      --s5: #6b625b; /* رمادي دافئ */
+      --s1: #a3876a;
+      /* ذهبي مطفأ / برونزي */
+      --s2: #4b5e55;
+      /* أخضر زيتي غامق */
+      --s3: #52616b;
+      /* أزرق رمادي (Slate) */
+      --s4: #805c5c;
+      /* عنابي مطفأ */
+      --s5: #6b625b;
+      /* رمادي دافئ */
     }
-    a{
+
+    a {
       color: var(--accent);
       text-decoration: none;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:"IBM Plex Sans Arabic", system-ui, -apple-system, sans-serif;
-      color:var(--ink);
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans Arabic", system-ui, -apple-system, sans-serif;
+      color: var(--ink);
       /* إضاءات خلفية خفيفة جداً تتناسب مع الطابع الرسمي */
       background:
         radial-gradient(900px 650px at 88% -10%, rgba(163, 135, 106, 0.05), transparent 58%),
@@ -59,180 +78,531 @@
     }
 
     /* Top bar */
-    .top{
-      position:sticky; top:0; z-index:50;
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 50;
       padding: 12px 12px 10px;
       backdrop-filter: blur(12px);
-      background: rgba(253,252,251,.85);
-      border-bottom:1px solid var(--line2);
+      background: rgba(253, 252, 251, .85);
+      border-bottom: 1px solid var(--line2);
     }
-    .topInner{
-      max-width:1240px; margin:0 auto;
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    }
-    .brand{display:flex; align-items:center; gap:10px}
-    .mark{
-      width:34px; height:34px; border-radius:12px;
-      background: linear-gradient(180deg, var(--accent2), var(--accent));
-      box-shadow: 0 10px 24px rgba(92,82,77,.25);
-      position:relative;
-    }
-    .mark:after{
-      content:""; position:absolute; inset:8px; border-radius:8px;
-      background: linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,.05));
-    }
-    .brand h1{margin:0; font-size:15px; font-weight:1000;}
-    .brand p{margin:2px 0 0; font-size:12px; font-weight:900; color:var(--sub)}
 
-    .actions{display:flex; gap:10px; flex-wrap:wrap}
-    .btn{
-      appearance:none; border:1px solid var(--line2);
-      background: rgba(255,255,255,.9); color: var(--ink);
-      padding: 10px 12px; border-radius: 14px;
-      font-weight:1000; font-size:13px; cursor: pointer;
-      display:inline-flex; align-items:center; justify-content:center; gap:8px;
-      box-shadow: 0 8px 16px rgba(42,37,35,.04); transition: 0.2s;
+    .topInner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    .btn:hover{ background: #fff; transform: translateY(-1px); box-shadow: 0 10px 20px rgba(42,37,35,.08); }
-    .btn.primary{
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, var(--accent2), var(--accent));
+      box-shadow: 0 10px 24px rgba(92, 82, 77, .25);
+      position: relative;
+    }
+
+    .mark:after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .25), rgba(255, 255, 255, .05));
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 1000;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--sub)
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--line2);
+      background: rgba(255, 255, 255, .9);
+      color: var(--ink);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight: 1000;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 16px rgba(42, 37, 35, .04);
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(42, 37, 35, .08);
+    }
+
+    .btn.primary {
       border-color: transparent;
       background: linear-gradient(180deg, var(--accent), var(--accent2));
-      color:#fff;
-      box-shadow: 0 14px 26px rgba(65,58,54,.24);
+      color: #fff;
+      box-shadow: 0 14px 26px rgba(65, 58, 54, .24);
     }
 
     /* Layout */
-    .wrap{max-width:1240px; margin:0 auto; padding: 12px 12px 26px}
-    .layout{
-      display:grid; grid-template-columns: 1.12fr .88fr; gap: 14px; align-items:start;
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 12px 12px 26px
     }
-    @media (max-width: 980px){ .layout{grid-template-columns:1fr} }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr
+      }
+    }
 
     /* Panels */
-    .panel{
-      background: var(--paper); border: 1px solid var(--line2);
-      border-radius: var(--r-xl); box-shadow: var(--shadow);
-      overflow:hidden;
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line2);
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
     }
-    .panelHead{
+
+    .panelHead {
       padding: 14px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-      border-bottom:1px solid var(--line2); background: rgba(255,255,255,.6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--line2);
+      background: rgba(255, 255, 255, .6);
     }
-    .searchRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; flex:1;}
-    .search{
-      flex:1; min-width:240px; border:1px solid var(--line2);
-      background:#fff; border-radius: 14px; padding: 10px 12px;
-      outline:none; font-weight:900; font-size:13px; color:var(--ink);
+
+    .searchRow {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      flex: 1;
     }
-    .search::placeholder{ color: var(--sub); }
-    .chip{
-      display:inline-flex; align-items:center; gap:8px; padding:8px 10px;
-      border-radius:999px; border:1px solid var(--line2);
-      background: rgba(255,255,255,.84); font-size:12px; font-weight:1000; color:var(--accent2);
+
+    .search {
+      flex: 1;
+      min-width: 240px;
+      border: 1px solid var(--line2);
+      background: #fff;
+      border-radius: 14px;
+      padding: 10px 12px;
+      outline: none;
+      font-weight: 900;
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .search::placeholder {
+      color: var(--sub);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line2);
+      background: rgba(255, 255, 255, .84);
+      font-size: 12px;
+      font-weight: 1000;
+      color: var(--accent2);
     }
 
     /* Cards List */
-    .list{ padding: 12px; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
-    @media (max-width: 760px){ .list{grid-template-columns:1fr} }
+    .list {
+      padding: 12px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
 
-    .card{
-      background: linear-gradient(180deg, #fff, rgba(255,255,255,.8));
-      border:1px solid rgba(92,82,77,.08); border-radius: 22px;
-      box-shadow: 0 10px 24px rgba(42,37,35,.04); padding: 12px;
-      position:relative; overflow:hidden; cursor: pointer; transition: 0.2s;
+    @media (max-width: 760px) {
+      .list {
+        grid-template-columns: 1fr
+      }
     }
-    .card:hover{ box-shadow: 0 14px 30px rgba(42,37,35,.08); transform: translateY(-2px); }
-    .card.selected{ outline: 3px solid rgba(92,82,77,.18); border-color: rgba(92,82,77,.25); }
-    
-    .cardTop{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:10px; }
-    .name{ font-size: 17px; font-weight:1000; margin:0; line-height: 1.3; color:var(--ink); }
-    .kpi{ text-align:left; min-width: 110px; }
-    .kpi .l{font-size:11px; font-weight:1000; color:var(--sub)}
-    .kpi .v{font-size:15px; font-weight:1000; margin-top:4px; color: var(--accent2);}
-    .kpi .v strong{font-size:17px}
-    
-    .meta{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
-    .pill{
-      display:inline-flex; align-items:center; gap:6px; padding:7px 9px;
-      border-radius:999px; border:1px solid rgba(92,82,77,.06);
-      background: rgba(253,252,251,.9); font-size:11px; font-weight:1000; color:var(--ink);
+
+    .card {
+      background: linear-gradient(180deg, #fff, rgba(255, 255, 255, .8));
+      border: 1px solid rgba(92, 82, 77, .08);
+      border-radius: 22px;
+      box-shadow: 0 10px 24px rgba(42, 37, 35, .04);
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.2s;
     }
-    .pill span{color: var(--sub); font-weight:900}
+
+    .card:hover {
+      box-shadow: 0 14px 30px rgba(42, 37, 35, .08);
+      transform: translateY(-2px);
+    }
+
+    .card.selected {
+      outline: 3px solid rgba(92, 82, 77, .18);
+      border-color: rgba(92, 82, 77, .25);
+    }
+
+    .cardTop {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .name {
+      font-size: 17px;
+      font-weight: 1000;
+      margin: 0;
+      line-height: 1.3;
+      color: var(--ink);
+    }
+
+    .kpi {
+      text-align: left;
+      min-width: 110px;
+    }
+
+    .kpi .l {
+      font-size: 11px;
+      font-weight: 1000;
+      color: var(--sub)
+    }
+
+    .kpi .v {
+      font-size: 15px;
+      font-weight: 1000;
+      margin-top: 4px;
+      color: var(--accent2);
+    }
+
+    .kpi .v strong {
+      font-size: 17px
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(92, 82, 77, .06);
+      background: rgba(253, 252, 251, .9);
+      font-size: 11px;
+      font-weight: 1000;
+      color: var(--ink);
+    }
+
+    .pill span {
+      color: var(--sub);
+      font-weight: 900
+    }
 
     /* Progress bar */
-    .barWrap{margin-top:8px; display: flex; align-items: center; gap: 10px;}
-    .bar{
-      flex: 1; height: 12px; border-radius: 999px; overflow:hidden;
-      border:1px solid rgba(92,82,77,.08); background: #f0eee9; display:flex;
+    .barWrap {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .segm{height:100%; transition: 0.5s ease-in-out;}
-    .pctText {font-size: 12px; font-weight: 1000; color: var(--accent2); min-width: 35px;}
+
+    .bar {
+      flex: 1;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(92, 82, 77, .08);
+      background: #f0eee9;
+      display: flex;
+    }
+
+    .segm {
+      height: 100%;
+      transition: 0.5s ease-in-out;
+    }
+
+    .pctText {
+      font-size: 12px;
+      font-weight: 1000;
+      color: var(--accent2);
+      min-width: 35px;
+    }
 
     /* Inspector (Right Side) */
-    .inspector{ position:sticky; top:84px; }
-    @media (max-width: 980px){ .inspector{position:static} }
-    .hero{
-      display: flex;
-    justify-content: space-between;
-      padding: 16px; border-bottom:1px solid var(--line2);
-      background: radial-gradient(700px 450px at 20% 0%, rgba(92,82,77,.08), transparent 62%), rgba(255,255,255,.5);
+    .inspector {
+      position: sticky;
+      top: 84px;
     }
-    .hero h2{ margin:0; font-size: 20px; font-weight:1000; color: var(--ink); }
-    .hero p{ margin:6px 0 0; color: var(--sub); font-size:12px; font-weight:900; line-height: 1.5; }
+
+    @media (max-width: 980px) {
+      .inspector {
+        position: static
+      }
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid var(--line2);
+      background: radial-gradient(700px 450px at 20% 0%, rgba(92, 82, 77, .08), transparent 62%), rgba(255, 255, 255, .5);
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 1000;
+      color: var(--ink);
+    }
+
+    .hero p {
+      margin: 6px 0 0;
+      color: var(--sub);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.5;
+    }
 
     /* Summary Tiles in Inspector */
-    .big{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 12px; }
-    .tile{ border:1px solid var(--line2); background: rgba(255,255,255,.9); border-radius: 18px; padding: 12px; }
-    .tile.full { grid-column: span 2; }
-    .tile .t{font-size:12px; font-weight:1000; color:var(--sub)}
-    .tile .v{ margin-top:8px; font-size: 22px; font-weight:1000; color: var(--ink); }
-    .tile.full .v { font-size: 28px; color: var(--accent2); }
-    .tile .s{margin-top:8px; font-size:11px; font-weight:900; color:var(--sub);}
+    .big {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .tile {
+      border: 1px solid var(--line2);
+      background: rgba(255, 255, 255, .9);
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .tile.full {
+      grid-column: span 2;
+    }
+
+    .tile .t {
+      font-size: 12px;
+      font-weight: 1000;
+      color: var(--sub)
+    }
+
+    .tile .v {
+      margin-top: 8px;
+      font-size: 22px;
+      font-weight: 1000;
+      color: var(--ink);
+    }
+
+    .tile.full .v {
+      font-size: 28px;
+      color: var(--accent2);
+    }
+
+    .tile .s {
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--sub);
+    }
 
     /* Funds Grid (الصناديق) */
-    .fundGrid{ display:grid; grid-template-columns: 1fr; gap: 10px; padding: 12px; }
-    .fundBox{
-      border:1px solid rgba(92,82,77,.08); background: #ffffff;
-      border-radius: 18px; padding: 14px; position:relative; overflow:hidden;
-      box-shadow: 0 6px 16px rgba(42,37,35,.03);
+    .fundGrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 12px;
     }
-    .fundBox:before{ content:""; position:absolute; inset:0 0 auto 0; height:5px; background: var(--stageColor, var(--s1)); }
-    .fundBox .row{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; }
-    .fundBox .row b{font-size:14px; font-weight:1000; color: var(--ink);}
-    .fundBox .row span{font-size:11px; font-weight:1000; color:#fff; background:var(--accent2); padding: 4px 8px; border-radius: 8px;}
-    
-    .fundDetails { display: flex; justify-content: space-between; align-items: flex-end;}
-    .fundDetails .lbl{font-size:11px; font-weight:1000; color:var(--sub); margin-bottom:4px}
-    .fundDetails .amt{ font-size: 20px; font-weight:1000; color: var(--ink); }
-    .fundDetails .amt .cur{font-size:12px; font-weight:1000; color:var(--sub); margin-right:4px}
-    
-    .fundBarWrap { margin-top: 12px; }
-    .fundBarWrap .fundBar { height: 6px; background: #f0eee9; border-radius: 999px; overflow: hidden; }
-    .fundBarWrap .fundSegm { height: 100%; background: var(--stageColor); border-radius: 999px; }
-    .fundBarWrap .fundMeta { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; font-weight: 900; color: var(--sub); }
-  
-  
-  
-@media print {
-    .wrap { padding: 0; }
-    .layout { grid-template-columns: 1fr; }
-    .panel .panelHead,.actions { display: none; }
-    .inspector { position: static; top: auto; page-break-before: always; }
-    body { background: #fff; }
-    .panel { box-shadow: none; border: none; }
-    .fundBox { page-break-inside: avoid; }
-    .card { page-break-inside: avoid; }
-    .tile { page-break-inside: avoid; }
-}
+
+    .fundBox {
+      border: 1px solid rgba(92, 82, 77, .08);
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 16px rgba(42, 37, 35, .03);
+    }
+
+    .fundBox:before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      background: var(--stageColor, var(--s1));
+    }
+
+    .fundBox .row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .fundBox .row b {
+      font-size: 14px;
+      font-weight: 1000;
+      color: var(--ink);
+    }
+
+    .fundBox .row span {
+      font-size: 11px;
+      font-weight: 1000;
+      color: #fff;
+      background: var(--accent2);
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .fundDetails {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .fundDetails .lbl {
+      font-size: 11px;
+      font-weight: 1000;
+      color: var(--sub);
+      margin-bottom: 4px
+    }
+
+    .fundDetails .amt {
+      font-size: 20px;
+      font-weight: 1000;
+      color: var(--ink);
+    }
+
+    .fundDetails .amt .cur {
+      font-size: 12px;
+      font-weight: 1000;
+      color: var(--sub);
+      margin-right: 4px
+    }
+
+    .fundBarWrap {
+      margin-top: 12px;
+    }
+
+    .fundBarWrap .fundBar {
+      height: 6px;
+      background: #f0eee9;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .fundBarWrap .fundSegm {
+      height: 100%;
+      background: var(--stageColor);
+      border-radius: 999px;
+    }
+
+    .fundBarWrap .fundMeta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--sub);
+    }
 
 
-  
-  
-  
-  
+
+    @media print {
+      .wrap {
+        padding: 0;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .panel .panelHead,
+      .actions {
+        display: none;
+      }
+
+      .inspector {
+        position: static;
+        top: auto;
+        page-break-before: always;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      .panel {
+        box-shadow: none;
+        border: none;
+      }
+
+      .fundBox {
+        page-break-inside: avoid;
+      }
+
+      .card {
+        page-break-inside: avoid;
+      }
+
+      .tile {
+        page-break-inside: avoid;
+      }
+    }
   </style>
 </head>
+
 <body>
   <header class="top">
     <div class="topInner">
@@ -253,7 +623,7 @@
 
   <main class="wrap">
     <section class="layout">
-      
+
       <div class="panel">
         <div class="panelHead">
           <div class="searchRow">
@@ -261,27 +631,27 @@
             <span class="chip" id="portfolioCount">0 محفظة</span>
           </div>
         </div>
-        
+
         <div class="list" id="portfolioList">
-          </div>
+        </div>
       </div>
 
       <div class="panel inspector" id="inspectorPanel">
-        </div>
+      </div>
 
     </section>
   </main>
 
   <script>
-    document.querySelector(".refresh").addEventListener("click", function() {
-        location.reload();
+    document.querySelector(".refresh").addEventListener("click", function () {
+      location.reload();
     });
-    document.querySelector(".back").addEventListener("click", function() {
-        location.href = "/";
+    document.querySelector(".back").addEventListener("click", function () {
+      location.href = "/";
     });
 
-    document.querySelector(".pdf").addEventListener("click", function() {
-        window.print();
+    document.querySelector(".pdf").addEventListener("click", function () {
+      window.print();
     });
 
     // === 2. دوال مساعدة للتنسيق ===
@@ -296,12 +666,12 @@
 
       portfolios.forEach((port, index) => {
         const achivementPct = calcPct(port.collectedTotal, port.overallTarget);
-        
+
         const cardEl = document.createElement('div');
         // جعل أول محفظة مختارة افتراضياً
         cardEl.className = `card ${index === 0 ? 'selected' : ''}`;
         cardEl.id = `port-${port.id}`;
-        
+
         cardEl.onclick = () => {
           document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
           cardEl.classList.add('selected');
@@ -339,14 +709,14 @@
 
       // بناء HTML الصناديق
       let fundsHtml = '';
-      if(port.funds && port.funds.length > 0) {
+      if (port.funds && port.funds.length > 0) {
         port.funds.forEach(fund => {
           const fundPct = calcPct(fund.collected, fund.target);
           fundsHtml += `
             <div class="fundBox" style="--stageColor:${fund.color}">
               <div class="row">
                 <b>${fund.name}</b>
-                <span>${fund.collected>=fund.target ? "مكتمل" : "غير مكتمل"}</span>
+                <span>${fund.collected >= fund.target ? "مكتمل" : "غير مكتمل"}</span>
               </div>
               <div class="fundDetails">
                 <div>
@@ -425,10 +795,265 @@
     // };
 
     info = [
-      {pk:35,  overallTarget:2182200, phaseTarget:.944880},
-      {pk:2,  overallTarget:1500000, phaseTarget:320000},
-      {pk:3,  overallTarget:1200000, phaseTarget:300000},
-    ]
+  {
+    "pk": 48,
+    "name": "البديعة الصباحية",
+    "bigTarget": "‏‎ 346840",
+    "phaseTarget1": 112802
+  },
+  {
+    "pk": 70,
+    "name": "التلقين المسائية",
+    "bigTarget": 861560,
+    "phaseTarget1": 283318
+  },
+  {
+    "pk": 72,
+    "name": "جامع التميمي",
+    "bigTarget": 582720,
+    "phaseTarget1": 195816
+  },
+  {
+    "pk": 71,
+    "name": "حصة بنت عبدالله البسام",
+    "bigTarget": 528760,
+    "phaseTarget1": 184178
+  },
+  {
+    "pk": 60,
+    "name": "دار ابن عيد المسائية",
+    "bigTarget": 731640,
+    "phaseTarget1": 245742
+  },
+  {
+    "pk": 57,
+    "name": "دار البديعة المسائية",
+    "bigTarget": 1074480,
+    "phaseTarget1": 374844
+  },
+  {
+    "pk": 59,
+    "name": "دار البويطن",
+    "bigTarget": 496760,
+    "phaseTarget1": 163378
+  },
+  {
+    "pk": 46,
+    "name": "دار الحركان الصباحية",
+    "bigTarget": 1329320,
+    "phaseTarget1": 446746
+  },
+  {
+    "pk": 51,
+    "name": "دار الحركان المسائية",
+    "bigTarget": 2108960,
+    "phaseTarget1": 742588
+  },
+  {
+    "pk": 61,
+    "name": "دار الحميضي المسائية",
+    "bigTarget": 768640,
+    "phaseTarget1": 269792
+  },
+  {
+    "pk": 47,
+    "name": "دار العضيب الصباحية",
+    "bigTarget": 893560,
+    "phaseTarget1": 304118
+  },
+  {
+    "pk": 52,
+    "name": "دار العضيب المسائية",
+    "bigTarget": 974520,
+    "phaseTarget1": 333306
+  },
+  {
+    "pk": 64,
+    "name": "دار الفهد الصباحية",
+    "bigTarget": 581720,
+    "phaseTarget1": 195166
+  },
+  {
+    "pk": 67,
+    "name": "دار الفهد المسائية",
+    "bigTarget": 911560,
+    "phaseTarget1": 315818
+  },
+  {
+    "pk": 55,
+    "name": "دار الفيحاء المسائية",
+    "bigTarget": 675680,
+    "phaseTarget1": 232804
+  },
+  {
+    "pk": 68,
+    "name": "دار المطار المسائية",
+    "bigTarget": 1322360,
+    "phaseTarget1": 465658
+  },
+  {
+    "pk": 63,
+    "name": "دار المقرأة الالكترونية",
+    "bigTarget": 3233560,
+    "phaseTarget1": 1239218
+  },
+  {
+    "pk": 50,
+    "name": "دار الملك خالد الصباحية",
+    "bigTarget": 517760,
+    "phaseTarget1": 177028
+  },
+  {
+    "pk": 58,
+    "name": "دار الملك خالد المسائية",
+    "bigTarget": 1642200,
+    "phaseTarget1": 579810
+  },
+  {
+    "pk": 56,
+    "name": "دار الودي المسائية",
+    "bigTarget": 504760,
+    "phaseTarget1": 168578
+  },
+  {
+    "pk": 49,
+    "name": "دار تراتيل الصباحية",
+    "bigTarget": 1790120,
+    "phaseTarget1": 629086
+  },
+  {
+    "pk": 53,
+    "name": "دار تراتيل المسائية",
+    "bigTarget": 1820120,
+    "phaseTarget1": 648586
+  },
+  {
+    "pk": 69,
+    "name": "دار غراس المسائية",
+    "bigTarget": 802600,
+    "phaseTarget1": 268430
+  },
+  {
+    "pk": 54,
+    "name": "دار مشرفة المسائية",
+    "bigTarget": 735640,
+    "phaseTarget1": 248342
+  },
+  {
+    "pk": 62,
+    "name": "دار موضي الخنيني المسائية",
+    "bigTarget": 1167440,
+    "phaseTarget1": 411832
+  },
+  {
+    "pk": 65,
+    "name": "دار نورة الشبل الصباحية",
+    "bigTarget": 510760,
+    "phaseTarget1": 172478
+  },
+  {
+    "pk": 66,
+    "name": "دار نورة الشبل المسائية",
+    "bigTarget": 1028480,
+    "phaseTarget1": 344944
+  },
+  {
+    "pk": 40,
+    "name": "مجمع الحلق الاجتماعية",
+    "bigTarget": 744200,
+    "phaseTarget1": 410580
+  },
+  {
+    "pk": 38,
+    "name": "مجمع الحلقات الإلكترونية",
+    "bigTarget": 1890200,
+    "phaseTarget1": 893680
+  },
+  {
+    "pk": 36,
+    "name": "مجمع الحلقات المنفردة",
+    "bigTarget": 576800,
+    "phaseTarget1": 259420
+  },
+  {
+    "pk": 32,
+    "name": "مجمع الزبير بن العوام",
+    "bigTarget": 820800,
+    "phaseTarget1": 306370
+  },
+  {
+    "pk": 24,
+    "name": "مجمع أبي بن كعب",
+    "bigTarget": 840800,
+    "phaseTarget1": 327070
+  },
+  {
+    "pk": 23,
+    "name": "مجمع أسامة بن زيد",
+    "bigTarget": 1346400,
+    "phaseTarget1": 528660
+  },
+  {
+    "pk": 28,
+    "name": "مجمع جامع المصيريعي",
+    "bigTarget": 973900,
+    "phaseTarget1": 392410
+  },
+  {
+    "pk": 35,
+    "name": "مجمع زيد بن ثابت",
+    "bigTarget": 2182200,
+    "phaseTarget1": 944880
+  },
+  {
+    "pk": 31,
+    "name": "مجمع سعد بن معاذ",
+    "bigTarget": 620200,
+    "phaseTarget1": 256830
+  },
+  {
+    "pk": 26,
+    "name": "مجمع سعيد بن زيد",
+    "bigTarget": 681900,
+    "phaseTarget1": 268060
+  },
+  {
+    "pk": 34,
+    "name": "مجمع عبدالله بن عباس",
+    "bigTarget": 369200,
+    "phaseTarget1": 162980
+  },
+  {
+    "pk": 37,
+    "name": "مجمع عبدالله بن مسعود",
+    "bigTarget": 571700,
+    "phaseTarget1": 261880
+  },
+  {
+    "pk": 30,
+    "name": "مجمع عتبة بن غزوان",
+    "bigTarget": 2017600,
+    "phaseTarget1": 810940
+  },
+  {
+    "pk": 33,
+    "name": "مجمع عثمان بن عفان",
+    "bigTarget": 2454700,
+    "phaseTarget1": 1012280
+  },
+  {
+    "pk": 27,
+    "name": "مجمع عمر بن الخطاب",
+    "bigTarget": 1379300,
+    "phaseTarget1": 490370
+  },
+  {
+    "pk": 29,
+    "name": "مجمع مصعب بن عمير",
+    "bigTarget": 1648100,
+    "phaseTarget1": 661240
+  }
+]
 
 
     fetch('/test')
@@ -438,22 +1063,23 @@
         data = data.filter(item => info.find(i => i.pk == item.pk)).map((item, index) => ({
           id: item.pk,
           name: item.name,
-          overallTarget: info.find(i => i.pk == item.pk)?.overallTarget || 0,
-          phaseTarget: info.find(i => i.pk == item.pk)?.phaseTarget || 0,
+          overallTarget: info.find(i => i.pk == item.pk)?.bigTarget || 0,
+          phaseTarget: info.find(i => i.pk == item.pk)?.phaseTarget1 || 0,
           collectedTotal: item.total || 500000,
           description: item.description || "وصف افتراضي للمحفظة.",
           funds: item.funds || [
             { name: "صندوق افتراضي 1", target: 500000, collected: 250000, color: "var(--s1)" },
             { name: "صندوق افتراضي 2", target: 300000, collected: 150000, color: "var(--s2)" }
           ]
-        })).sort((a,b) => b.collectedTotal - a.collectedTotal);
-        renderPortfolios(data); 
-        if(data.length > 0) {
-        renderInspector(data[0]); 
-      }
-     
+        })).sort((a, b) => b.collectedTotal - a.collectedTotal);
+        renderPortfolios(data);
+        if (data.length > 0) {
+          renderInspector(data[0]);
+        }
+
       })
       .catch(err => console.error("خطأ في جلب البيانات:", err));
   </script>
 </body>
+
 </html>

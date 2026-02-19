@@ -14,12 +14,12 @@ const Day = require("./models/Day");
 const { name } = require("ejs");
 const e = require("express");
 const axios = require("axios");
-const XLSX = require('xlsx');
+const XLSX = require("xlsx");
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: "50mb" }));
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("تم الاتصال بقاعدة البيانات بنجاح!"))
@@ -61,7 +61,6 @@ app.get("/dashboard", async (req, res) => {
   res.render("dashboard");
 });
 
-
 app.get("/dashboard/:id", async (req, res) => {
   const date = dates();
   const data = (
@@ -69,20 +68,24 @@ app.get("/dashboard/:id", async (req, res) => {
       "https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
     )
   ).data;
-    const boxes = (
+  const boxes = (
     await axios.get(
       `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${req.params.id}`,
     )
   ).data;
-
+  const msthdfatM = msthdfat.find((i) => i.pk == req.params.id);
   res.render("mgm3", {
     data: data.items.find((i) => i.pk == req.params.id),
     boxes: boxes.items || [],
-    msthdfat: msthdfat[req.params.id],
-    position: { day: date.rd, phase: 1 }
+    bx:msthdfatM? msthdfatM[`b${date.rd}`] : 0,
+    gx:msthdfatM? msthdfatM[`g${date.rd}`] : 0,
+    phaseTarget: 944880,
+    bigTarget: 2182200,
+    // phaseTarget:msthdfatM?.phaseTarget1,
+    // bigTarget:msthdfatM?.bigTarget,
+    position: { day: date.rd, phase: 1 },
   });
 });
-
 
 app.get("/:id/mycoupons", async (req, res) => {
   const coupons = await Coupon.find({
@@ -96,12 +99,14 @@ app.get("/:id/mycoupons", async (req, res) => {
 app.get("/:id/boxes", async (req, res) => {
   let user = await User.findById(req.params.id);
   if (req.query.all == "yes") {
-    const boxes = await axios.get(`https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}`,
+    const boxes = await axios.get(
+      `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}`,
     );
     res.json(boxes.data.items || []);
-  }else {
-    const date = dates()
-    const boxes = await axios.get(`https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd}-${date.td}`,
+  } else {
+    const date = dates();
+    const boxes = await axios.get(
+      `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd}-${date.td}`,
     );
     res.json(boxes.data.items || []);
   }
@@ -175,39 +180,40 @@ app.post("/users/add-bulk", async (req, res) => {
     const addedUsers = await User.insertMany(usersData, { ordered: false });
 
     res.json({
-      added: addedUsers.map(u => ({
+      added: addedUsers.map((u) => ({
         name: u.name,
         reff: u.reff,
         phone: u.phone,
         url1: u.url1,
         url2: u.url2,
       })),
-      failed: []
+      failed: [],
     });
-
   } catch (error) {
     const added = [];
     const failed = [];
 
     // 1. استخراج السجلات التي نجحت
     if (error.insertedDocs) {
-      added.push(...error.insertedDocs.map(u => ({
-        name: u.name,
-        reff: u.reff,
-        phone: u.phone,
-        url1: u.url1,
-        url2: u.url2,
-      })));
+      added.push(
+        ...error.insertedDocs.map((u) => ({
+          name: u.name,
+          reff: u.reff,
+          phone: u.phone,
+          url1: u.url1,
+          url2: u.url2,
+        })),
+      );
     }
 
     // 2. استخراج السجلات التي فشلت
     if (error.writeErrors && Array.isArray(error.writeErrors)) {
-      error.writeErrors.forEach(err => {
+      error.writeErrors.forEach((err) => {
         failed.push({
           // في Mongoose، البيانات الفاشلة موجودة في err.op
-          data: err.op, 
+          data: err.op,
           reason: err.errmsg || "خطأ في البيانات",
-          index: err.index // ترتيب العنصر في المصفوفة الأصلية
+          index: err.index, // ترتيب العنصر في المصفوفة الأصلية
         });
       });
     } else if (!error.insertedDocs) {
@@ -217,7 +223,7 @@ app.post("/users/add-bulk", async (req, res) => {
 
     res.json({
       added,
-      failed
+      failed,
     });
   }
 });
@@ -285,7 +291,10 @@ app.get("/:id/giveCoupon", async (req, res) => {
     return;
   }
   const userGoalsData = await userGoals(user._id);
-  if (userGoalsData.boxes >= dayg.payGoal && userGoalsData.payment >= dayg.payGoal) {
+  if (
+    userGoalsData.boxes >= dayg.payGoal &&
+    userGoalsData.payment >= dayg.payGoal
+  ) {
     const newCoupon = await Coupon.findOneAndUpdate(
       { status: 0 },
       {
@@ -323,7 +332,9 @@ async function userGoals(id) {
     return { boxes: 0, payment: 0 };
   }
 
-  const goals = await axios.get(`https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd}-${date.td}`);
+  const goals = await axios.get(
+    `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd}-${date.td}`,
+  );
   if (goals.data.success !== true) {
     return { boxes: 0, payment: 0 };
   }
@@ -332,16 +343,26 @@ async function userGoals(id) {
 userGoals("6995c7e7c8c710cb83a3389e").then(console.log).catch(console.error);
 
 function dates() {
-    const date = new Date();
-    date.setHours(date.getHours() - 7); // Adjust for timezone if needed
-    const fd = (new Date(date.getFullYear(), date.getMonth(), date.getDate()).setHours(7))/1000;
-    const td = +(new Date(date.getFullYear(), date.getMonth(), date.getDate()+1).setHours(7))/1000;
-    return { date :new Date(date.getFullYear(), date.getMonth(), date.getDate()),fd, td,rd:getRamadanDay(date) };
+  const date = new Date();
+  date.setHours(date.getHours() - 7); // Adjust for timezone if needed
+  const fd =
+    new Date(date.getFullYear(), date.getMonth(), date.getDate()).setHours(7) /
+    1000;
+  const td =
+    +new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1).setHours(
+      7,
+    ) / 1000;
+  return {
+    date: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+    fd,
+    td,
+    rd: getRamadanDay(date),
+  };
 }
 function getRamadanDay(date) {
   // بداية ونهاية رمضان 1447هـ بالميلادي
-  const startRamadan = new Date('2026-02-18T00:00:00');
-  const endRamadan = new Date('2026-03-19T23:59:59');
+  const startRamadan = new Date("2026-02-18T00:00:00");
+  const endRamadan = new Date("2026-03-19T23:59:59");
 
   // تصفير الوقت للمقارنة بين الأيام فقط
   const inputDate = new Date(date.setHours(0, 0, 0, 0));

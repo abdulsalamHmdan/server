@@ -318,7 +318,7 @@
       <div class="card kpi-card">
         <div class="kpi-info">
           <span>إجمالي الصناديق التابعة</span>
-          <strong>12</strong>
+          <strong><%= boxes.length %></strong>
         </div>
         <div class="kpi-icon">📦</div>
       </div>
@@ -326,7 +326,7 @@
       <div class="card kpi-card">
         <div class="kpi-info">
           <span>مستهدف الصناديق اليومي</span>
-          <strong>5</strong>
+          <strong><%= bx %></strong>
         </div>
         <div class="kpi-icon">🎯</div>
       </div>
@@ -334,7 +334,7 @@
       <div class="card kpi-card">
         <div class="kpi-info">
           <span>مستهدف التبرعات اليومي</span>
-          <strong style="color: var(--success-color);">5,000 ر.س</strong>
+          <strong style="color: var(--success-color);"><%= gx %> ر.س</strong>
         </div>
         <div class="kpi-icon">💸</div>
       </div>
@@ -346,29 +346,29 @@
         <div class="target-grid">
           <div class="target-item">
             <span class="target-label">إجمالي ما تم جمعه</span>
-            <span class="target-value success">45,000 ر.س</span> 
+            <span class="target-value success"><%= data?.total || 0 %> ر.س</span> 
           </div>
           <div class="target-item">
             <span class="target-label">المستهدف الكلي</span>
-            <span class="target-value">100,000 ر.س</span>
+            <span class="target-value"><%= bigTarget || 0 %> ر.س</span>
           </div>
         </div>
         <div class="progress-wrapper">
           <div class="progress-header">
             <span>نسبة المستهدف الكلي</span>
-            <span>45%</span>
+            <span><%= data?.total && bigTarget ? (data.total / bigTarget * 100).toFixed(2) : 0 %> %</span>
           </div>
           <div class="progress-container">
-            <div class="progress-bar" style="width: 45%;"></div>
+            <div class="progress-bar" style="width: <%= data?.total && bigTarget ? (data.total / bigTarget * 100).toFixed(2) : 0 %>%;"></div>
           </div>
         </div>
         <div class="progress-wrapper">
           <div class="progress-header">
             <span>نسبة المستهدف المرحلي</span>
-            <span>45%</span>
+            <span><%= data?.total && phaseTarget ? (data.total / phaseTarget * 100).toFixed(2) : 0 %> %</span>
           </div>
           <div class="progress-container">
-            <div class="progress-bar" style="width: 45%;"></div>
+            <div class="progress-bar" style="width: <%= data?.total && phaseTarget ? (data.total / phaseTarget * 100).toFixed(2) : 0 %>%;"></div>
           </div>
         </div>
       </div>
@@ -379,25 +379,25 @@
         </div>
         <div class="target-grid" style="grid-template-columns: 1fr;"> <div class="target-item">
             <span class="target-label">تم جمعه (المرحلة الحالية)</span>
-            <span class="target-value success">20,000 ر.س</span>
+            <span class="target-value success"><%= data?.total || 0 %> ر.س</span>
           </div>
           <div class="target-item">
             <span class="target-label">مستهدف المرحلة</span>
-            <span class="target-value">25,000 ر.س</span>
+            <span class="target-value"><%= phaseTarget || 0 %> ر.س</span>
           </div>
         </div>
         <div class="progress-wrapper">
           <div class="progress-header">
             <span>نسبة الإنجاز</span>
-            <span>80%</span>
+            <span><%= data?.total && phaseTarget ? (data.total / phaseTarget * 100).toFixed(2) : 0 %> %</span>
           </div>
           <div class="progress-container">
-            <div class="progress-bar" style="width: 80%;"></div>
+            <div class="progress-bar" style="width: <%= data?.total && phaseTarget ? (data.total / phaseTarget * 100).toFixed(2) : 0 %>%;"></div>
           </div>
         </div>
       </div>
 
-      <div class="card">
+      <div class="card disabled">
         <div class="card-title">
           <h2>أبرز السفراء</h2>
         </div>
@@ -445,90 +445,16 @@
           <h2>قائمة الصناديق التابعة</h2>
         </div>
         <div id="boxes" class="list-container grid-list">
+          <% boxes.forEach(box => { %>
+          <div class="list-item">
+            <div class="item-info">
+              <span class="item-name"><%= box.name %></span>
+            </div>
+            <span class="item-amount"><%= box.total %> ر.س</span>
+          </div>
+          <% }) %>
+
           
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق كفالة الأيتام</span>
-            </div>
-            <span class="item-amount">20,000 ر.س</span>
-          </div>
-
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق سقيا الماء</span>
-            </div>
-            <span class="item-amount">15,000 ر.س</span>
-          </div>
-
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق بناء المساجد</span>
-            </div>
-            <span class="item-amount">10,000 ر.س</span>
-          </div>
-
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق إفطار الصائم</span>
-            </div>
-            <span class="item-amount">0 ر.س</span>
-          </div>
-
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق كسوة العيد</span>
-            </div>
-            <span class="item-amount">0 ر.س</span>
-          </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق كسوة العيد</span>
-            </div>
-            <span class="item-amount">0 ر.س</span>
-          </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق كسوة العيد</span>
-            </div>
-            <span class="item-amount">0 ر.س</span>
-          </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق كسوة العيد</span>
-            </div>
-            <span class="item-amount">0 ر.س</span>
-          </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق كسوة العيد</span>
-            </div>
-            <span class="item-amount">0 ر.س</span>
-          </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق كسوة العيد</span>
-            </div>
-            <span class="item-amount">0 ر.س</span>
-          </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق كسوة العيد</span>
-            </div>
-            <span class="item-amount">0 ر.س</span>
-          </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق كسوة العيد</span>
-            </div>
-            <span class="item-amount">0 ر.س</span>
-          </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name">صندوق كسوة العيد</span>
-            </div>
-            <span class="item-amount">0 ر.س</span>
-          </div>
-
         </div>
       </div>
 
