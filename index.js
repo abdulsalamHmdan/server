@@ -28,32 +28,12 @@ mongoose
 app.get("/test", async (req, res) => {
   const data = (
     await axios.get(
-      "https://donate.utq.org.sa/api/v1/orders/report/goals_type:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
+      "https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
     )
   ).data;
   res.json(data.items);
 });
 
-app.get("/testing", async (req, res) => {
-  let data =[]; 
-  let page = 0;
-  let a;
-  let datas
-    
-  // a =  await (axios.get(`https://donate.utq.org.sa/api/v1/orders/report/client_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?page=${page++}`)).data;
-  do {
-     datas = (
-    await axios.get(
-      "https://donate.utq.org.sa/api/v1/orders/report/client_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?page=" + page++,
-    )
-  ).data;
-    console.log(page,datas.hasMore);
-    data.push(...datas.items);
-  } while (datas.hasMore == true && page < 10);
-    
-
-  res.json(data);
-});
 app.get("/:id/sfeer", async (req, res) => {
   const date = new Date();
   const user = await User.findById(req.params.id);
@@ -77,51 +57,33 @@ app.get("/:id/sfeer", async (req, res) => {
   res.render("sfeer", object);
 });
 
-app.get("/db", async (req, res) => {
-  let users = await User.find({})
-  
-  users = users.map(u => ({
-    id: u._id.toString(),
-    name: u.name,
-    reff: u.reff,
-    phone: u.phone,
-    url1: u.url1,
-    url2: u.url2,
-  }));
-  console.log(users[0]);
-
-  const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.json_to_sheet(users);
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
-  XLSX.writeFile(workbook, "data.xlsx");
-  res.json({ users: users.length });
-});
-
 app.get("/dashboard", async (req, res) => {
-  // let dayData = await Day.findOne({ date: 1 });
-  // const data = (await axios.get("https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik")).data;
-
   res.render("dashboard");
 });
-app.get("/mgm3/:id", async (req, res) => {
-  const today = new Date();
-  // const ramadanDay = getRamadanDay(today);
 
 
+app.get("/dashboard/:id", async (req, res) => {
+  const date = dates();
   const data = (
     await axios.get(
       "https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
     )
   ).data;
+    const boxes = (
+    await axios.get(
+      `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${req.params.id}`,
+    )
+  ).data;
 
   res.render("mgm3", {
     data: data.items.find((i) => i.pk == req.params.id),
-    boxes: [],
+    boxes: boxes.items || [],
     msthdfat: msthdfat[req.params.id],
-    position: { day: 1, phase: 1 }
+    position: { day: date.rd, phase: 1 }
   });
-  // res.json( data.items.find(i => i.pk == req.params.id) );
 });
+
+
 app.get("/:id/mycoupons", async (req, res) => {
   const coupons = await Coupon.find({
     user: req.params.id,
@@ -133,16 +95,16 @@ app.get("/:id/mycoupons", async (req, res) => {
 
 app.get("/:id/boxes", async (req, res) => {
   let user = await User.findById(req.params.id);
-  console.log(req.query.all == "yes");
-  const boxes = [
-    {
-      sum: 1000,
-      goal: 10000,
-      name: "وقف علي المذن",
-    },
-  ];
-
-  res.json(boxes);
+  if (req.query.all == "yes") {
+    const boxes = await axios.get(`https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}`,
+    );
+    res.json(boxes.data.items || []);
+  }else {
+    const date = dates()
+    const boxes = await axios.get(`https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd}-${date.td}`,
+    );
+    res.json(boxes.data.items || []);
+  }
 });
 app.get("/:id/rank", async (req, res) => {
   let user = await User.findById(req.params.id);
@@ -152,8 +114,7 @@ app.get("/:id/rank", async (req, res) => {
 });
 
 app.get("/:id/goals", async (req, res) => {
-  let user = await User.findById(req.params.id);
-  const goals = userGoals(user.phone, "");
+  const goals = await userGoals(req.params.id);
 
   res.json(goals);
 });
@@ -302,7 +263,6 @@ app.post("/coupons/save-bulk", async (req, res) => {
 
 app.get("/:id/giveCoupon", async (req, res) => {
   const date = new Date();
-  // date.setDate(date.getDate()-8); // Subtract one day
   const dayg = Day.findOne({ date: getRamadanDay(date) });
   const userId = req.params.id;
   let user = await User.findById(userId);
@@ -356,10 +316,28 @@ app.use((req, res) => {
   res.status(404).render("404", { title: "صفحة غير موجودة" });
 });
 
-function userGoals(id, day) {
-  return { boxes: 1, payment: 1 };
-}
+async function userGoals(id) {
+  const date = dates();
+  const user = await User.findById(id);
+  if (!user) {
+    return { boxes: 0, payment: 0 };
+  }
 
+  const goals = await axios.get(`https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd}-${date.td}`);
+  if (goals.data.success !== true) {
+    return { boxes: 0, payment: 0 };
+  }
+  return { boxes: goals.data.items.length, payment: goals.data.totals.total };
+}
+userGoals("6995c7e7c8c710cb83a3389e").then(console.log).catch(console.error);
+
+function dates() {
+    const date = new Date();
+    date.setHours(date.getHours() - 7); // Adjust for timezone if needed
+    const fd = (new Date(date.getFullYear(), date.getMonth(), date.getDate()).setHours(7))/1000;
+    const td = +(new Date(date.getFullYear(), date.getMonth(), date.getDate()+1).setHours(7))/1000;
+    return { date :new Date(date.getFullYear(), date.getMonth(), date.getDate()),fd, td,rd:getRamadanDay(date) };
+}
 function getRamadanDay(date) {
   // بداية ونهاية رمضان 1447هـ بالميلادي
   const startRamadan = new Date('2026-02-18T00:00:00');
