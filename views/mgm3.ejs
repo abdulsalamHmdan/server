@@ -267,6 +267,10 @@
       color: var(--success-color);
       font-weight: bold;
     }
+    .disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
 
     /* التجاوب مع الشاشات (Responsive Design) */
     @media (max-width: 992px) {
@@ -300,6 +304,7 @@
     ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
     ::-webkit-scrollbar-thumb { background: #d1c4b9; border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--primary-btn); }
+
   </style>
 </head>
 <body>
@@ -409,34 +414,8 @@
             </div>
             <span class="item-amount">15,000 ر.س</span>
           </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-number">1</span>
-              <span class="item-name">أحمد عبدالله</span>
-            </div>
-            <span class="item-amount">15,000 ر.س</span>
-          </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-number">2</span>
-              <span class="item-name">محمد خالد</span>
-            </div>
-            <span class="item-amount">12,500 ر.س</span>
-          </div>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-number">3</span>
-              <span class="item-name">مؤسسة الأمل</span>
-            </div>
-            <span class="item-amount">8,000 ر.س</span>
-          </div>
-           <div class="list-item">
-            <div class="item-info">
-              <span class="item-number">4</span>
-              <span class="item-name">فاعل خير</span>
-            </div>
-            <span class="item-amount">4,500 ر.س</span>
-          </div>
+
+          
         </div>
       </div>
 
