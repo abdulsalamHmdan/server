@@ -5,6 +5,8 @@ const UserSchema = new mongoose.Schema({
   reff: { type: String, required: true, unique: true },
   mgm3: { type: String },
   phone:{ type: String, required: true, unique: true },
+  url1:{ type: String },
+  url2:{ type: String },
 });
 
 module.exports = mongoose.model('User', UserSchema);

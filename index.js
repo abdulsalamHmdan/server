@@ -14,25 +14,45 @@ const Day = require("./models/Day");
 const { name } = require("ejs");
 const e = require("express");
 const axios = require("axios");
+const XLSX = require('xlsx');
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("تم الاتصال بقاعدة البيانات بنجاح!"))
   .catch((err) => console.log("فشل الاتصال:", err));
 
-// المسارات الأساسية
-
 app.get("/test", async (req, res) => {
   const data = (
     await axios.get(
-      "https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik",
+      "https://donate.utq.org.sa/api/v1/orders/report/goals_type:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
     )
   ).data;
   res.json(data.items);
+});
+
+app.get("/testing", async (req, res) => {
+  let data =[]; 
+  let page = 0;
+  let a;
+  let datas
+    
+  // a =  await (axios.get(`https://donate.utq.org.sa/api/v1/orders/report/client_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?page=${page++}`)).data;
+  do {
+     datas = (
+    await axios.get(
+      "https://donate.utq.org.sa/api/v1/orders/report/client_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?page=" + page++,
+    )
+  ).data;
+    console.log(page,datas.hasMore);
+    data.push(...datas.items);
+  } while (datas.hasMore == true && page < 10);
+    
+
+  res.json(data);
 });
 app.get("/:id/sfeer", async (req, res) => {
   const date = new Date();
@@ -48,14 +68,33 @@ app.get("/:id/sfeer", async (req, res) => {
       $eq: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
     },
   });
-  let dayData = await Day.findOne({ date: 1 });
+  let dayData = await Day.findOne({ date: getRamadanDay(date) });
   const object = Object.create(dayData);
   object["name"] = user.name;
   object["url"] = `https://donate.utq.org.sa/p/1/${user.reff}`;
   object["id"] = req.params.id;
   object["coupon"] = coupon;
-
   res.render("sfeer", object);
+});
+
+app.get("/db", async (req, res) => {
+  let users = await User.find({})
+  
+  users = users.map(u => ({
+    id: u._id.toString(),
+    name: u.name,
+    reff: u.reff,
+    phone: u.phone,
+    url1: u.url1,
+    url2: u.url2,
+  }));
+  console.log(users[0]);
+
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.json_to_sheet(users);
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+  XLSX.writeFile(workbook, "data.xlsx");
+  res.json({ users: users.length });
 });
 
 app.get("/dashboard", async (req, res) => {
@@ -71,7 +110,7 @@ app.get("/mgm3/:id", async (req, res) => {
 
   const data = (
     await axios.get(
-      "https://demo.disaq.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcYFxoaHEseTxwbHh0gHyIhJCMmJSgnKik",
+      "https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
     )
   ).data;
 
@@ -79,7 +118,7 @@ app.get("/mgm3/:id", async (req, res) => {
     data: data.items.find((i) => i.pk == req.params.id),
     boxes: [],
     msthdfat: msthdfat[req.params.id],
-    position:{day: 1, phase: 1}
+    position: { day: 1, phase: 1 }
   });
   // res.json( data.items.find(i => i.pk == req.params.id) );
 });
@@ -165,58 +204,61 @@ app.get("/safer/add", (req, res) => {
 });
 
 app.post("/users/add-bulk", async (req, res) => {
-  const usersData = req.body; // نتوقع مصفوفة من الكائنات
-  // التحقق من أن البيانات عبارة عن مصفوفة
+  const usersData = req.body;
+
   if (!Array.isArray(usersData)) {
     return res.status(400).json({ error: "يجب إرسال البيانات كمصفوفة" });
   }
-  const added = [];
-  const failed = [];
-  for (const row of usersData) {
-    // ملاحظة: قد تأتي أسماء الأعمدة من الإكسل بأحرف كبيرة أو مسافات، يفضل تنظيفها هنا
-    const userData = {
-      name: row.name,
-      reff: row.reff,
-      mgm3: row.mgm3,
-      phone: row.phone,
-    };
-    try {
-      // التحقق من الحقول الإجبارية قبل محاولة الحفظ
-      if (!userData.name || !userData.reff || !userData.phone) {
-        throw new Error("بيانات ناقصة (الاسم، الهاتف، أو reff)");
-      }
 
-      // محاولة إنشاء المستخدم
-      const newUser = await User.create(userData);
+  try {
+    const addedUsers = await User.insertMany(usersData, { ordered: false });
 
-      // إذا نجح الحفظ
-      added.push(newUser);
-    } catch (error) {
-      // تحديد سبب الفشل
-      let reason = "خطأ غير معروف";
-      if (error.code === 11000) {
-        // خطأ التكرار (Duplicate Key)
-        if (error.keyPattern.phone) reason = "رقم الهاتف مكرر";
-        else if (error.keyPattern.reff) reason = "reff مكرر";
-        else if (error.keyPattern.mgm3) reason = "mgm3 مكرر";
-        else reason = "بيانات مكررة";
-      } else {
-        reason = error.message;
-      }
+    res.json({
+      added: addedUsers.map(u => ({
+        name: u.name,
+        reff: u.reff,
+        phone: u.phone,
+        url1: u.url1,
+        url2: u.url2,
+      })),
+      failed: []
+    });
 
-      // إضافة للفشل مع الاحتفاظ بالبيانات المرسلة لعرضها
-      failed.push({
-        ...userData,
-        reason: reason,
-      });
+  } catch (error) {
+    const added = [];
+    const failed = [];
+
+    // 1. استخراج السجلات التي نجحت
+    if (error.insertedDocs) {
+      added.push(...error.insertedDocs.map(u => ({
+        name: u.name,
+        reff: u.reff,
+        phone: u.phone,
+        url1: u.url1,
+        url2: u.url2,
+      })));
     }
-  }
 
-  // إرجاع النتيجة النهائية
-  res.json({
-    added,
-    failed,
-  });
+    // 2. استخراج السجلات التي فشلت
+    if (error.writeErrors && Array.isArray(error.writeErrors)) {
+      error.writeErrors.forEach(err => {
+        failed.push({
+          // في Mongoose، البيانات الفاشلة موجودة في err.op
+          data: err.op, 
+          reason: err.errmsg || "خطأ في البيانات",
+          index: err.index // ترتيب العنصر في المصفوفة الأصلية
+        });
+      });
+    } else if (!error.insertedDocs) {
+      // إذا كان الخطأ ليس له علاقة بالـ Bulk Write (مثل خطأ اتصال بقاعدة البيانات)
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json({
+      added,
+      failed
+    });
+  }
 });
 
 app.get("/coupons/add", (req, res) => {
@@ -261,7 +303,7 @@ app.post("/coupons/save-bulk", async (req, res) => {
 app.get("/:id/giveCoupon", async (req, res) => {
   const date = new Date();
   // date.setDate(date.getDate()-8); // Subtract one day
-
+  const dayg = Day.findOne({ date: getRamadanDay(date) });
   const userId = req.params.id;
   let user = await User.findById(userId);
   if (!user) {
@@ -282,8 +324,8 @@ app.get("/:id/giveCoupon", async (req, res) => {
     });
     return;
   }
-  const userGoalsData = await userGoals(user._id, "");
-  if (userGoalsData.boxes >= 1 && userGoalsData.payment >= 1) {
+  const userGoalsData = await userGoals(user._id);
+  if (userGoalsData.boxes >= dayg.payGoal && userGoalsData.payment >= dayg.payGoal) {
     const newCoupon = await Coupon.findOneAndUpdate(
       { status: 0 },
       {
@@ -318,31 +360,29 @@ function userGoals(id, day) {
   return { boxes: 1, payment: 1 };
 }
 
-// function getRamadanDay(date) {
-//   // تحويل التاريخ المدخل إلى تنسيق هجري (أم القرى)
-//   const options = { day: 'numeric', month: 'long', year: 'numeric', calendar: 'islamic-uma' };
-//   const hijriDate = new Intl.DateTimeFormat('en-u-ca-islamic-uma-nu-latn', options).format(date);
+function getRamadanDay(date) {
+  // بداية ونهاية رمضان 1447هـ بالميلادي
+  const startRamadan = new Date('2026-02-18T00:00:00');
+  const endRamadan = new Date('2026-03-19T23:59:59');
 
-//   // استخراج اليوم والشهر والسنة الهجرية من النص
-//   const parts = hijriDate.split(' ');
-//   const day = parseInt(parts[0]);
-//   const month = parts[1];
-//   const year = parseInt(parts[2]);
+  // تصفير الوقت للمقارنة بين الأيام فقط
+  const inputDate = new Date(date.setHours(0, 0, 0, 0));
+  const startCompare = new Date(startRamadan.setHours(0, 0, 0, 0));
 
-//   // التحقق إذا كانت السنة 1447هـ
-//   if (year === 1447) {
-//     if (month === 'Ramadan') {
-//       return day;
-//     } else if (month === 'Shaʻban') {
-//       return 1; // قبل رمضان (شعبان وما قبله)
-//     } else {
-//       return 30; // بعد رمضان (شوال وما بعده)
-//     }
-//   }
+  if (inputDate < startCompare) {
+    return 1; // قبل رمضان
+  }
 
-//   // في حال كان التاريخ في سنوات أخرى
-//   return year < 1447 ? 1 : 30;
-// }
+  if (inputDate > endRamadan) {
+    return 30; // بعد رمضان
+  }
+
+  // حساب الفرق بالأيام (1000ms * 60s * 60m * 24h)
+  const diffTime = Math.abs(inputDate - startCompare);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+  return diffDays;
+}
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
   console.log(`السيرفر يعمل على http://localhost:${PORT}`);
