@@ -283,57 +283,6 @@
     document.querySelector(".pdf").addEventListener("click", function() {
         window.print();
     });
-    // === 1. البيانات الوهمية للمحافظ والصناديق التابعة لها ===
-    const staticData = [
-      {
-        id: 1,
-        name: "محفظة مجمع سعيد بن زيد",
-        overallTarget: 2500000,
-        // phaseTarget: 0,
-        collectedTotal: 650000,
-        description: "تهدف المحفظة إلى بناء أصول استثمارية عقارية وصناديق أسهم لضمان استدامة موارد المجمع التشغيلية ضمن معايير منخفضة المخاطر.",
-        funds: [
-          { name: "صندوق الوقف العقاري",  target: 1500000, collected: 1500000, color: "var(--s1)" },
-          { name: "صندوق الأسهم القيادية",  target: 700000, collected: 150000, color: "var(--s2)" },
-          { name: "صندوق الصكوك السيادية",target: 300000, collected: 100000, color: "var(--s3)" }
-        ]
-      },
-      {
-        id: 2,
-        name: "محفظة مجمع أبي بن كعب",
-        overallTarget: 1800000,
-        phaseTarget: 400000,
-        collectedTotal: 810000,
-        description: "محفظة مخصصة لدعم البرامج التعليمية وكفالة المعلمين عبر صناديق استثمارية ذات طابع آمن وعوائد مستقرة.",
-        funds: [
-        //   { name: "صندوق الإنماء الوقفي", returnRate: "7%", target: 1000000, collected: 600000, color: "var(--s1)" },
-        //   { name: "صندوق المرابحة", returnRate: "4%", target: 800000, collected: 210000, color: "var(--s5)" }
-        ]
-      },
-      {
-        id: 3,
-        name: "محفظة مجمع عمر بن الخطاب",
-        overallTarget: 3000000,
-        phaseTarget: 1000000,
-        collectedTotal: 450000,
-        description: "المحفظة الاستراتيجية الكبرى للمجمع، تركز على الاستحواذات العقارية المدرة للدخل.",
-        funds: [
-        //   { name: "صندوق الاستحواذ العقاري", returnRate: "9%", target: 2000000, collected: 250000, color: "var(--s4)" },
-        //   { name: "صندوق الريت (REITs)", returnRate: "6%", target: 1000000, collected: 200000, color: "var(--s3)" }
-        ]
-      },
-      {
-        id: 4,
-        name: "محفظة مجمع أسامة بن زيد",
-        overallTarget: 1200000,
-        phaseTarget: 300000,
-        collectedTotal: 1100000,
-        description: "محفظة منجزة تقريباً، تعتمد على عوائد الأسهم المطروحة للاكتتاب العام وذات النمو المتسارع.",
-        funds: [
-        //   { name: "صندوق الاكتتابات العامة", returnRate: "15%", target: 1200000, collected: 1100000, color: "var(--s2)" }
-        ]
-      }
-    ];
 
     // === 2. دوال مساعدة للتنسيق ===
     const formatMoney = (num) => Number(num).toLocaleString("en-us");
@@ -432,7 +381,7 @@
             <h2>${port.name}</h2>
             <p>${port.description}</p>
             </div>
-          <a href="/mgm3/${port.id}" class="btn primary">صفحة المجمع</a>
+          <a href="/dashboard/${port.id}" class="btn primary">صفحة المجمع</a>
         </div>
 
         <div class="big">
@@ -476,7 +425,7 @@
     // };
 
     info = [
-      {pk:35,  overallTarget:1000000, phaseTarget:200000},
+      {pk:35,  overallTarget:2182200, phaseTarget:.944880},
       {pk:2,  overallTarget:1500000, phaseTarget:320000},
       {pk:3,  overallTarget:1200000, phaseTarget:300000},
     ]
@@ -485,9 +434,10 @@
     fetch('/test')
       .then(res => res.json())
       .then(data => {
+        info
         data = data.filter(item => info.find(i => i.pk == item.pk)).map((item, index) => ({
           id: item.pk,
-          name: item.itemName,
+          name: item.name,
           overallTarget: info.find(i => i.pk == item.pk)?.overallTarget || 0,
           phaseTarget: info.find(i => i.pk == item.pk)?.phaseTarget || 0,
           collectedTotal: item.total || 500000,

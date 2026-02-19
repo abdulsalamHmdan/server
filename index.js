@@ -28,7 +28,7 @@ mongoose
 app.get("/test", async (req, res) => {
   const data = (
     await axios.get(
-      "https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
+      "https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
     )
   ).data;
   res.json(data.items);
