@@ -283,7 +283,6 @@ app.get("/:id/giveCoupon", async (req, res) => {
     },
   });
   if (coupon) {
-    console.log("user");
     res.json({
       valid: true,
       coupon: coupon,
@@ -340,7 +339,6 @@ async function userGoals(id) {
   }
   return { boxes: goals.data.items.length, payment: goals.data.totals.total };
 }
-userGoals("6995c7e7c8c710cb83a3389e").then(console.log).catch(console.error);
 
 function dates() {
   const date = new Date();

@@ -323,25 +323,32 @@
       <div class="card kpi-card">
         <div class="kpi-info">
           <span>إجمالي الصناديق التابعة</span>
-          <strong><%= boxes.length %></strong>
+          <strong style="text-align: center;"><%= boxes.length %></strong>
         </div>
-        <div class="kpi-icon">📦</div>
+        <!-- <div class="kpi-icon">📦</div> -->
+        <div class="kpi-icon">
+          <img src="/icons/quantity.png" width="30px" alt="" srcset="">
+        </div>
       </div>
 
       <div class="card kpi-card">
         <div class="kpi-info">
           <span>مستهدف الصناديق اليومي</span>
-          <strong><%= bx %></strong>
+          <strong style="text-align: center;"><%= bx %></strong>
         </div>
-        <div class="kpi-icon">🎯</div>
+        <div class="kpi-icon">
+          <img src="/icons/goal.png" width="30px" alt="" srcset="">
+        </div>
       </div>
 
       <div class="card kpi-card">
         <div class="kpi-info">
           <span>مستهدف التبرعات اليومي</span>
-          <strong style="color: var(--success-color);"><%= gx %> ر.س</strong>
+          <strong style="text-align: center; color: var(--success-color);"><%= gx %> ر.س</strong>
         </div>
-        <div class="kpi-icon">💸</div>
+        <div class="kpi-icon">
+          <img src="/icons/rial.png" width="30px" alt="" srcset="">
+        </div>
       </div>
 
       <div class="card span-2">
