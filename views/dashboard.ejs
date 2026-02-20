@@ -723,11 +723,12 @@
       const remaining = Math.max(0, port.overallTarget - port.collectedTotal);
 
       // بناء HTML الصناديق
-      fetch(`https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${port.bk}`).then((res) => res.json())
-        .then((data) => {     
+      fetch(`dashBox/${port.bk}`).then((res) => res.json())
+        .then((data) => {    
+          document.querySelector(".chip2").textContent = `${data.length} صندوق`; 
           let fundsHtml = ``;
-      if (data.items && data.items.length > 0) {
-        data.items.forEach((fund) => {
+      if (data && data.length > 0) {
+        data.forEach((fund) => {
           const fundPct = calcPct(fund.total, fund.target||1400);
           fundsHtml += `
             <div class="fundBox" style="--stageColor:${fund.color}">
@@ -801,7 +802,7 @@
         <div style="padding:0 14px 14px">
           <b style="display:flex; align-items:center; justify-content:space-between; font-size:14px; font-weight:1000; margin:15px 4px 12px; color:var(--ink)">
             <span>الصناديق الاستثمارية المكونة للمحفظة</span>
-            <span class="chip" style="background:#fff; font-size:11px;">${port.funds.length} صناديق</span>
+            <span class="chip chip2" style="background:#fff; font-size:11px;">-</span>
           </b>
           <div class="fundGrid">
             ${fundsHtml}

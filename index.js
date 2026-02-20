@@ -126,6 +126,15 @@ app.get("/dashboard/:id/today", cacheM(5), async (req, res) => {
     boxes: boxes.items || [],
   });
 });
+app.get("/dashbox/:id", cacheM(5), async (req, res) => {
+  const date = dates();
+  const boxes = (
+    await axios.get(
+      `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${req.params.id}`,
+    )
+  ).data;
+  res.json( boxes.items || []);
+});
 
 app.get("/:id/mycoupons", async (req, res) => {
   const coupons = await Coupon.find({
