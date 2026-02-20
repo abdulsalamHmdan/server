@@ -724,10 +724,8 @@
 
       // بناء HTML الصناديق
       fetch(`https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${port.bk}`).then((res) => res.json())
-        .then((data) => {
-          console.log(data.items);
-        
-      let fundsHtml = "";
+        .then((data) => {     
+          let fundsHtml = ``;
       if (data.items && data.items.length > 0) {
         data.items.forEach((fund) => {
           const fundPct = calcPct(fund.total, fund.target||1400);
@@ -762,7 +760,14 @@
       } else {
         fundsHtml = `<div style="font-size:12px; color:var(--sub); padding:10px;">لا توجد صناديق مدرجة حالياً.</div>`;
       }
+      document.querySelector(".fundGrid").innerHTML = fundsHtml;
 
+
+         })
+
+        
+      let fundsHtml = `<div style="font-size:12px; color:var(--sub); padding:10px;">جاري جلب الصناديق</div>`;
+      
       // بناء HTML اللوحة الجانبية
       inspector.innerHTML = `
         <div class="hero">
@@ -803,7 +808,6 @@
           </div>
         </div>
       `;
-      })
     }
 
     // === 5. التهيئة المبدئية عند تحميل الصفحة ===
@@ -819,190 +823,190 @@
         pk: 48,
         bk: 24,
         name: "البديعة الصباحية",
-        bigTarget: "346,840",
-        phaseTarget1: "112,802",
+        bigTarget: 346840,
+        phaseTarget1: 112802,
       },
       {
         pk: 70,
         bk: 46,
         name: "التلقين المسائية",
-        bigTarget: "861,560",
-        phaseTarget1: "283,318",
+        bigTarget: 861560,
+        phaseTarget1: 283318,
       },
       {
         pk: 72,
         bk: 48,
         name: "جامع التميمي",
-        bigTarget: "582,720",
-        phaseTarget1: "195,816",
+        bigTarget: 582720,
+        phaseTarget1: 195816,
       },
       {
         pk: 71,
         bk: 47,
         name: "حصة بنت عبدالله البسام",
-        bigTarget: "528,760",
-        phaseTarget1: "184,178",
+        bigTarget: 528760,
+        phaseTarget1: 184178,
       },
       {
         pk: 60,
         bk: 36,
         name: "دار ابن عيد المسائية",
-        bigTarget: "731,640",
-        phaseTarget1: "245,742",
+        bigTarget: 731640,
+        phaseTarget1: 245742,
       },
       {
         pk: 57,
         bk: 33,
         name: "دار البديعة المسائية",
-        bigTarget: "1,074,480",
-        phaseTarget1: "374,844",
+        bigTarget: 1074480,
+        phaseTarget1: 374844,
       },
       {
         pk: 59,
         bk: 35,
         name: "دار البويطن",
-        bigTarget: "496,760",
-        phaseTarget1: "163,378",
+        bigTarget: 496760,
+        phaseTarget1: 163378,
       },
       {
         pk: 46,
         bk: 22,
         name: "دار الحركان الصباحية",
-        bigTarget: "1,329,320",
-        phaseTarget1: "446,746",
+        bigTarget: 1329320,
+        phaseTarget1: 446746,
       },
       {
         pk: 51,
         bk: 27,
         name: "دار الحركان المسائية",
-        bigTarget: "2,108,960",
-        phaseTarget1: "742,588",
+        bigTarget: 2108960,
+        phaseTarget1: 742588,
       },
       {
         pk: 61,
         bk: 37,
         name: "دار الحميضي المسائية",
-        bigTarget: "768,640",
-        phaseTarget1: "269,792",
+        bigTarget: 768640,
+        phaseTarget1: 269792,
       },
       {
         pk: 47,
         bk: 23,
         name: "دار العضيب الصباحية",
-        bigTarget: "893,560",
-        phaseTarget1: "304,118",
+        bigTarget: 893560,
+        phaseTarget1: 304118,
       },
       {
         pk: 52,
         bk: 28,
         name: "دار العضيب المسائية",
-        bigTarget: "974,520",
-        phaseTarget1: "333,306",
+        bigTarget: 974520,
+        phaseTarget1: 333306,
       },
       {
         pk: 64,
         bk: 40,
         name: "دار الفهد الصباحية",
-        bigTarget: "581,720",
-        phaseTarget1: "195,166",
+        bigTarget: 581720,
+        phaseTarget1: 195166,
       },
       {
         pk: 67,
         bk: 43,
         name: "دار الفهد المسائية",
-        bigTarget: "911,560",
-        phaseTarget1: "315,818",
+        bigTarget: 911560,
+        phaseTarget1: 315818,
       },
       {
         pk: 55,
         bk: 31,
         name: "دار الفيحاء المسائية",
-        bigTarget: "675,680",
-        phaseTarget1: "232,804",
+        bigTarget: 675680,
+        phaseTarget1: 232804,
       },
       {
         pk: 68,
         bk: 44,
         name: "دار المطار المسائية",
-        bigTarget: "1,322,360",
-        phaseTarget1: "465,658",
+        bigTarget: 1322360,
+        phaseTarget1: 465658,
       },
       {
         pk: 63,
         bk: 39,
         name: "دار المقرأة الالكترونية",
-        bigTarget: "3,233,560",
-        phaseTarget1: "1,239,218",
+        bigTarget: 3233560,
+        phaseTarget1: 1239218,
       },
       {
         pk: 50,
         bk: 26,
         name: "دار الملك خالد الصباحية",
-        bigTarget: "517,760",
-        phaseTarget1: "177,028",
+        bigTarget: 517760,
+        phaseTarget1: 177028,
       },
       {
         pk: 58,
         bk: 34,
         name: "دار الملك خالد المسائية",
-        bigTarget: "1,642,200",
-        phaseTarget1: "579,810",
+        bigTarget: 1642200,
+        phaseTarget1: 579810,
       },
       {
         pk: 56,
         bk: 32,
         name: "دار الودي المسائية",
-        bigTarget: "504,760",
-        phaseTarget1: "168,578",
+        bigTarget: 504760,
+        phaseTarget1: 168578,
       },
       {
         pk: 49,
         bk: 25,
         name: "دار تراتيل الصباحية",
-        bigTarget: "1,790,120",
-        phaseTarget1: "629,086",
+        bigTarget: 1790120,
+        phaseTarget1: 629086,
       },
       {
         pk: 53,
         bk: 29,
         name: "دار تراتيل المسائية",
-        bigTarget: "1,820,120",
-        phaseTarget1: "648,586",
+        bigTarget: 1820120,
+        phaseTarget1: 648586,
       },
       {
         pk: 69,
         bk: 45,
         name: "دار غراس المسائية",
-        bigTarget: "802,600",
-        phaseTarget1: "268,430",
+        bigTarget: 802600,
+        phaseTarget1: 268430,
       },
       {
         pk: 54,
         bk: 30,
         name: "دار مشرفة المسائية",
-        bigTarget: "735,640",
-        phaseTarget1: "248,342",
+        bigTarget: 735640,
+        phaseTarget1: 248342,
       },
       {
         pk: 62,
         bk: 38,
         name: "دار موضي الخنيني المسائية",
-        bigTarget: "1,167,440",
-        phaseTarget1: "411,832",
+        bigTarget: 1167440,
+        phaseTarget1: 411832,
       },
       {
         pk: 65,
         bk: 41,
         name: "دار نورة الشبل الصباحية",
-        bigTarget: "510,760",
-        phaseTarget1: "172,478",
+        bigTarget: 510760,
+        phaseTarget1: 172478,
       },
       {
         pk: 66,
         bk: 42,
         name: "دار نورة الشبل المسائية",
-        bigTarget: "1,028,480",
-        phaseTarget1: "344,944",
+        bigTarget: 1028480,
+        phaseTarget1: 344944,
       },
       {
         pk: 40,
@@ -1117,7 +1121,7 @@
         phaseTarget1: 661240,
       },
     ];
-    fetch("/test")
+    fetch("/dashboardData")
       .then((res) => res.json())
       .then((data) => {
         info;

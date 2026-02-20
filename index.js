@@ -20,12 +20,33 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "100mb" }));
+const cache = require("memory-cache");
+
+// دالة الوسيط (Middleware) الخاصة بالكاش
+let cacheM = (duration) => {
+    return (req, res, next) => {
+        let key = "__express__" + (req.originalUrl || req.url);
+        let cachedBody = cache.get(key);
+
+        if (cachedBody) {
+            res.send(cachedBody);
+            return;
+        } else {
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                cache.put(key, body, duration * 1000); // المدة بالثواني
+                res.sendResponse(body);
+            };
+            next();
+        }
+    };
+};
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("تم الاتصال بقاعدة البيانات بنجاح!"))
   .catch((err) => console.log("فشل الاتصال:", err));
 
-app.get("/test", async (req, res) => {
+app.get("/dashboardData", cacheM(60), async (req, res) => {
   const data = (
     await axios.get(
       "https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
@@ -37,7 +58,7 @@ app.get("/test", async (req, res) => {
 
 
 app.get("/:id/sfeer", async (req, res) => {
-  const date = new Date();
+  const date = dates();
   const user = await User.findById(req.params.id);
   if (!user) {
     res.send("لا يوجد سفير بهذا الرقم");
@@ -47,10 +68,10 @@ app.get("/:id/sfeer", async (req, res) => {
     user: user,
     status: 1,
     ExchangeDate: {
-      $eq: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+      $eq: date.date,
     },
   });
-  let dayData = await Day.findOne({ date: getRamadanDay(date) });
+  let dayData = await Day.findOne({ date: date.rd });
   const object = Object.create(dayData);
   object["name"] = user.name;
   object["url"] = `https://donate.utq.org.sa/p/1/${user.reff}`;
@@ -63,8 +84,9 @@ app.get("/dashboard", async (req, res) => {
   res.render("dashboard");
 });
 
-app.get("/dashboard/:id", async (req, res) => {
+app.get("/dashboard/:id", cacheM(5), async (req, res) => {
   const date = dates();
+  const msthdfatM = msthdfat.find((i) => i.pk == req.params.id);
   const data = (
     await axios.get(
       "https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
@@ -72,20 +94,36 @@ app.get("/dashboard/:id", async (req, res) => {
   ).data;
   const boxes = (
     await axios.get(
-      `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${req.params.id}`,
+      `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${msthdfatM?.bk}`,
     )
   ).data;
-  const msthdfatM = msthdfat.find((i) => i.pk == req.params.id);
   res.render("mgm3", {
     data: data.items.find((i) => i.pk == req.params.id),
     boxes: boxes.items || [],
-    // phaseTarget: 944880,
-    // bigTarget: 2182200,
     bx:msthdfatM? msthdfatM[`b${date.rd}`] : 0,
     gx:msthdfatM? msthdfatM[`g${date.rd}`] : 0,
     phaseTarget:msthdfatM?.phaseTarget1,
     bigTarget:msthdfatM?.bigTarget,
     position: { day: date.rd, phase: 1 },
+  });
+});
+
+app.get("/dashboard/:id/today", cacheM(5), async (req, res) => {
+  const date = dates();
+  const msthdfatM = msthdfat.find((i) => i.pk == req.params.id);
+  const data = (
+    await axios.get(
+      `https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?ts=${date.fd}-${date.td}`,
+    )
+  ).data;
+  const boxes = (
+    await axios.get(
+      `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${msthdfatM?.bk}&ts=${date.fd}-${date.td}`,
+    )
+  ).data;
+  res.json( {
+    data: data.items.find((i) => i.pk == req.params.id),
+    boxes: boxes.items || [],
   });
 });
 

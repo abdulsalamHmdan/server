@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,7 +42,8 @@
     /* حاوية لوحة التحكم */
     .dashboard-wrapper {
       width: 100%;
-      max-width: 1200px; /* مساحة واسعة تناسب لوحة التحكم */
+      max-width: 1200px;
+      /* مساحة واسعة تناسب لوحة التحكم */
       display: flex;
       flex-direction: column;
       gap: 25px;
@@ -71,16 +73,17 @@
     /* نظام الشبكة (Grid System) */
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3 أعمدة في الشاشات الكبيرة */
+      grid-template-columns: repeat(4, 1fr);
+      /* 3 أعمدة في الشاشات الكبيرة */
       gap: 20px;
     }
 
     .span-2 {
-      grid-column: span 2;
+      grid-column: span 3;
     }
 
     .span-3 {
-      grid-column: span 3;
+      grid-column: span 4;
     }
 
     /* تنسيق البطاقات العامة */
@@ -213,7 +216,8 @@
       gap: 12px;
       overflow-y: auto;
       max-height: 300px;
-      padding-left: 5px; /* لمساحة السكرول */
+      padding-left: 5px;
+      /* لمساحة السكرول */
     }
 
     /* لشبكة الصناديق لتعبئة المساحة العريضة */
@@ -268,6 +272,7 @@
       color: var(--success-color);
       font-weight: bold;
     }
+
     .disabled {
       opacity: 0.6;
       pointer-events: none;
@@ -278,9 +283,11 @@
       .grid-container {
         grid-template-columns: repeat(2, 1fr);
       }
+
       .span-2 {
         grid-column: span 2;
       }
+
       .grid-list {
         grid-template-columns: 1fr;
       }
@@ -290,9 +297,12 @@
       .grid-container {
         grid-template-columns: 1fr;
       }
-      .span-2, .span-3 {
+
+      .span-2,
+      .span-3 {
         grid-column: span 1;
       }
+
       .header {
         flex-direction: column;
         text-align: center;
@@ -301,30 +311,46 @@
     }
 
     /* تخصيص سكرول القوائم */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: #d1c4b9; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--primary-btn); }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
 
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #d1c4b9;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-btn);
+    }
   </style>
 </head>
+
 <body>
 
   <div class="dashboard-wrapper">
-    
+
     <div class="header">
       <div class="header-titles">
-        <h1>لوحة تحكم <%= data.name %></h1>
+        <h1>لوحة تحكم <%= data.name %>
+        </h1>
         <p>نظرة عامة على أداء الصناديق والمستهدفات</p>
       </div>
-      </div>
+    </div>
 
     <div class="grid-container">
-      
+
       <div class="card kpi-card">
         <div class="kpi-info">
-          <span>إجمالي الصناديق التابعة</span>
-          <strong style="text-align: center;"><%= boxes.length %></strong>
+          <span>إجمالي صناديق اليوم</span>
+          <strong style="text-align: center;">
+            -
+          </strong>
         </div>
         <div class="kpi-icon">
           <img src="/icons/quantity.png" width="30px" alt="" srcset="">
@@ -333,8 +359,22 @@
 
       <div class="card kpi-card">
         <div class="kpi-info">
+          <span>مجموع تبرعات اليوم</span>
+          <strong style="text-align: center;">
+            -
+          </strong>
+        </div>
+        <div class="kpi-icon">
+          <img src="/icons/rial.png" width="30px" alt="" srcset="">
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-info">
           <span>مستهدف الصناديق اليومي</span>
-          <strong style="text-align: center;"><%= bx %></strong>
+          <strong style="text-align: center;">
+            <%= bx %>
+          </strong>
         </div>
         <div class="kpi-icon">
           <img src="/icons/goal.png" width="30px" alt="" srcset="">
@@ -344,10 +384,12 @@
       <div class="card kpi-card">
         <div class="kpi-info">
           <span>مستهدف التبرعات اليومي</span>
-          <strong style="text-align: center; color: var(--success-color);"><%= gx %> ر.س</strong>
+          <strong style="text-align: center; color: var(--success-color);">
+            <%= gx %> ر.س
+          </strong>
         </div>
         <div class="kpi-icon">
-          <img src="/icons/rial.png" width="30px" alt="" srcset="">
+          <img src="/icons/goal.png" width="30px" alt="" srcset="">
         </div>
       </div>
 
@@ -358,30 +400,31 @@
         <div class="target-grid">
           <div class="target-item">
             <span class="target-label">إجمالي ما تم جمعه</span>
-            <span class="target-value success"><%= data?.total || 0 %> ر.س</span> 
+            <span class="target-value success">
+              <%= data?.total || 0 %> ر.س
+            </span>
           </div>
           <div class="target-item">
             <span class="target-label">المستهدف الكلي</span>
-            <span class="target-value"><%= bigTarget || 0 %> ر.س</span>
+            <span class="target-value">
+              <%= bigTarget || 0 %> ر.س
+            </span>
           </div>
         </div>
         <div class="progress-wrapper">
           <div class="progress-header">
             <span>نسبة المستهدف الكلي</span>
-            <span><%= data?.total && bigTarget ? (data.total / bigTarget * 100).toFixed(2) : 0 %> %</span>
+            <span>
+              <%= data?.total && bigTarget ? (data.total / bigTarget * 100).toFixed(2) : 0 %> %
+            </span>
           </div>
           <div class="progress-container">
-            <div class="progress-bar" style="width: <%= data?.total && bigTarget ? (data.total / bigTarget * 100).toFixed(2) : 0 %>%;"></div>
+            <div class="progress-bar"
+              style="width: <%= data?.total && bigTarget ? (data.total / bigTarget * 100).toFixed(2) : 0 %>%;"></div>
           </div>
         </div>
-        <div class="progress-wrapper">
-          <div class="progress-header">
-            <span>نسبة المستهدف المرحلي</span>
-            <span><%= data?.total && phaseTarget ? (data.total / phaseTarget * 100).toFixed(2) : 0 %> %</span>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar" style="width: <%= data?.total && phaseTarget ? (data.total / phaseTarget * 100).toFixed(2) : 0 %>%;"></div>
-          </div>
+        <div class="progress-wrapper progress-wrapperToday " style="display: flex;width: 100%;gap: 5px;">
+
         </div>
       </div>
 
@@ -389,22 +432,31 @@
         <div class="card-title">
           <h2>المستهدف المرحلي</h2>
         </div>
-        <div class="target-grid" style="grid-template-columns: 1fr;"> <div class="target-item">
+        <div class="target-grid" style="grid-template-columns: 1fr;">
+          <div class="target-item">
             <span class="target-label">تم جمعه (المرحلة الحالية)</span>
-            <span class="target-value success"><%= data?.total || 0 %> ر.س</span>
+            <span class="target-value success">
+              <%= data?.total || 0 %> ر.س
+            </span>
           </div>
           <div class="target-item">
             <span class="target-label">مستهدف المرحلة</span>
-            <span class="target-value"><%= phaseTarget || 0 %> ر.س</span>
+            <span class="target-value">
+              <%= phaseTarget || 0 %> ر.س
+            </span>
           </div>
         </div>
         <div class="progress-wrapper">
           <div class="progress-header">
             <span>نسبة الإنجاز</span>
-            <span><%= data?.total && phaseTarget ? (data.total / phaseTarget * 100).toFixed(2) : 0 %> %</span>
+            <span>
+              <%= data?.total && phaseTarget ? (data.total / phaseTarget * 100).toFixed(2) : 0 %> %
+            </span>
           </div>
           <div class="progress-container">
-            <div class="progress-bar" style="width: <%= data?.total && phaseTarget ? (data.total / phaseTarget * 100).toFixed(2) : 0 %>%;"></div>
+            <div class="progress-bar"
+              style="width: <%= data?.total && phaseTarget ? (data.total / phaseTarget * 100).toFixed(2) : 0 %>%;">
+            </div>
           </div>
         </div>
       </div>
@@ -422,25 +474,32 @@
             <span class="item-amount">15,000 ر.س</span>
           </div>
 
-          
+
         </div>
       </div>
 
       <div class="card span-2">
         <div class="card-title">
           <h2>قائمة الصناديق التابعة</h2>
+          <span>
+            <%= boxes.length %> صندوق
+          </span>
         </div>
         <div id="boxes" class="list-container grid-list">
-          <% boxes.forEach(box => { %>
-          <div class="list-item">
-            <div class="item-info">
-              <span class="item-name"><%= box.name %></span>
+          <% boxes.forEach(box=> { %>
+            <div class="list-item">
+              <div class="item-info">
+                <span class="item-name">
+                  <%= box.name %>
+                </span>
+              </div>
+              <span class="item-amount">
+                <%= box.total %> ر.س
+              </span>
             </div>
-            <span class="item-amount"><%= box.total %> ر.س</span>
-          </div>
-          <% }) %>
+            <% }) %>
 
-          
+
         </div>
       </div>
 
@@ -454,6 +513,40 @@
    * @param {string} elementId - الـ ID الخاص بالقائمة
    * @param {number} speed - سرعة التمرير (رقم صغير مثل 0.5 أو 1)
    */
+
+  fetch('/dashboard/<%= data.pk %>/today')
+    .then(res => res.json())
+    .then(d => {
+      console.log(d);
+      document.querySelector(".kpi-card:nth-child(2) .kpi-info strong").textContent = d.data.total + " ر.س";
+      document.querySelector(".kpi-card:nth-child(1) .kpi-info strong").textContent = d.boxes.length;
+  
+      document.querySelector(".progress-wrapperToday").innerHTML = 
+      `
+  <div class="x" style="
+    width: 50%;
+">
+            <div class="progress-header">
+              <span>نسبة المستهدف اليومي</span>
+              <span>${(d.data.total/(+"<%=gx%>")*100).toFixed(2)} %</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar" style="width: ${(d.data.total/(+"<%=gx%>")*100).toFixed(2)}%;"></div>
+            </div>
+          </div>
+          <div class="x" style="
+    width: 50%;
+">
+            <div class="progress-header">
+              <span>نسبة الصناديق اليومية</span>
+              <span>${(d.boxes.length/(+"<%=bx%>")*100).toFixed(2)} %</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar" style="width: ${(d.boxes.length/(+"<%=bx%>")*100).toFixed(2)}%;"></div>
+            </div>
+          </div>
+          `
+    })
 
 
   function smoothAutoScroll(elementId, speed = 0.5) {
@@ -484,7 +577,7 @@
         if (container.scrollTop + container.clientHeight >= container.scrollHeight - 1) {
           pauseForSeconds(10); // إيقاف 3 ثواني
           direction = -1; // اعكس الاتجاه للأعلى
-        } 
+        }
         // إذا وصلنا لأول القائمة بالأعلى
         else if (container.scrollTop <= 0) {
           pauseForSeconds(10); // إيقاف 3 ثواني
@@ -496,7 +589,7 @@
         container.scrollTop = currentScroll;
 
         // مزامنة المتغير مع السكرول الفعلي
-        currentScroll = container.scrollTop; 
+        currentScroll = container.scrollTop;
       }
 
       // استدعاء الدالة بشكل مستمر
@@ -513,4 +606,5 @@
     smoothAutoScroll('sfraa', 0.4);
   });
 </script>
+
 </html>
