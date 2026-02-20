@@ -139,6 +139,7 @@
       justify-content: center;
       font-size: 1.5rem;
       color: var(--accent-color);
+      margin-top: 5px;
     }
 
     /* شبكة المستهدفات (للبطاقات الكبيرة) */
@@ -313,7 +314,7 @@
     
     <div class="header">
       <div class="header-titles">
-        <h1>لوحة تحكم محفظة المجمع</h1>
+        <h1>لوحة تحكم <%= data.name %></h1>
         <p>نظرة عامة على أداء الصناديق والمستهدفات</p>
       </div>
       </div>
@@ -325,7 +326,6 @@
           <span>إجمالي الصناديق التابعة</span>
           <strong style="text-align: center;"><%= boxes.length %></strong>
         </div>
-        <!-- <div class="kpi-icon">📦</div> -->
         <div class="kpi-icon">
           <img src="/icons/quantity.png" width="30px" alt="" srcset="">
         </div>

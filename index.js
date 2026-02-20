@@ -19,7 +19,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json({ limit: "50mb" }));
+app.use(express.json({ limit: "100mb" }));
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("تم الاتصال بقاعدة البيانات بنجاح!"))
@@ -33,6 +33,8 @@ app.get("/test", async (req, res) => {
   ).data;
   res.json(data.items);
 });
+
+
 
 app.get("/:id/sfeer", async (req, res) => {
   const date = new Date();
@@ -77,12 +79,12 @@ app.get("/dashboard/:id", async (req, res) => {
   res.render("mgm3", {
     data: data.items.find((i) => i.pk == req.params.id),
     boxes: boxes.items || [],
+    // phaseTarget: 944880,
+    // bigTarget: 2182200,
     bx:msthdfatM? msthdfatM[`b${date.rd}`] : 0,
     gx:msthdfatM? msthdfatM[`g${date.rd}`] : 0,
-    phaseTarget: 944880,
-    bigTarget: 2182200,
-    // phaseTarget:msthdfatM?.phaseTarget1,
-    // bigTarget:msthdfatM?.bigTarget,
+    phaseTarget:msthdfatM?.phaseTarget1,
+    bigTarget:msthdfatM?.bigTarget,
     position: { day: date.rd, phase: 1 },
   });
 });
@@ -332,12 +334,12 @@ async function userGoals(id) {
   }
 
   const goals = await axios.get(
-    `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd}-${date.td}`,
+    `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd/1000}-${date.td}`,
   );
   if (goals.data.success !== true) {
     return { boxes: 0, payment: 0 };
   }
-  return { boxes: goals.data.items.length, payment: goals.data.totals.total };
+  return { boxes: goals.data.items.length, payment: goals.data.totals.total};
 }
 
 function dates() {
