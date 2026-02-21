@@ -44,26 +44,37 @@ mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("تم الاتصال بقاعدة البيانات بنجاح!"))
   .catch((err) => console.log("فشل الاتصال:", err));
-app.get("/db", async (req, res) => {
-  let users = await User.find({});
+// app.get("/db", async (req, res) => {
+//   let users = await User.find({});
 
-  users = users.map((u) => ({
-    id: u._id.toString(),
-    name: u.name,
-    reff: u.reff,
-    mgm3: u.mgm3,
-    phone: u.phone,
-    url1: u.url1,
-    url2: u.url2,
-  }));
-  console.log(users[0]);
+//   users = users.map((u) => ({
+//     id: u._id.toString(),
+//     name: u.name,
+//     reff: u.reff,
+//     mgm3: u.mgm3,
+//     phone: u.phone,
+//     url1: u.url1,
+//     url2: u.url2,
+//   }));
+//   console.log(users[0]);
 
-  const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.json_to_sheet(users);
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
-  XLSX.writeFile(workbook, "data2.xlsx");
-  res.json({ users: users.length });
-});
+//   const workbook = XLSX.utils.book_new();
+//   const worksheet = XLSX.utils.json_to_sheet(users);
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+//   XLSX.writeFile(workbook, "data2.xlsx");
+//   res.json({ users: users.length });
+// });
+// app.get("/updateDb", async (req, res) => {
+// const updates = [];
+// const bulkOps = updates.map(update => ({
+//   updateOne: {
+//     filter: { _id: update.id },
+//     update: { $set: { mgm3: update.mgm3 } }
+//   }
+// }));
+//   await User.bulkWrite(bulkOps)
+//   res.json({ users: bulkOps });
+// });
 
 app.get("/dashboardData", cacheM(60), async (req, res) => {
   const data = (
