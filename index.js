@@ -198,7 +198,10 @@ app.get("/:id/boxes", async (req, res) => {
   }
 });
 app.get("/:id/rank", async (req, res) => {
-  let user = await User.findById(req.params.id);
+  // let user = await User.findById(req.params.id);
+  let user = await User.find({}, "name mgm3").sort({ name: -1 });
+  console.log(user.findIndex((u) => u._id == req.params.id));
+  console.log(user.filter(x=>x.mgm3=="200").findIndex((u) => u._id == req.params.id));
   const rank = { a: 1, b: 1, c: 1 };
 
   res.json(rank);
@@ -423,6 +426,7 @@ async function userGoals(id) {
   if (goals.data.success !== true) {
     return { boxes: 0, payment: 0 };
   }
+  console.log(goals.data.totals.total);
   return { boxes: goals.data.items.length, payment: goals.data.totals.total };
 }
 
@@ -460,7 +464,6 @@ function getRamadanDay(date) {
     return 30; // بعد رمضان
   }
 
-  // حساب الفرق بالأيام (1000ms * 60s * 60m * 24h)
   const diffTime = Math.abs(inputDate - startCompare);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 

@@ -719,8 +719,8 @@
     // === 4. رسم تفاصيل المحفظة والصناديق (الجانب الأيسر) ===
     function renderInspector(port) {
       const inspector = document.getElementById("inspectorPanel");
-      const achivementPct = calcPct(port.collectedTotal, port.overallTarget);
-      const remaining = Math.max(0, port.overallTarget - port.collectedTotal);
+      const achivementPct = calcPct(port.collectedTotal, port.phaseTarget);
+      const remaining = Math.max(0, port.phaseTarget - port.collectedTotal);
 
       // بناء HTML الصناديق
       fetch(`dashBox/${port.bk}`).then((res) => res.json())
@@ -787,15 +787,15 @@
           </div>
 
           <div class="tile">
-            <div class="t">نسبة التحقيق (الكلي)</div>
+            <div class="t">نسبة التحقيق (المرحلي)</div>
             <div class="v" style="color:var(--accent2)">${achivementPct}%</div>
-            <div class="s">من أصل ${formatMoney(port.overallTarget)} ﷼</div>
+            <div class="s">من أصل ${formatMoney(port.phaseTarget)} ﷼</div>
           </div>
 
           <div class="tile">
-            <div class="t">المتبقي للمستهدف الكلي</div>
+            <div class="t">المتبقي للمستهدف المرحلي</div>
             <div class="v" style="color:#a55c5c">${formatMoney(remaining)}</div>
-            <div class="s">المبلغ المتبقي لإغلاق المحفظة بالكامل.</div>
+            <div class="s">المبلغ المتبقي لإغلاق الهدف المرحلي.</div>
           </div>
         </div>
 
