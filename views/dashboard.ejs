@@ -1134,7 +1134,7 @@
             bk: info.find((i) => i.pk == item.pk)?.bk,
             overallTarget: info.find((i) => i.pk == item.pk)?.bigTarget || 0,
             phaseTarget: info.find((i) => i.pk == item.pk)?.phaseTarget1 || 0,
-            collectedTotal: item.total || 500000,
+            collectedTotal: item.total||0,
             description: item.description || "وصف افتراضي للمحفظة.",
             funds: item.funds || [
               {
