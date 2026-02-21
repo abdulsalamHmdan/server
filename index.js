@@ -21,30 +21,49 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "100mb" }));
 const cache = require("memory-cache");
-
 // دالة الوسيط (Middleware) الخاصة بالكاش
 let cacheM = (duration) => {
-    return (req, res, next) => {
-        let key = "__express__" + (req.originalUrl || req.url);
-        let cachedBody = cache.get(key);
+  return (req, res, next) => {
+    let key = "__express__" + (req.originalUrl || req.url);
+    let cachedBody = cache.get(key);
 
-        if (cachedBody) {
-            res.send(cachedBody);
-            return;
-        } else {
-            res.sendResponse = res.send;
-            res.send = (body) => {
-                cache.put(key, body, duration * 1000); // المدة بالثواني
-                res.sendResponse(body);
-            };
-            next();
-        }
-    };
+    if (cachedBody) {
+      res.send(cachedBody);
+      return;
+    } else {
+      res.sendResponse = res.send;
+      res.send = (body) => {
+        cache.put(key, body, duration * 1000); // المدة بالثواني
+        res.sendResponse(body);
+      };
+      next();
+    }
+  };
 };
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("تم الاتصال بقاعدة البيانات بنجاح!"))
   .catch((err) => console.log("فشل الاتصال:", err));
+app.get("/db", async (req, res) => {
+  let users = await User.find({});
+
+  users = users.map((u) => ({
+    id: u._id.toString(),
+    name: u.name,
+    reff: u.reff,
+    mgm3: u.mgm3,
+    phone: u.phone,
+    url1: u.url1,
+    url2: u.url2,
+  }));
+  console.log(users[0]);
+
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.json_to_sheet(users);
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+  XLSX.writeFile(workbook, "data2.xlsx");
+  res.json({ users: users.length });
+});
 
 app.get("/dashboardData", cacheM(60), async (req, res) => {
   const data = (
@@ -54,8 +73,6 @@ app.get("/dashboardData", cacheM(60), async (req, res) => {
   ).data;
   res.json(data.items);
 });
-
-
 
 app.get("/:id/sfeer", async (req, res) => {
   const date = dates();
@@ -86,6 +103,8 @@ app.get("/dashboard", async (req, res) => {
 
 app.get("/dashboard/:id", cacheM(5), async (req, res) => {
   const date = dates();
+  const users = await User.find({}, "name", { limit: 15 });
+  // console.log(users.length);
   const msthdfatM = msthdfat.find((i) => i.pk == req.params.id);
   const data = (
     await axios.get(
@@ -100,11 +119,12 @@ app.get("/dashboard/:id", cacheM(5), async (req, res) => {
   res.render("mgm3", {
     data: data.items.find((i) => i.pk == req.params.id),
     boxes: boxes.items || [],
-    bx:msthdfatM? msthdfatM[`b${date.rd}`] : 0,
-    gx:msthdfatM? msthdfatM[`g${date.rd}`] : 0,
-    phaseTarget:msthdfatM?.phaseTarget1,
-    bigTarget:msthdfatM?.bigTarget,
-    position: { day: date.rd, phase: 1 },
+    bx: msthdfatM ? msthdfatM[`b${date.rd}`] : 0,
+    gx: msthdfatM ? msthdfatM[`g${date.rd}`] : 0,
+    phaseTarget: msthdfatM?.phaseTarget1,
+    bigTarget: msthdfatM?.bigTarget,
+    sfeer: users,
+    // position: { day: date.rd, phase: 1 },
   });
 });
 
@@ -121,7 +141,7 @@ app.get("/dashboard/:id/today", cacheM(5), async (req, res) => {
       `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${msthdfatM?.bk}&ts=${date.fd}-${date.td}`,
     )
   ).data;
-  res.json( {
+  res.json({
     data: data.items.find((i) => i.pk == req.params.id),
     boxes: boxes.items || [],
   });
@@ -133,7 +153,7 @@ app.get("/dashbox/:id", cacheM(5), async (req, res) => {
       `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${req.params.id}`,
     )
   ).data;
-  res.json( boxes.items || []);
+  res.json(boxes.items || []);
 });
 
 app.get("/:id/mycoupons", async (req, res) => {
@@ -381,12 +401,12 @@ async function userGoals(id) {
   }
 
   const goals = await axios.get(
-    `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd/1000}-${date.td}`,
+    `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd}-${date.td}`,
   );
   if (goals.data.success !== true) {
     return { boxes: 0, payment: 0 };
   }
-  return { boxes: goals.data.items.length, payment: goals.data.totals.total};
+  return { boxes: goals.data.items.length, payment: goals.data.totals.total };
 }
 
 function dates() {

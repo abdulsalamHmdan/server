@@ -665,7 +665,7 @@
     // === 2. دوال مساعدة للتنسيق ===
     const formatMoney = (num) => Number(num).toLocaleString("en-us");
     const calcPct = (part, total) =>
-      total > 0 ? Math.min(100, Math.round((part / total) * 100)) : 0;
+      total > 0 ? Math.min(100, (part / total) * 100).toFixed(2) : 0;
 
     // === 3. رسم قائمة المحافظ (الجانب الأيمن) ===
     function renderPortfolios(portfolios) {

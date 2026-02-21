@@ -461,11 +461,19 @@
         </div>
       </div>
 
-      <div class="card disabled">
+      <div class="card">
         <div class="card-title">
           <h2>أبرز السفراء</h2>
         </div>
         <div id="sfraa" class="list-container">
+          <% sfeer.forEach(s => { %>
+            <div class="list-item">
+            <div class="item-info">
+              <span class="item-number">1</span>
+              <span class="item-name"><%= s.name %></span>
+            </div>
+          </div>
+          <% }) %>
         
 
 
