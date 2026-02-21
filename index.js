@@ -114,7 +114,6 @@ app.get("/dashboard/:id", cacheM(5), async (req, res) => {
     cond = newData.hasMore == true;
     page++;
   }
-  console.log("PAGE", page);
   const boxes = (
     await axios.get(
       `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${msthdfatM?.bk}`,
@@ -140,13 +139,27 @@ app.get("/dashboard/:id/today", cacheM(5), async (req, res) => {
       `https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?ts=${date.fd}-${date.td}`,
     )
   ).data;
+
+  let page = 1;
+  let cond = data.hasMore == true;
+  while (cond) {
+    const newData = (
+      await axios.get(
+        `https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?page=${page}&ts=${date.fd}-${date.td}`,
+      )
+    ).data;
+    data.items.push(...newData.items);
+    cond = newData.hasMore == true;
+    page++;
+  }
+
   const boxes = (
     await axios.get(
       `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?type=${msthdfatM?.bk}&ts=${date.fd}-${date.td}`,
     )
   ).data;
   res.json({
-    data: data.items.find((i) => i.pk == req.params.id),
+    data: data.items.find((i) => i.pk == req.params.id)||0,
     boxes: boxes.items || [],
   });
 });

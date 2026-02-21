@@ -510,17 +510,13 @@
 
 </body>
 <script>
-  /**
-   * دالة التمرير التلقائي (للأعلى والأسفل)
-   * @param {string} elementId - الـ ID الخاص بالقائمة
-   * @param {number} speed - سرعة التمرير (رقم صغير مثل 0.5 أو 1)
-   */
+
 
   fetch('/dashboard/<%= data.pk %>/today')
     .then(res => res.json())
     .then(d => {
       console.log(d);
-      document.querySelector(".kpi-card:nth-child(2) .kpi-info strong").textContent = d.data.total + " ر.س";
+      document.querySelector(".kpi-card:nth-child(2) .kpi-info strong").textContent = (d.data.total || 0) + " ر.س";
       document.querySelector(".kpi-card:nth-child(1) .kpi-info strong").textContent = d.boxes.length;
   
       document.querySelector(".progress-wrapperToday").innerHTML = 
@@ -530,10 +526,10 @@
 ">
             <div class="progress-header">
               <span>نسبة المستهدف اليومي</span>
-              <span>${(d.data.total/(+"<%=gx%>")*100).toFixed(2)} %</span>
+              <span>${((d?.data?.total||0)/(+"<%=gx%>")*100).toFixed(2)} %</span>
             </div>
             <div class="progress-container">
-              <div class="progress-bar" style="width: ${(d.data.total/(+"<%=gx%>")*100).toFixed(2)}%;"></div>
+              <div class="progress-bar" style="width: ${((d?.data?.total||0)/(+"<%=gx%>")*100).toFixed(2)}%;"></div>
             </div>
           </div>
           <div class="x" style="
