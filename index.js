@@ -357,8 +357,9 @@ app.post("/coupons/save-bulk", async (req, res) => {
 /*============================== */
 
 app.get("/:id/giveCoupon", async (req, res) => {
-  const date = new Date();
-  const dayg = Day.findOne({ date: getRamadanDay(date) });
+  const date = dates();
+  const dayg = await Day.findOne({ date: date.rd });
+  console.log(dayg);
   const userId = req.params.id;
   let user = await User.findById(userId);
   if (!user) {
@@ -368,7 +369,7 @@ app.get("/:id/giveCoupon", async (req, res) => {
     user: user._id,
     status: 1,
     ExchangeDate: {
-      $eq: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+      $eq: date.date,
     },
   });
   if (coupon) {
@@ -388,11 +389,7 @@ app.get("/:id/giveCoupon", async (req, res) => {
       {
         user: user._id,
         status: 1,
-        ExchangeDate: new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate(),
-        ),
+        ExchangeDate: date.date,
       },
     );
     if (newCoupon) {
@@ -404,6 +401,9 @@ app.get("/:id/giveCoupon", async (req, res) => {
       res.json({ valid: false, message: "لا يوجد كوبونات متاحة" });
     }
   } else {
+    console.log(userGoalsData.boxes , dayg.payGoal ,userGoalsData.payment , dayg.payGoal);
+    console.log(userGoalsData.boxes >= dayg.payGoal ,userGoalsData.payment >= dayg.payGoal);
+
     res.json({ valid: false, message: "لم تحقق الأهداف بعد" });
   }
 });

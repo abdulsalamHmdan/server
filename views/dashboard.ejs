@@ -809,6 +809,7 @@
           </div>
         </div>
       `;
+      inspector.scrollIntoView({ behavior: "smooth" });
     }
 
     // === 5. التهيئة المبدئية عند تحميل الصفحة ===
@@ -1135,7 +1136,7 @@
             overallTarget: info.find((i) => i.pk == item.pk)?.bigTarget || 0,
             phaseTarget: info.find((i) => i.pk == item.pk)?.phaseTarget1 || 0,
             collectedTotal: item.total||0,
-            description: item.description || "وصف افتراضي للمحفظة.",
+            description: item.description || "بيانات المجمع التفصيلية",
             funds: item.funds || [
               {
                 name: "صندوق افتراضي 1",
