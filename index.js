@@ -116,7 +116,6 @@ app.get("/:id/profile", async (req, res) => {
 });
 app.post("/:id/profile", async (req, res) => {
   const { field, value } = req.body;
-  console.log(field, value);
   await User.findByIdAndUpdate(req.params.id, { [field]: value })
     .then((u) => {})
     .catch((e) => {
@@ -263,17 +262,25 @@ app.get("/:id/boxes", async (req, res) => {
     res.json(boxes.data.items || []);
   }
 });
-app.get("/:id/rank", async (req, res) => {
-  // let user = await User.findById(req.params.id);
-  let user = await User.find({}, "name mgm3").sort({ name: -1 });
-  console.log(user.findIndex((u) => u._id == req.params.id));
-  console.log(
-    user
-      .filter((x) => x.mgm3 == "200")
-      .findIndex((u) => u._id == req.params.id),
-  );
-  const rank = { a: 1, b: 1, c: 1 };
 
+app.get("/:id/rank", async (req, res) => {
+  let me = await User.findById(req.params.id);
+  let user = await User.find({}, "name mgm3").sort({ name: -1 });
+  const pks = user.map((u) => u.mgm3);
+  let data = (
+    await axios.get(
+      "https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
+    )
+  ).data;
+  data = data.items;
+  const rankIndex = data.filter((i) => pks.includes(i.pk)).findIndex((i) => i.pk == me.mgm3) + 1;
+  const rank = {
+    a: user.findIndex((u) => u._id == req.params.id)+1,
+    b: user
+      .filter((x) => x.mgm3 == me.mgm3)
+      .findIndex((u) => u._id == req.params.id)+1,
+    c: rankIndex || "-",
+  };
   res.json(rank);
 });
 
@@ -352,8 +359,8 @@ app.post("/save", (req, res) => {
         { upsert: true, new: true },
       );
 
-      res.send("تم الحفظ بنجاح!");
-      // res.redirect(`/admin/${date}?success=true`);
+      // res.send("تم الحفظ بنجاح!");
+      res.redirect(`/days`);
     } catch (dbError) {
       console.error("❌ خطأ في قاعدة البيانات:", dbError);
       res.status(500).send("حدث خطأ أثناء الحفظ في قاعدة البيانات.");
@@ -466,7 +473,6 @@ app.post("/coupons/save-bulk", async (req, res) => {
 app.get("/:id/giveCoupon", async (req, res) => {
   const date = dates();
   const dayg = await Day.findOne({ date: date.rd });
-  console.log(dayg);
   const userId = req.params.id;
   let user = await User.findById(userId);
   if (!user) {
@@ -541,7 +547,6 @@ async function userGoals(id) {
   if (goals.data.success !== true) {
     return { boxes: 0, payment: 0 };
   }
-  console.log(goals.data.totals.total);
   return { boxes: goals.data.items.length, payment: goals.data.totals.total };
 }
 
