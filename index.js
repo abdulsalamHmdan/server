@@ -45,6 +45,23 @@ mongoose
   .then(() => console.log("تم الاتصال بقاعدة البيانات بنجاح!"))
   .catch((err) => console.log("فشل الاتصال:", err));
 
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const multer = require("multer");
+cloudinary.config({
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
+});
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "my_app_uploads",
+    allowed_formats: ["jpg", "png", "jpeg", "webp"],
+  },
+});
+const upload = multer({ storage: storage });
+
 app.get("/dashboardData", cacheM(60), async (req, res) => {
   const data = (
     await axios.get(
@@ -159,7 +176,7 @@ app.get("/dashboard/:id/today", cacheM(5), async (req, res) => {
     )
   ).data;
   res.json({
-    data: data.items.find((i) => i.pk == req.params.id)||0,
+    data: data.items.find((i) => i.pk == req.params.id) || 0,
     boxes: boxes.items || [],
   });
 });
@@ -201,7 +218,11 @@ app.get("/:id/rank", async (req, res) => {
   // let user = await User.findById(req.params.id);
   let user = await User.find({}, "name mgm3").sort({ name: -1 });
   console.log(user.findIndex((u) => u._id == req.params.id));
-  console.log(user.filter(x=>x.mgm3=="200").findIndex((u) => u._id == req.params.id));
+  console.log(
+    user
+      .filter((x) => x.mgm3 == "200")
+      .findIndex((u) => u._id == req.params.id),
+  );
   const rank = { a: 1, b: 1, c: 1 };
 
   res.json(rank);
@@ -224,7 +245,6 @@ app.get("/admin/:dayId", async (req, res) => {
   const dayId = req.params.dayId;
   let dayData = await Day.findOne({ date: dayId });
 
-  // إذا لم توجد بيانات، نرسل كائن فارغ للـ EJS
   if (!dayData) {
     dayData = {
       date: dayId,
@@ -238,20 +258,56 @@ app.get("/admin/:dayId", async (req, res) => {
   res.render("admin", { data: dayData });
 });
 
-app.post("/save", async (req, res) => {
-  const { date, img, text, boxGoal, payGoal, goal, label } = req.body;
+// POST: حفظ البيانات مع معالجة الصورة
+// لاحظ استخدام upload.single('imgFile')
+app.post("/save", (req, res) => {
+  // نقلنا دالة الرفع لداخل المسار عشان نقدر نمسك أخطاء Cloudinary
+  upload.single("imgFile")(req, res, async (uploadError) => {
+    // 1. التحقق من وجود خطأ في الرفع للسحابة
+    if (uploadError) {
+      console.error("❌ خطأ من الكلاوديناري:", uploadError);
+      return res.status(500).send("فشل رفع الصورة للسحابة: " + uploadError.message);
+    }
 
-  const goalsArray = Array.isArray(goal)
-    ? goal.map((g, i) => ({ goal: g, label: label[i] }))
-    : [{ goal, label }];
+    console.log("الملف المرفوع:", req.file);
+    console.log("البيانات النصية:", req.body);
 
-  await Day.findOneAndUpdate(
-    { date: date },
-    { img, text, boxGoal, payGoal, goals: goalsArray },
-    { upsert: true, new: true },
-  );
+    // 2. إذا نجح الرفع، نكمل حفظ البيانات في قاعدة البيانات
+    try {
+      const { date, text, boxGoal, payGoal, goal, label, currentImg } = req.body;
 
-  res.redirect(`/admin/${date}?success=true`);
+      let goalsArray = [];
+      if (Array.isArray(goal)) {
+        goalsArray = goal.map((g, i) => ({ goal: g, label: label[i] }));
+      } else if (goal) {
+        goalsArray = [{ goal, label }];
+      }
+
+      let finalImg = currentImg;
+      if (req.file) {
+        finalImg = req.file.path; // هذا هو رابط الصورة من Cloudinary
+      }
+
+      await Day.findOneAndUpdate(
+        { date: date },
+        {
+          text,
+          boxGoal,
+          payGoal,
+          goals: goalsArray,
+          img: finalImg,
+        },
+        { upsert: true, new: true }
+      );
+      
+      res.send("تم الحفظ بنجاح!");
+      // res.redirect(`/admin/${date}?success=true`);
+      
+    } catch (dbError) {
+      console.error("❌ خطأ في قاعدة البيانات:", dbError);
+      res.status(500).send("حدث خطأ أثناء الحفظ في قاعدة البيانات.");
+    }
+  });
 });
 
 app.get("/safer/add", (req, res) => {
@@ -401,8 +457,16 @@ app.get("/:id/giveCoupon", async (req, res) => {
       res.json({ valid: false, message: "لا يوجد كوبونات متاحة" });
     }
   } else {
-    console.log(userGoalsData.boxes , dayg.payGoal ,userGoalsData.payment , dayg.payGoal);
-    console.log(userGoalsData.boxes >= dayg.payGoal ,userGoalsData.payment >= dayg.payGoal);
+    console.log(
+      userGoalsData.boxes,
+      dayg.payGoal,
+      userGoalsData.payment,
+      dayg.payGoal,
+    );
+    console.log(
+      userGoalsData.boxes >= dayg.payGoal,
+      userGoalsData.payment >= dayg.payGoal,
+    );
 
     res.json({ valid: false, message: "لم تحقق الأهداف بعد" });
   }

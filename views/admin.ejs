@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>تعديل بيانات اليوم <%= data.date %></title>
+    <title>تعديل بيانات اليوم <%= data.date %>
+    </title>
     <style>
         /* إعدادات المتغيرات والألوان */
         :root {
@@ -146,7 +147,7 @@
 
         /* تعديل العرض ليتناسب مع وجود زر الحذف */
         .link-section input[name="goal"] {
-            width: 35% !important; 
+            width: 35% !important;
             margin-bottom: 0;
         }
 
@@ -162,14 +163,16 @@
             border: 1px solid #fecaca;
             border-radius: 8px;
             width: 35px;
-            height: 45px; /* نفس ارتفاع الحقل تقريباً */
+            height: 45px;
+            /* نفس ارتفاع الحقل تقريباً */
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             font-size: 1.1rem;
             transition: all 0.2s;
-            flex-shrink: 0; /* منع الزر من الانكماش */
+            flex-shrink: 0;
+            /* منع الزر من الانكماش */
         }
 
         .btn-delete:hover {
@@ -179,9 +182,17 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         /* --------------------------------------- */
 
         .btn {
@@ -238,21 +249,37 @@
     <div class="container">
         <div class="header">
             <a href="/" class="btn-outline" style="padding: 5px 15px;">عودة</a>
-            <h1>تعديل بيانات اليوم <%= data.date %></h1>
+            <h1>تعديل بيانات اليوم <%= data.date %>
+            </h1>
         </div>
 
-        <form action="/save" method="POST">
+        <form action="/save" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="date" value="<%= data.date %>">
 
             <div class="card">
                 <div class="card-title">
                     <h2>البيانات الأساسية</h2>
                 </div>
-                <p>رابط الصورة</p>
-                <input type="text" name="img" placeholder="رابط الصورة" value="<%= data.img %>">
-                <p>نص الرسالة</p>
-                <textarea name="text" class="message-preview" style="width:100%; height:100px; border:1px solid #eee"
-                    placeholder="نص الرسالة"><%= data.text %></textarea>
+                <!-- <p>رابط الصورة</p>
+                <input type="text" name="img" placeholder="رابط الصورة" value="<%= data.img %>"> -->
+                <p>صورة اليوم</p>
+
+                <% if(data.img) { %>
+                    <div style="margin-bottom: 15px;">
+                        <img src="<%= data.img %>" alt="Current Image"
+                            style="width: 100px; border-radius: 10px; border: 1px solid #ddd;">
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">الصورة الحالية</p>
+                    </div>
+                    <% } %>
+                        <input type="file" name="imgFile" accept="image/*"
+                            style="padding: 10px; border: 2px dashed var(--border-color); width: 100%; border-radius: 12px; margin-bottom: 15px;">
+
+
+
+                        <p>نص الرسالة</p>
+                        <textarea name="text" class="message-preview"
+                            style="width:100%; height:100px; border:1px solid #eee"
+                            placeholder="نص الرسالة"><%= data.text %></textarea>
             </div>
 
             <div class="card">
@@ -276,21 +303,23 @@
                     <h2>الخطة اليومية (Goals)</h2>
                 </div>
                 <div id="goalsContainer">
-                    <% if(data.goals && data.goals.length > 0) { %>
-                        <% data.goals.forEach(g => { %>
+                    <% if(data.goals && data.goals.length> 0) { %>
+                        <% data.goals.forEach(g=> { %>
                             <div class="link-section">
                                 <input type="text" name="goal" placeholder="الهدف (مثال: 50)" value="<%= g.goal %>">
                                 <input type="text" name="label" placeholder="الوصف (مثال: جزء)" value="<%= g.label %>">
-                                <button type="button" class="btn-delete" onclick="removeGoal(this)" title="حذف">✕</button>
+                                <button type="button" class="btn-delete" onclick="removeGoal(this)"
+                                    title="حذف">✕</button>
                             </div>
-                        <% }) %>
-                    <% } else { %>
-                        <div class="link-section">
-                            <input type="text" name="goal" placeholder="الهدف (مثال: 50)">
-                            <input type="text" name="label" placeholder="الوصف (مثال: جزء)">
-                            <button type="button" class="btn-delete" onclick="removeGoal(this)" title="حذف">✕</button>
-                        </div>
-                    <% } %>
+                            <% }) %>
+                                <% } else { %>
+                                    <div class="link-section">
+                                        <input type="text" name="goal" placeholder="الهدف (مثال: 50)">
+                                        <input type="text" name="label" placeholder="الوصف (مثال: جزء)">
+                                        <button type="button" class="btn-delete" onclick="removeGoal(this)"
+                                            title="حذف">✕</button>
+                                    </div>
+                                    <% } %>
                 </div>
                 <button type="button" class="btn-outline" onclick="addGoal()">+ إضافة هدف آخر</button>
             </div>
@@ -317,7 +346,7 @@
             // التحقق من عدد العناصر المتبقية (اختياري: إذا أردت منع حذف آخر حقل)
             // const container = document.getElementById('goalsContainer');
             // if (container.children.length > 1) { ... }
-            
+
             const section = btn.closest('.link-section');
             section.remove();
         }
