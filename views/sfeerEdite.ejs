@@ -294,40 +294,51 @@
         }, 3000);
       }
 
-function handleFormSubmit(event) {
-    event.preventDefault();
-    
-    const activeCard = document.querySelector('.card.active');
-    // البحث عن input أو select داخل الكرت النشط
-    const field = activeCard.querySelector('input, select');
-    
-    if (!field.value || field.value.trim() === "") {
-        showMessage("عذراً، يرجى اختيار أو إدخال قيمة صحيحة", "error");
-        return;
-    }
+      function handleFormSubmit(event) {
+        event.preventDefault();
 
-    // الفنكشن الأولى: طباعة القيمة في الكونسول
-    console.log(field.name, field.value);
-    fetch("", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ field: field.name, value: field.value })
-    }).then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              showMessage("تم تحديث البيانات بنجاح ✅");
-          } else {
-              showMessage(`حدث خطأ أثناء تحديث البيانات: ${data.error || "غير معروف"}`, "error");
+        const activeCard = document.querySelector(".card.active");
+        // البحث عن input أو select داخل الكرت النشط
+        const field = activeCard.querySelector("input, select");
+
+        if (!field.value || field.value.trim() === "") {
+          showMessage("عذراً، يرجى اختيار أو إدخال قيمة صحيحة", "error");
+          return;
+        }
+
+        if (field.name == "phone") {
+           const phonePattern = /^5\d{8}$/; // يبدأ بـ 5 ويتبعه 8 أرقام
+          if (!phonePattern.test(field.value)) {
+            showMessage("عذراً، ادخل الرقم بدون صفر 5xxxxxxxx", "error");
+            return;
           }
-      })
-      .catch(error => {
-          console.error("Error:", error);
-          showMessage("حدث خطأ في الاتصال بالخادم ❌", "error");
-      });
-    
-}
+        }
+
+        // الفنكشن الأولى: طباعة القيمة في الكونسول
+        console.log(field.name, field.value);
+        fetch("", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ field: field.name, value: field.value }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showMessage("تم تحديث البيانات بنجاح ✅");
+            } else {
+              showMessage(
+                `حدث خطأ أثناء تحديث البيانات: ${data.error || "غير معروف"}`,
+                "error",
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showMessage("حدث خطأ في الاتصال بالخادم ❌", "error");
+          });
+      }
     </script>
   </body>
 </html>
