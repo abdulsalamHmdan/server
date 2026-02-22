@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تعديل بيانات المستخدم</title>
+    <style>
+      :root {
+        --bg-color: #f4f5f7;
+        --card-bg: #ffffff;
+        --primary-btn: #5c524d;
+        --secondary-btn: #ffffff;
+        --accent-color: #4a90e2;
+        --text-main: #2d3436;
+        --text-muted: #636e72;
+        --border-color: #edf2f7;
+        --input-bg: #fcfcfc;
+        --danger-color: #e53e3e;
+        --success-color: #38a169;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--text-main);
+        background:
+          radial-gradient(
+            900px 600px at 10% 0%,
+            rgba(155, 217, 228, 0.35),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 700px at 95% 15%,
+            rgba(68, 49, 41, 0.14),
+            transparent 55%
+          ),
+          var(--bg-color);
+        min-height: 100vh;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 500px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .header h1 {
+        font-size: 1.4rem;
+        color: var(--primary-btn);
+      }
+
+      /* أزرار التنقل العلوي */
+      .nav-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 25px;
+      }
+
+      .tab-btn {
+        padding: 10px 18px;
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        color: var(--text-muted);
+      }
+
+      .tab-btn.active {
+        background: var(--primary-btn);
+        color: white;
+        border-color: var(--primary-btn);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 25px;
+        padding: 30px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        display: none; /* مخفي افتراضياً */
+        animation: slideUp 0.4s ease;
+      }
+
+      .card.active {
+        display: block;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      input[type="text"],
+      input[type="tel"],
+      input[type="number"] {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        background: var(--input-bg);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s;
+      }
+
+      input:focus {
+        border-color: var(--primary-btn);
+        box-shadow: 0 0 0 3px rgba(92, 82, 77, 0.1);
+      }
+
+      .btn-save {
+        width: 100%;
+        padding: 16px;
+        border-radius: 15px;
+        border: none;
+        background: var(--primary-btn);
+        color: white;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: transform 0.2s;
+      }
+
+      .btn-save:active {
+        transform: scale(0.98);
+      }
+
+      /* صندوق الرسائل التنبيهية */
+      #alertBox {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 15px 25px;
+        border-radius: 12px;
+        display: none;
+        z-index: 1000;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        color: white;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="alertBox"></div>
+
+    <div class="container">
+      <div class="header">
+        <h1>إعدادات الملف الشخصي</h1>
+      </div>
+
+      <div class="nav-tabs">
+        <button class="tab-btn active" onclick="showTab('nameTab', this)">
+          الاسم
+        </button>
+        <button class="tab-btn" onclick="showTab('phoneTab', this)">
+          رقم الجوال
+        </button>
+        <button class="tab-btn" onclick="showTab('mgm3Tab', this)">
+          المجمع
+        </button>
+      </div>
+
+      <form id="editForm" onsubmit="handleFormSubmit(event)">
+        <div id="nameTab" class="card active">
+          <label>الاسم الكامل</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="أدخل اسمك الجديد"
+            value="<%= user.name %>"
+          />
+          <button type="submit" class="btn-save">حفظ الاسم</button>
+        </div>
+
+        <div id="phoneTab" class="card">
+          <label>رقم الجوال</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="05xxxxxxxx"
+            value="<%= user.phone %>"
+          />
+          <button type="submit" class="btn-save">حفظ الرقم</button>
+        </div>
+
+        <div id="mgm3Tab" class="card">
+          <label>اختر المجمع</label>
+          <select
+            id="mgm3"
+            name="mgm3"
+            style="
+              width: 100%;
+              padding: 15px;
+              border: 1px solid var(--border-color);
+              border-radius: 15px;
+              background: var(--input-bg);
+              font-size: 1rem;
+              outline: none;
+              appearance: none;
+            "
+          >
+            <option value="" disabled selected>-- اختر من القائمة --</option>
+            <option value="complex_1">زيد بن ثابت</option>
+            <option value="complex_2">أسامة بن زيد</option>
+            <option value="complex_3">عثمان بن عفان</option>
+          </select>
+
+          <div
+            style="
+              margin-top: -35px;
+              margin-left: 15px;
+              float: left;
+              pointer-events: none;
+              color: var(--text-muted);
+            "
+          >
+            ▼
+          </div>
+
+          <button type="submit" class="btn-save" style="margin-top: 40px">
+            حفظ المجمع
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      // 1. دالة التبديل بين البطاقات (Tabs)
+      function showTab(tabId, btn) {
+        // إخفاء جميع الكروت
+        document
+          .querySelectorAll(".card")
+          .forEach((card) => card.classList.remove("active"));
+        // إزالة الحالة النشطة من جميع الأزرار
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+
+        // إظهار الكرت المحدد وتنشيط الزر
+        document.getElementById(tabId).classList.add("active");
+        btn.classList.add("active");
+      }
+
+      // 2. دالة عرض الرسائل (تنبيه أو خطأ)
+      function showMessage(msg, type = "info") {
+        const alertBox = document.getElementById("alertBox");
+        alertBox.innerText = msg;
+        alertBox.style.display = "block";
+
+        if (type === "error") {
+          alertBox.style.backgroundColor = "var(--danger-color)";
+        } else {
+          alertBox.style.backgroundColor = "var(--success-color)";
+        }
+
+        // إخفاء الرسالة بعد 3 ثواني
+        setTimeout(() => {
+          alertBox.style.display = "none";
+        }, 3000);
+      }
+
+function handleFormSubmit(event) {
+    event.preventDefault();
+    
+    const activeCard = document.querySelector('.card.active');
+    // البحث عن input أو select داخل الكرت النشط
+    const field = activeCard.querySelector('input, select');
+    
+    if (!field.value || field.value.trim() === "") {
+        showMessage("عذراً، يرجى اختيار أو إدخال قيمة صحيحة", "error");
+        return;
+    }
+
+    // الفنكشن الأولى: طباعة القيمة في الكونسول
+    console.log(field.name, field.value);
+    fetch("", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ field: field.name, value: field.value })
+    }).then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              showMessage("تم تحديث البيانات بنجاح ✅");
+          } else {
+              showMessage(`حدث خطأ أثناء تحديث البيانات: ${data.error || "غير معروف"}`, "error");
+          }
+      })
+      .catch(error => {
+          console.error("Error:", error);
+          showMessage("حدث خطأ في الاتصال بالخادم ❌", "error");
+      });
+    
+}
+    </script>
+  </body>
+</html>

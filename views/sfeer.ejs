@@ -640,8 +640,10 @@
         </div>
 
 
-
-        <button class="btn btn-outline btn-logout">تسجيل خروج</button>
+        <div class="btns">
+          <button class="btn btn-primary btn-profile" style="margin-bottom: 0;">الملف الشخصي</button>
+          <button class="btn btn-outline btn-logout">تسجيل خروج</button>
+        </div>
   </div>
 </body>
 
@@ -653,6 +655,7 @@
   const copyBtn = document.querySelector("#copy-btn");
   const urlSave = document.querySelector("#urlSave");
   const btnLogout = document.querySelector(".btn-logout");
+  const btnProfile = document.querySelector(".btn-profile");
   const refreshG = document.querySelector("#refreshG");
   const refreshR = document.querySelector("#refreshR");
   const couponBtn = document.querySelector("#coupon");
@@ -719,6 +722,9 @@
   });
   btnLogout.addEventListener("click", () => {
     location.href = "/"
+  });
+  btnProfile.addEventListener("click", () => {
+    location.href = "profile"
   });
   refreshG.addEventListener('click', () => {
     const els = document.querySelectorAll(".target-item");

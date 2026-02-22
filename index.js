@@ -105,7 +105,35 @@ app.get("/:id/sfeer", async (req, res) => {
   object["coupon"] = coupon;
   res.render("sfeer", object);
 });
+app.get("/:id/profile", async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    res.send("لا يوجد سفير بهذا الرقم");
+    return;
+  }
+  res.render("sfeerEdite", { user });
+});
+app.post("/:id/profile", async (req, res) => {
+  const { field, value } = req.body;
+  console.log(field, value);
+  await User.findByIdAndUpdate(req.params.id, { [field]: value })
+    .then((u) => {
+      
+      console.log("تم تحديث المستخدم:", u);
+    
+    })
+    .catch((e) => {
+      console.error("خطأ في تحديث المستخدم:", e);
+      if (e.kind === "ObjectId") {
+      res.json({ error: "لا يوجد سفير بهذا الرقم", success: false });
+      } else {
+        res.json({ error: "المدخل غير صحيح", success: false });
+      }
+      return;
+    });
 
+  res.json({ error: null, success: true });
+});
 app.get("/dashboard", async (req, res) => {
   res.render("dashboard");
 });
@@ -266,7 +294,9 @@ app.post("/save", (req, res) => {
     // 1. التحقق من وجود خطأ في الرفع للسحابة
     if (uploadError) {
       console.error("❌ خطأ من الكلاوديناري:", uploadError);
-      return res.status(500).send("فشل رفع الصورة للسحابة: " + uploadError.message);
+      return res
+        .status(500)
+        .send("فشل رفع الصورة للسحابة: " + uploadError.message);
     }
 
     console.log("الملف المرفوع:", req.file);
@@ -274,7 +304,8 @@ app.post("/save", (req, res) => {
 
     // 2. إذا نجح الرفع، نكمل حفظ البيانات في قاعدة البيانات
     try {
-      const { date, text, boxGoal, payGoal, goal, label, currentImg } = req.body;
+      const { date, text, boxGoal, payGoal, goal, label, currentImg } =
+        req.body;
 
       let goalsArray = [];
       if (Array.isArray(goal)) {
@@ -297,12 +328,11 @@ app.post("/save", (req, res) => {
           goals: goalsArray,
           img: finalImg,
         },
-        { upsert: true, new: true }
+        { upsert: true, new: true },
       );
-      
+
       res.send("تم الحفظ بنجاح!");
       // res.redirect(`/admin/${date}?success=true`);
-      
     } catch (dbError) {
       console.error("❌ خطأ في قاعدة البيانات:", dbError);
       res.status(500).send("حدث خطأ أثناء الحفظ في قاعدة البيانات.");
