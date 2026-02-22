@@ -48,6 +48,7 @@ mongoose
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
+const { Console } = require("console");
 cloudinary.config({
   cloud_name: process.env.cloud_name,
   api_key: process.env.api_key,
@@ -117,15 +118,12 @@ app.post("/:id/profile", async (req, res) => {
   const { field, value } = req.body;
   console.log(field, value);
   await User.findByIdAndUpdate(req.params.id, { [field]: value })
-    .then((u) => {
-      
-      console.log("تم تحديث المستخدم:", u);
-    
-    })
+    .then((u) => {})
     .catch((e) => {
-      console.error("خطأ في تحديث المستخدم:", e);
       if (e.kind === "ObjectId") {
-      res.json({ error: "لا يوجد سفير بهذا الرقم", success: false });
+        res.json({ error: "لا يوجد سفير بهذا الرقم", success: false });
+      } else if (e.code === 11000) {
+        res.json({ error: "هذا المستخدم بالفعل مسجل", success: false });
       } else {
         res.json({ error: "المدخل غير صحيح", success: false });
       }
@@ -134,6 +132,29 @@ app.post("/:id/profile", async (req, res) => {
 
   res.json({ error: null, success: true });
 });
+app.get("/dashboard/:id/addusers", async (req, res) => {
+  res.render("addNew.ejs");
+});
+app.post("/dashboard/:id/addusers", async (req, res) => {
+  const { name, phone } = req.body;
+  const user = new User({ name, phone, reff: phone, mgm3: req.params.id });
+  await user
+    .save()
+    .then(() => {
+      res.json({ error: null, success: true });
+    })
+    .catch((e) => {
+      if (e.code === 11000) {
+        res.json({ error: "هذا المستخدم بالفعل مسجل", success: false });
+        return;
+      } else {
+        console.error(e);
+        res.json({ error: "المدخل غير صحيح", success: false });
+        return;
+      }
+    });
+});
+
 app.get("/dashboard", async (req, res) => {
   res.render("dashboard");
 });

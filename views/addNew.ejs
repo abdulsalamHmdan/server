@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إضافة مستخدم جديد</title>
+    <style>
+      :root {
+        --bg-color: #f4f5f7;
+        --card-bg: #ffffff;
+        --primary-btn: #5c524d;
+        --text-main: #2d3436;
+        --text-muted: #636e72;
+        --border-color: #edf2f7;
+        --input-bg: #fcfcfc;
+        --success-color: #38a169;
+        --danger-color: #e53e3e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background:
+          radial-gradient(
+            900px 600px at 10% 0%,
+            rgba(155, 217, 228, 0.35),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 700px at 95% 15%,
+            rgba(68, 49, 41, 0.14),
+            transparent 55%
+          ),
+          var(--bg-color);
+      }
+
+      .container {
+        width: 100%;
+        max-width: 450px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+      .header h1 {
+        font-size: 1.5rem;
+        color: var(--primary-btn);
+        margin: 0;
+      }
+      .header p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-top: 8px;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 25px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--text-main);
+        font-size: 0.95rem;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 18px;
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        background: var(--input-bg);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      input:focus {
+        border-color: #cbd5e0;
+        box-shadow: 0 0 0 4px rgba(92, 82, 77, 0.05);
+        background: #fff;
+      }
+
+      .btn-add {
+        width: 100%;
+        padding: 16px;
+        border-radius: 14px;
+        border: none;
+        background: var(--primary-btn);
+        color: white;
+        font-weight: bold;
+        font-size: 1.1rem;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.2s;
+      }
+      .btn-back {
+        width: 100%;
+        padding: 16px;
+        border-radius: 14px;
+        border: none;
+        background: var(--input-bg);
+        color: var(--primary-btn);
+        font-weight: bold;
+        font-size: 1.1rem;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.2s;
+      }
+
+      .btn-add:hover {
+        opacity: 0.95;
+        transform: translateY(-1px);
+      }
+      .btn-add:active {
+        transform: translateY(0);
+      }
+
+      /* التنبيه العائم */
+      #statusMessage {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        padding: 15px 25px;
+        border-radius: 15px;
+        color: white;
+        display: none;
+        font-weight: bold;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="statusMessage"></div>
+
+    <div class="container">
+      <div class="header">
+        <h1>إضافة مستخدم جديد</h1>
+        <p>يرجى ملء البيانات المطلوبة لإنشاء الحساب</p>
+      </div>
+
+      <div class="card">
+        <form id="newUserForm" onsubmit="handleCreateUser(event)">
+          <div class="form-group">
+            <label for="fullName">الاسم الكامل</label>
+            <input
+              type="text"
+              id="fullName"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumber">رقم الجوال</label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              placeholder="05xxxxxxxx"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-add">إنشاء المستخدم</button>
+          <button type="button" class="btn-back" onclick="window.history.back()">عودة</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      /**
+       * 1. فنكشن عرض الرسائل والتنبيهات
+       * @param {string} msg - نص الرسالة
+       * @param {string} type - نوع الرسالة (success أو error)
+       */
+      function showAlert(msg, type = "success") {
+        const toast = document.getElementById("statusMessage");
+        toast.innerText = msg;
+        toast.style.display = "block";
+
+        if (type === "error") {
+          toast.style.backgroundColor = "var(--danger-color)";
+        } else {
+          toast.style.backgroundColor = "var(--success-color)";
+        }
+
+        // إخفاء التنبيه تلقائياً
+        setTimeout(() => {
+          toast.style.display = "none";
+        }, 3500);
+      }
+
+      /**
+       * 2. فنكشن طباعة البيانات في الكونسول
+       */
+      function logUserData(name, phone) {
+        console.group("🚀 بيانات مستخدم جديد");
+        console.log("%cالاسم:", "color: #5c524d; font-weight: bold", name);
+        console.log("%cالجوال:", "color: #38a169; font-weight: bold", phone);
+        console.log("تاريخ الإضافة:", new Date().toLocaleString("ar-SA"));
+        console.groupEnd();
+      }
+
+      // معالج إرسال الفورم
+      function handleCreateUser(event) {
+        event.preventDefault();
+
+        const name = document.getElementById("fullName").value;
+        const phone = document.getElementById("phoneNumber").value;
+
+        // التحقق البسيط
+        if (name.length < 3) {
+          showAlert("يرجى إدخال اسم صحيح (أكثر من 3 حروف)", "error");
+          return;
+        }
+        if (!/^5\d{8}$/.test(phone)) {
+          showAlert("يرجى إدخال رقم جوال صحيح يبدأ بـ 5 ويتكون من 9 أرقام", "error");
+          return;
+        }
+
+        fetch("", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, phone }),
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            if (data.success) {
+              showAlert("تمت إضافة المستخدم بنجاح!");
+              logUserData(name, phone);
+              event.target.reset();
+            } else {
+              showAlert(`حدث خطأ أثناء إضافة المستخدم:${data.error}`, "error");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showAlert("حدث خطأ في الاتصال بالخادم", "error");
+          });
+        // تنفيذ الفنكشنز المطلوبة
+        logUserData(name, phone);
+        showAlert("تمت إضافة المستخدم بنجاح!");
+
+        // إعادة تعيين الفورم
+      }
+    </script>
+  </body>
+</html>
