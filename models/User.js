@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
   reff: { type: String, required: true, unique: true },
   mgm3: { type: String },
   phone:{ type: String, required: true, unique: true },
+  total:{ type: Number, default: 0 },
   url1:{ type: String },
   url2:{ type: String },
 });

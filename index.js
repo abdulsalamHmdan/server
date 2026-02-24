@@ -5,16 +5,19 @@ const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 require("dotenv").config();
+const cors = require("cors");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const User = require("./models/User");
 const Coupon = require("./models/coupon");
 const Day = require("./models/Day");
+const Notifid = require("./models/notifid");
 const { name } = require("ejs");
 const e = require("express");
 const axios = require("axios");
 const XLSX = require("xlsx");
+app.use(cors());
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
@@ -43,7 +46,7 @@ let cacheM = (duration) => {
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("تم الاتصال بقاعدة البيانات بنجاح!"))
-  .catch((err) => console.log("فشل الاتصال:", err));
+  .catch((err) => console.log("فشل الاتصال:", "err"));
 
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
@@ -265,7 +268,7 @@ app.get("/:id/boxes", async (req, res) => {
 
 app.get("/:id/rank", async (req, res) => {
   let me = await User.findById(req.params.id);
-  let user = await User.find({}, "name mgm3").sort({ name: -1 });
+  let user = await User.find({}, "name mgm3").sort({ total: -1 });
   const pks = user.map((u) => u.mgm3);
   let data = (
     await axios.get(
@@ -273,12 +276,15 @@ app.get("/:id/rank", async (req, res) => {
     )
   ).data;
   data = data.items;
-  const rankIndex = data.filter((i) => pks.includes(i.pk)).findIndex((i) => i.pk == me.mgm3) + 1;
+  const rankIndex =
+    data.filter((i) => pks.includes(i.pk)).findIndex((i) => i.pk == me.mgm3) +
+    1;
   const rank = {
-    a: user.findIndex((u) => u._id == req.params.id)+1,
-    b: user
-      .filter((x) => x.mgm3 == me.mgm3)
-      .findIndex((u) => u._id == req.params.id)+1,
+    a: user.findIndex((u) => u._id == req.params.id) + 1,
+    b:
+      user
+        .filter((x) => x.mgm3 == me.mgm3)
+        .findIndex((u) => u._id == req.params.id) + 1,
     c: rankIndex || "-",
   };
   res.json(rank);
@@ -327,8 +333,8 @@ app.post("/save", (req, res) => {
         .send("فشل رفع الصورة للسحابة: " + uploadError.message);
     }
 
-    console.log("الملف المرفوع:", req.file);
-    console.log("البيانات النصية:", req.body);
+    // console.log("الملف المرفوع:", req.file);
+    // console.log("البيانات النصية:", req.body);
 
     // 2. إذا نجح الرفع، نكمل حفظ البيانات في قاعدة البيانات
     try {
@@ -514,18 +520,68 @@ app.get("/:id/giveCoupon", async (req, res) => {
       res.json({ valid: false, message: "لا يوجد كوبونات متاحة" });
     }
   } else {
-    console.log(
-      userGoalsData.boxes,
-      dayg.payGoal,
-      userGoalsData.payment,
-      dayg.payGoal,
-    );
-    console.log(
-      userGoalsData.boxes >= dayg.payGoal,
-      userGoalsData.payment >= dayg.payGoal,
-    );
+    // console.log(
+    //   userGoalsData.boxes,
+    //   dayg.payGoal,
+    //   userGoalsData.payment,
+    //   dayg.payGoal,
+    // );
+    // console.log(
+    //   userGoalsData.boxes >= dayg.payGoal,
+    //   userGoalsData.payment >= dayg.payGoal,
+    // );
 
     res.json({ valid: false, message: "لم تحقق الأهداف بعد" });
+  }
+});
+// Add headers before the routes are defined
+
+app.get("/api/share", async (req, res) => {
+  res.json({
+    image:
+      "https://res.cloudinary.com/dkqi1xott/image/upload/v1771906590/my_app_uploads/oappqpyjiz6pokbb3rz4.jpg",
+    link: "aa",
+    message: "xxxx",
+  });
+});
+app.get("/api/gl", async (req, res) => {
+  res.json({
+    boxesGoal: "0",
+    amountGoal: "0",
+    boxesAchieved: "0",
+    amountAchieved: "0",
+  });
+});
+
+app.get("/api/savekey/:key", async (req, res) => {
+  try {
+    const { key } = req.params;
+    console.log("Received key:", key);
+    const notifid = new Notifid({ key: key });
+    await notifid.save();
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, error: error });
+  }
+});
+app.get("/api/notifids", async (req, res) => {
+  try {
+    const date = dates();
+    const dayData = await Day.findOne({ date: date.rd });
+    const notifids = (await Notifid.find({})).map((n) => n.key);
+    await axios.post("https://exp.host/--/api/v2/push/send", {
+      to: notifids,
+      title: "رسالة اليوم",
+      body: dayData.text || "صباح الخير! تحقق من أهداف اليوم.",
+    }).then(response=>{
+      res.json({ success: true });
+    }).catch((e) => {
+      console.error("Error sending test notification:", e.response?.data || e);
+      res.json({ success: false, error: e });
+    });
+
+  } catch (error) {
+    console.error("Error fetching notifids:", error);
   }
 });
 
