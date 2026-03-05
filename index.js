@@ -102,7 +102,15 @@ app.get("/:id/sfeer", async (req, res) => {
     },
   });
   let dayData = await Day.findOne({ date: date.rd });
-  const object = Object.create(dayData);
+  const object = Object.create(
+    dayData || {
+      img: "",
+      text: "بانتظار اضافة مستهدفات اليوم",
+      boxGoal: 10,
+      payGoal: 990,
+      goals: [],
+    },
+  );
   object["name"] = user.name;
   object["url"] = `https://donate.utq.org.sa/p/1/${user.reff}`;
   object["id"] = req.params.id;
@@ -537,26 +545,84 @@ app.get("/:id/giveCoupon", async (req, res) => {
 // Add headers before the routes are defined
 
 app.get("/api/share", async (req, res) => {
+  const date = dates();
+  const dayData = await Day.findOne({ date: date.rd });
   res.json({
-    image:
-      "https://res.cloudinary.com/dkqi1xott/image/upload/v1771906590/my_app_uploads/oappqpyjiz6pokbb3rz4.jpg",
+    image: dayData?.img || "",
     link: "aa",
-    message: "xxxx",
+    message: dayData?.text || "بانتظار اضافة مستهدفات اليوم",
   });
 });
+
 app.get("/api/gl", async (req, res) => {
+  const phone = req.query.phone;
+  const date = dates();
+  const dayData = await Day.findOne({ date: date.rd });
+  const boxes = (
+    await axios.get(
+      `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?ts=${date.fd}-${date.td}&goal_creator=${phone}`,
+    )
+  ).data;
   res.json({
-    boxesGoal: "0",
-    amountGoal: "0",
-    boxesAchieved: "0",
-    amountAchieved: "0",
+    boxesGoal: dayData?.boxGoal || 10,
+    amountGoal: dayData?.payGoal || 990,
+    boxesAchieved: boxes?.items?.length || 0,
+    amountAchieved: boxes?.totals?.total || 0,
   });
+});
+app.get("/api/rn", async (req, res) => {
+  const id = req.query.id;
+  let me = await User.findById(id);
+  let user = await User.find({}, "name mgm3").sort({ total: -1 });
+  const pks = user.map((u) => u.mgm3);
+  let data = (
+    await axios.get(
+      "https://donate.utq.org.sa/api/v1/orders/report/prod_id:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ",
+    )
+  ).data;
+
+  data = data.items;
+  const rankIndex =
+    data.filter((i) => pks.includes(i.pk)).findIndex((i) => i.pk == me.mgm3) +
+    1;
+  const rank = {
+    a: user.findIndex((u) => u._id == id) + 1,
+    b: user.filter((x) => x.mgm3 == me.mgm3).findIndex((u) => u._id == id) + 1,
+    c: rankIndex || "-",
+  };
+  res.json(rank);
+});
+
+app.get("/:id/bx", async (req, res) => {
+  let user = await User.findById(req.query.id);
+  if (req.query.filter == "all") {
+    const boxes = await axios.get(
+      `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}`,
+    );
+    res.json(boxes.data.items || []);
+  } else {
+    const date = dates();
+    const boxes = await axios.get(
+      `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${date.fd}-${date.td}`,
+    );
+    res.json(boxes.data.items || []);
+  }
+});
+
+app.get("/api/login", async (req, res) => {
+  try {
+    const { key } = req.query;
+    const user = await User.findById(key);
+    res.json({ success: true, id: user });
+  } catch (error) {
+    res.json({ success: false, error: error });
+  }
 });
 
 app.get("/api/savekey/:key", async (req, res) => {
   try {
     const { key } = req.params;
-    console.log("Received key:", key);
+    // console.log("Received key:", key);
     const notifid = new Notifid({ key: key });
     await notifid.save();
     res.json({ success: true });
@@ -569,17 +635,22 @@ app.get("/api/notifids", async (req, res) => {
     const date = dates();
     const dayData = await Day.findOne({ date: date.rd });
     const notifids = (await Notifid.find({})).map((n) => n.key);
-    await axios.post("https://exp.host/--/api/v2/push/send", {
-      to: notifids,
-      title: "رسالة اليوم",
-      body: dayData.text || "صباح الخير! تحقق من أهداف اليوم.",
-    }).then(response=>{
-      res.json({ success: true });
-    }).catch((e) => {
-      console.error("Error sending test notification:", e.response?.data || e);
-      res.json({ success: false, error: e });
-    });
-
+    await axios
+      .post("https://exp.host/--/api/v2/push/send", {
+        to: notifids,
+        title: "رسالة اليوم",
+        body: dayData.text || "صباح الخير! تحقق من أهداف اليوم.",
+      })
+      .then((response) => {
+        res.json({ success: true });
+      })
+      .catch((e) => {
+        console.error(
+          "Error sending test notification:",
+          e.response?.data || e,
+        );
+        res.json({ success: false, error: e });
+      });
   } catch (error) {
     console.error("Error fetching notifids:", error);
   }
