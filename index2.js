@@ -30,17 +30,14 @@ const updateUsersDataTask = async () => {
             const batchPromises = currentBatch.map(async (user) => {
                 try {
                     // تجهيز روابط الـ API (عدل الروابط حسب الحاجة)
-                    const url1 = `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?ad_reff=${user.reff}`;
-                    const url2 = `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}`;
+                    const url1 = `https://donate.utq.org.sa/api/v1/orders/report/goals:ED4SFhUVFUcZGBsZHRgeTyEdIiQgHyIhJCMmJSgnKiksKy4tMC8yMQ?goal_creator=${user.phone}&ts=${1771534800}-${1772744400}`;
 
                     // تشغيل الطلبين معاً لنفس المستخدم لتوفير الوقت
-                    const [res1, res2] = await Promise.all([
-                        axios.get(url1).catch(() => ({ data: { totals: { total: 0 } } })), // تعامل مع الخطأ بإرجاع 0
-                        axios.get(url2).catch(() => ({ data: { totals: { total: 0 } } }))
-                    ]);
+                    const res1 = await axios.get(url1).catch(() => ({ data: { totals: { total: 0 } } }));
+
 
                     // جمع القيمتين (أو معالجتهما حسب منطق تطبيقك)
-                    const finalTotal = (res1?.data?.totals?.total || 0) + (res2?.data?.totals?.total || 0);
+                    const finalTotal = (res1?.data?.totals?.total || 0)
 
                     return {
                         updateOne: {
