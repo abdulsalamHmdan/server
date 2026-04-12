@@ -46,7 +46,7 @@ let cacheM = (duration) => {
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("تم الاتصال بقاعدة البيانات بنجاح!"))
-  .catch((err) => console.log("فشل الاتصال:", "err"));
+  .catch((err) => console.log("فشل الاتصال:", err));
 
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
